@@ -1,9 +1,9 @@
 var loaderUtils = require('loader-utils'),
     to5 = require('6to5');
 
-module.exports = function (source) {
+module.exports = function (source, map) {
     var options = loaderUtils.parseQuery(this.query),
-        result;
+        result, code, map;
 
     if (this.cacheable) {
         this.cacheable();
@@ -11,6 +11,8 @@ module.exports = function (source) {
 
     result = to5.transform(source, options);
 
-    this.callback(null, result.code);
+    code = result.code;
+    map = result.map && result.map.toJSON();
 
+    this.callback(null, code, map);
 };
