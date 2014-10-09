@@ -12,7 +12,10 @@ module.exports = function (source, map) {
     result = to5.transform(source, options);
 
     code = result.code;
-    map = result.map && result.map.toJSON();
+
+    if (result.map) {
+        map = result.map;
+    }
 
     this.callback(null, code, map);
 };
