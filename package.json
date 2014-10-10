@@ -7,7 +7,7 @@
     "loader-utils": "^0.2.4"
   },
   "peerDependencies": {
-    "6to5": "^1.7.8"
+    "6to5": "^1.7.9"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
