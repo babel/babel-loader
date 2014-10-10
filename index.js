@@ -1,7 +1,8 @@
 var loaderUtils = require('loader-utils'),
     to5 = require('6to5');
 
-module.exports = function (source, map) {
+module.exports = function (source) {
+
     var options = loaderUtils.parseQuery(this.query),
         result, code, map;
 
