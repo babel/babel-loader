@@ -1,6 +1,6 @@
 {
   "name": "6to5-loader",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "6t05 module loader for webpack",
   "main": "index.js",
   "dependencies": {
