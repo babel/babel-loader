@@ -9,13 +9,12 @@ module.exports = function (source, map) {
         this.cacheable();
     }
 
+    options.sourceMap = true;
     result = to5.transform(source, options);
 
     code = result.code;
-
-    if (result.map) {
-        map = result.map;
-    }
+    map = result.map;
+    map.sourcesContent = [source];
 
     this.callback(null, code, map);
 };
