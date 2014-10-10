@@ -7,17 +7,17 @@
     "loader-utils": "^0.2.4"
   },
   "peerDependencies": {
-    "6to5": "^1.7.9"
+    "6to5": "^1.7.9",
+    "webpack": "^1.4.5"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
     "mocha-loader": "^0.6.5",
     "should": "^4.0.4",
-    "webpack": "^1.4.5",
     "webpack-dev-server": "^1.6.5"
   },
   "scripts": {
-    "test": "webpack-dev-server --config test/webpack.config.js"
+    "test": "webpack-dev-server --config=test/webpack.config.js"
   },
   "repository": {
     "type": "git",
