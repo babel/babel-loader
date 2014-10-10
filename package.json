@@ -4,8 +4,10 @@
   "description": "6t05 module loader for webpack",
   "main": "index.js",
   "dependencies": {
-    "6to5": "^1.7.8",
     "loader-utils": "^0.2.4"
+  },
+  "peerDependencies": {
+    "6to5": "^1.7.8"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
