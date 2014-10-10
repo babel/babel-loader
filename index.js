@@ -10,6 +10,7 @@ module.exports = function (source, map) {
     }
 
     options.sourceMap = true;
+    options.filename = loaderUtils.getRemainingRequest(this);
     result = to5.transform(source, options);
 
     code = result.code;
