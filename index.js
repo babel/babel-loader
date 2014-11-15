@@ -2,7 +2,6 @@ var loaderUtils = require('loader-utils'),
     to5 = require('6to5');
 
 module.exports = function (source) {
-
     var options = loaderUtils.parseQuery(this.query),
         result, code, map;
 
@@ -12,11 +11,18 @@ module.exports = function (source) {
 
     options.sourceMap = true;
     options.filename = loaderUtils.getRemainingRequest(this);
-    result = to5.transform(source, options);
 
-    code = result.code;
-    map = result.map;
-    map.sourcesContent = [source];
+    var nodeModule = options.filename.indexOf('node_modules') >= 0;
+
+    if (nodeModule) {
+        code = source;
+    } else {
+        result = to5.transform(source, options);
+
+        code = result.code;
+        map = result.map;
+        map.sourcesContent = [source];
+    }
 
     this.callback(null, code, map);
 };
