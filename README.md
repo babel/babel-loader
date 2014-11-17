@@ -13,7 +13,7 @@ $ npm install --save-dev 6to5-loader
 ## Usage
 
 ```
-import Animal from 'es6!./Animal.js';
+import Animal from '6to5!./Animal.js';
 
 class Person extends Animal {
   constructor(arg='default') {
@@ -25,7 +25,7 @@ export default Person;
 ```
 
 ```
-var Person = require('es6!./Person.js').default;
+var Person = require('6to5!./Person.js').default;
 new Person();
 ```
 
