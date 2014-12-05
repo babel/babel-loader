@@ -47,7 +47,7 @@ import Person from './Person.js';
 
 ## Options
 
-See the `6to5` [options](https://github.com/sebmck/6to5#options)
+See the `6to5` [options](https://6to5.github.io/usage.html#options)
 
 ## License
 
