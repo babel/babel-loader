@@ -1,5 +1,10 @@
 var loaderUtils = require('loader-utils'),
-    to5 = require('6to5');
+    to5 = require('6to5'),
+    toBoolean = function (val) {
+        if (val === 'true') { return true; }
+        if (val === 'false') { return false; }
+        return val;
+    };
 
 module.exports = function (source) {
 
@@ -10,13 +15,20 @@ module.exports = function (source) {
         this.cacheable();
     }
 
+    // Convert 'true'/'false' to true/false
+    options = Object.keys(options).reduce(function (accumulator, key) {
+        accumulator[key] = toBoolean(options[key]);
+        return accumulator;
+    }, {});
+
     options.sourceMap = true;
     options.filename = loaderUtils.getRemainingRequest(this);
-    result = to5.transform(source, options);
 
+    result = to5.transform(source, options);
     code = result.code;
     map = result.map;
     map.sourcesContent = [source];
 
     this.callback(null, code, map);
+
 };
