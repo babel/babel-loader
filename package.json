@@ -1,13 +1,13 @@
 {
   "name": "6to5-loader",
-  "version": "0.2.4",
+  "version": "1.0.0",
   "description": "6t05 module loader for webpack",
   "main": "index.js",
   "dependencies": {
     "loader-utils": "^0.2.5"
   },
   "peerDependencies": {
-    "6to5": "^1.7.9",
+    "6to5": "^2.0.0",
     "webpack": "^1.4.5"
   },
   "devDependencies": {
