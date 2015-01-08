@@ -21,13 +21,16 @@ module.exports = function (source) {
         return accumulator;
     }, {});
 
-    options.sourceMap = true;
+    options.sourceMap = this.sourceMap;
     options.filename = loaderUtils.getRemainingRequest(this);
 
     result = to5.transform(source, options);
     code = result.code;
+
     map = result.map;
-    map.sourcesContent = [source];
+    if (map) {
+        map.sourcesContent = [source];
+    }
 
     this.callback(null, code, map);
 
