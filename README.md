@@ -78,7 +78,7 @@ plugins: [
   // Alternatively, write `require('6to5/runtime')` at the top of your entry point.
   // Leaks the object to the window, but it's simple.
   new webpack.ProvidePlugin({
-    to5Runtime: "imports?global=>{}!exports-loader?global.to5Runtime!6to5/runtime"
+    to5Runtime: "6to5/runtime"
   })
 ]
 ```
