@@ -66,7 +66,7 @@ bundling a single runtime and providing it to each transformed file.
 ```javascript
 loaders: [
   // runtime=true tells 6to5 to expect a runtime, but we still need to bundle it.
-  {test: /\.jsx?$/, exclude: /node_modules/, loader: '6to5-loader?experimental=true&runtime=true'}
+  {test: /\.jsx?$/, exclude: /node_modules/, loader: '6to5-loader?experimental&runtime'}
 ],
 plugins: [
   // to5Runtime wants to export to the window. This loader grabs the export
@@ -78,12 +78,18 @@ plugins: [
   // Alternatively, write `require('6to5/runtime')` at the top of your entry point.
   // Leaks the object to the window, but it's simple.
   new webpack.ProvidePlugin({
-    to5Runtime: "imports?global=>{}!exports-loader?global.to5Runtime!6to5/runtime"
+    to5Runtime: "imports?global=>{}!exports?global.to5Runtime!6to5/runtime"
   })
 ]
 ```
 
 This can save significant overhead if you use 6to5 in many modules.
+
+_Note:_ You'll need the [imports-loader](https://github.com/webpack/imports-loader) and [exports-loader](https://github.com/webpack/exports-loader), for this configuration to work.
+These can be installed with:
+```
+npm install imports-loader exports-loader --save-dev
+```
 
 ## Options
 
