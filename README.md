@@ -12,7 +12,7 @@ $ npm install --save-dev 6to5-loader
 
 ## Usage
 
-```
+```javascript
 import Animal from '6to5!./Animal.js';
 
 class Person extends Animal {
@@ -24,14 +24,14 @@ class Person extends Animal {
 export default Person;
 ```
 
-```
+```javascript
 var Person = require('6to5!./Person.js').default;
 new Person();
 ```
 
 Or within the webpack config:
 
-```
+```javascript
 module: {
     loaders: [
         { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader'}
@@ -41,7 +41,7 @@ module: {
 
 and then import normally:
 
-```
+```javascript
 import Person from './Person.js';
 ```
 
