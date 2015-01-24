@@ -12,7 +12,7 @@ $ npm install --save-dev 6to5-loader
 
 ## Usage
 
-```es6
+```javascript
 import Animal from '6to5!./Animal.js';
 
 class Person extends Animal {
@@ -24,7 +24,7 @@ class Person extends Animal {
 export default Person;
 ```
 
-```es6
+```javascript
 var Person = require('6to5!./Person.js').default;
 new Person();
 ```
@@ -41,7 +41,7 @@ module: {
 
 and then import normally:
 
-```es6
+```javascript
 import Person from './Person.js';
 ```
 
