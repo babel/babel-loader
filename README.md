@@ -93,7 +93,7 @@ npm install imports-loader exports-loader --save-dev
 
 ## Options
 
-See the `6to5` [options](https://6to5.github.io/usage.html#options)
+See the `6to5` [options](http://6to5.org/docs/usage/options/)
 
 ## License
 
