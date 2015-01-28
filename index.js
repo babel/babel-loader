@@ -1,5 +1,5 @@
 var loaderUtils = require('loader-utils'),
-    to5 = require('6to5'),
+    to5 = require('6to5-core'),
     toBoolean = function (val) {
         if (val === 'true') { return true; }
         if (val === 'false') { return false; }

@@ -7,7 +7,7 @@
     "loader-utils": "^0.2.5"
   },
   "peerDependencies": {
-    "6to5": "^2.0.0",
+    "6to5-core": "^3.0.0",
     "webpack": "^1.4.5"
   },
   "devDependencies": {

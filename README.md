@@ -61,35 +61,18 @@ this will be added to every file that requires it.
 You can instead require the 6to5 runtime as a separate module to avoid the duplication.
 
 The following configuration disables automatic per-file runtime injection in 6to5, instead
-bundling a single runtime and providing it to each transformed file.
+bundling requiring `6to5-runtime` and making all helpers use it.
+
+**NOTE:** You must run `npm install 6to5-runtime --save` to include this in your project.
 
 ```javascript
 loaders: [
   // runtime=true tells 6to5 to expect a runtime, but we still need to bundle it.
-  {test: /\.jsx?$/, exclude: /node_modules/, loader: '6to5-loader?experimental&runtime'}
-],
-plugins: [
-  // to5Runtime wants to export to the window. This loader grabs the export
-  // and instead provides it to the modules that need it.
-  // 
-  // The 'imports?global=>{}!' is optional, but prevents to5Runtime from leaking
-  // to the window object.
-  // 
-  // Alternatively, write `require('6to5/runtime')` at the top of your entry point.
-  // Leaks the object to the window, but it's simple.
-  new webpack.ProvidePlugin({
-    to5Runtime: "imports?global=>{}!exports?global.to5Runtime!6to5/runtime"
-  })
+  {test: /\.jsx?$/, exclude: /node_modules/, loader: '6to5-loader?experimental&optional=selfContained'}
 ]
 ```
 
 This can save significant overhead if you use 6to5 in many modules.
-
-_Note:_ You'll need the [imports-loader](https://github.com/webpack/imports-loader) and [exports-loader](https://github.com/webpack/exports-loader), for this configuration to work.
-These can be installed with:
-```
-npm install imports-loader exports-loader --save-dev
-```
 
 ## Options
 
