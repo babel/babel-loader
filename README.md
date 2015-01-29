@@ -67,7 +67,7 @@ bundling requiring `6to5-runtime` and making all helpers use it.
 
 ```javascript
 loaders: [
-  // the experimental and optional=selfContained transformers tells 6to5 to require the runtime instead of inlining it.
+  // the optional 'selfContained' transformer tells 6to5 to require the runtime instead of inlining it.
   {test: /\.jsx?$/, exclude: /node_modules/, loader: '6to5-loader?experimental&optional=selfContained'}
 ]
 ```
