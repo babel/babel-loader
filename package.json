@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Couto/6to5-loader.git"
+    "url": "https://github.com/6to5/6to5-loader.git"
   },
   "keywords": [
     "webpack",
@@ -34,7 +34,7 @@
   "author": "Luis Couto <couto@15minuteslate.net>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Couto/6to5-loader/issues"
+    "url": "https://github.com/6to5/6to5-loader/issues"
   },
-  "homepage": "https://github.com/Couto/6to5-loader"
+  "homepage": "https://github.com/6to5/6to5-loader"
 }
