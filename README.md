@@ -1,8 +1,8 @@
 # 6to5-loader
 
-> Turn ES6 code into vanilla ES5 with no runtime required using [6to5](https://github.com/sebmck/6to5);
+> Turn ES6 code into vanilla ES5 with no runtime required using [6to5](https://github.com/6to5/6to5);
 
-__Notes:__ Issues with the output should be reported on the 6to5 [issue tracker](https://github.com/sebmck/6to5/issues);
+__Notes:__ Issues with the output should be reported on the 6to5 [issue tracker](https://github.com/6to5/6to5/issues);
 
 ## Install
 
