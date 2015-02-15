@@ -1,5 +1,5 @@
 var loaderUtils = require('loader-utils'),
-    to5 = require('6to5-core'),
+    babel = require('babel-core'),
     toBoolean = function (val) {
         if (val === 'true') { return true; }
         if (val === 'false') { return false; }
@@ -24,7 +24,7 @@ module.exports = function (source) {
     options.sourceMap = this.sourceMap;
     options.filename = loaderUtils.getRemainingRequest(this);
 
-    result = to5.transform(source, options);
+    result = babel.transform(source, options);
     code = result.code;
 
     map = result.map;
