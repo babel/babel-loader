@@ -1,7 +1,7 @@
 {
   "name": "babel-loader",
   "version": "4.0.0",
-  "description": "6t05 module loader for webpack",
+  "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
     "loader-utils": "^0.2.5"
@@ -27,6 +27,7 @@
     "webpack",
     "loader",
     "6to5",
+    "babel",
     "es6",
     "transpiler",
     "module"
