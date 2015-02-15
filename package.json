@@ -27,6 +27,7 @@
     "webpack",
     "loader",
     "6to5",
+    "babel",
     "es6",
     "transpiler",
     "module"
