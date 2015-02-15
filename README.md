@@ -2,8 +2,6 @@
 
 > Turn ES6 code into vanilla ES5 with no runtime required using [babel](https://github.com/babel/babel);
 
-__Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
-
 ## Install
 
 ```
@@ -67,7 +65,7 @@ bundling requiring `babel-runtime` and making all helpers use it.
 
 ```javascript
 loaders: [
-  // runtime=true tells babel to expect a runtime, but we still need to bundle it.
+  // the optional 'selfContained' transformer tells babel to require the runtime instead of inlining it.
   {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=selfContained'}
 ]
 ```
