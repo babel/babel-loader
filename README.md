@@ -51,15 +51,15 @@ Make sure you are transforming as few files as possible. Because you are probabl
 matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted
 source. See the `exclude` option in the `loaders` config as documented above.
 
-#### babel is injecting a runtime into each file and bloating my code!
+#### babel is injecting helpers into each file and bloating my code!
 
-babel uses a very small runtime for common functions such as `_extend`. By default
+babel uses very small helpers for common functions such as `_extend`. By default
 this will be added to every file that requires it.
 
 You can instead require the babel runtime as a separate module to avoid the duplication.
 
 The following configuration disables automatic per-file runtime injection in babel, instead
-bundling requiring `babel-runtime` and making all helpers use it.
+requiring `babel-runtime` and making all helper references use it.
 
 **NOTE:** You must run `npm install babel-runtime --save` to include this in your project.
 
@@ -69,8 +69,6 @@ loaders: [
   {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=selfContained'}
 ]
 ```
-
-This can save significant overhead if you use babel in many modules.
 
 ## Options
 
