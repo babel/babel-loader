@@ -61,12 +61,14 @@ You can instead require the babel runtime as a separate module to avoid the dupl
 The following configuration disables automatic per-file runtime injection in babel, instead
 requiring `babel-runtime` and making all helper references use it.
 
+See the [docs](https://babeljs.io/docs/usage/runtime) for more information.
+
 **NOTE:** You must run `npm install babel-runtime --save` to include this in your project.
 
 ```javascript
 loaders: [
-  // the optional 'selfContained' transformer tells babel to require the runtime instead of inlining it.
-  {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=selfContained'}
+  // the optional 'runtime' transformer tells babel to require the runtime instead of inlining it.
+  { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=runtime' }
 ]
 ```
 
