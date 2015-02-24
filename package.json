@@ -7,8 +7,8 @@
     "loader-utils": "^0.2.5"
   },
   "peerDependencies": {
-    "babel-core": "^4.0.0",
-    "webpack": "^1.4.5"
+    "babel-core": "^4.4.0",
+    "webpack": "^1.6.0"
   },
   "devDependencies": {
     "mocha": "^2.0.1",
