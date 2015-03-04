@@ -1,3 +1,4 @@
+var sourceMap = require('source-map');
 var loaderUtils = require('loader-utils'),
     babel = require('babel-core'),
     toBoolean = function (val) {
@@ -6,7 +7,7 @@ var loaderUtils = require('loader-utils'),
         return val;
     };
 
-module.exports = function (source) {
+module.exports = function (source, inputMap) {
 
     var options = loaderUtils.parseQuery(this.query),
         result, code, map;
@@ -29,6 +30,21 @@ module.exports = function (source) {
 
     map = result.map;
     if (map) {
+
+        if (inputMap) {
+            map.sources[0] = inputMap.file;
+
+            var inputMapConsumer = new sourceMap.SourceMapConsumer(inputMap);
+            var outputMapConsumer = new sourceMap.SourceMapConsumer(map);
+            var outputMapGenerator = sourceMap.SourceMapGenerator.fromSourceMap(outputMapConsumer);
+            outputMapGenerator.applySourceMap(inputMapConsumer);
+            var mergedMap = outputMapGenerator.toJSON();
+
+            mergedMap.sources = map.sources
+            mergedMap.file = map.file;
+            map = mergedMap;
+        }
+
         map.sourcesContent = [source];
     }
 
