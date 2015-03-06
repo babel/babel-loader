@@ -6,7 +6,7 @@ var loaderUtils = require('loader-utils'),
         return val;
     };
 
-module.exports = function (source) {
+module.exports = function (source, inputSourceMap) {
 
     var options = loaderUtils.parseQuery(this.query),
         result, code, map;
@@ -22,6 +22,7 @@ module.exports = function (source) {
     }, {});
 
     options.sourceMap = this.sourceMap;
+    options.inputSourceMap = inputSourceMap;
     options.filename = loaderUtils.getRemainingRequest(this);
 
     result = babel.transform(source, options);
