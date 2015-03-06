@@ -4,7 +4,8 @@
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
-    "loader-utils": "^0.2.5"
+    "loader-utils": "^0.2.5",
+    "source-map": "^0.4.1"
   },
   "peerDependencies": {
     "babel-core": "^4.0.0",
