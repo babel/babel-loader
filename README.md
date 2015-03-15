@@ -76,6 +76,13 @@ loaders: [
 
 See the `babel` [options](http://babeljs.io/docs/usage/options/)
 
+This loader also supports the following loader-specific option:
+
+* `cacheDirectory`: When set, the given directory will be used to cache the results of the loader.
+  Future webpack builds will attempt to read from the cache to avoid needing to run the potentially
+  expensive Babel recompilation process on each run. A value of `true` will cause the loader to
+  use the default OS temporary file directory.
+
 ## License
 
 MIT © Luis Couto
