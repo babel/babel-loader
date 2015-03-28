@@ -6,15 +6,9 @@ var loaderUtils = require('loader-utils'),
         if (val === 'true') { return true; }
         if (val === 'false') { return false; }
         return val;
-    },
-    // Create an identifier for the cache function
-    identifier = JSON.stringify({
-        loader: pkg.version,
-        babel: babel.version
-    });
+    };
 
 module.exports = function (source, inputSourceMap) {
-
     var options = loaderUtils.parseQuery(this.query),
         callback = this.async(),
         result, cacheDirectory;
@@ -34,12 +28,18 @@ module.exports = function (source, inputSourceMap) {
     options.filename = loaderUtils.getRemainingRequest(this);
 
     cacheDirectory = options.cacheDirectory;
+    cacheIdentifier = options.cacheIdentifier || JSON.stringify({
+        'babel-loader': pkg.version,
+        'babel-core': babel.version
+    });
+
     delete options.cacheDirectory;
+    delete options.cacheIdentifier;
 
     if (cacheDirectory){
         cache({
             directory: cacheDirectory,
-            identifier: identifier,
+            identifier: cacheIdentifier,
             source: source,
             options: options,
             transform: transpile,
