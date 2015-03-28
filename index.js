@@ -1,33 +1,32 @@
-var loaderUtils = require('loader-utils'),
-    babel = require('babel-core'),
-    crypto = require('crypto'),
+var crypto = require('crypto'),
     fs = require('fs'),
-    path = require('path'),
     os = require('os'),
+    path = require('path'),
     zlib = require('zlib'),
+    assign = require('object-assign'),
+    babel = require('babel-core'),
+    loaderUtils = require('loader-utils'),
     version = require('./package').version;
 
 module.exports = function (source, inputSourceMap) {
 
-    var options = loaderUtils.parseQuery(this.query),
+    var queryOptions = loaderUtils.parseQuery(this.query),
         callback = this.async(),
-        result, cacheDirectory;
+        options = assign({}, this.options.babel, queryOptions, {
+            sourceMap: this.sourceMap,
+            inputSourceMap: inputSourceMap,
+            filename: loaderUtils.getRemainingRequest(this),
+        }),
+        result;
 
     if (this.cacheable) {
         this.cacheable();
     }
 
-    options.sourceMap = this.sourceMap;
-    options.inputSourceMap = inputSourceMap;
-    options.filename = loaderUtils.getRemainingRequest(this);
+    if (options.cacheDirectory === true) options.cacheDirectory = os.tmpdir();
 
-    cacheDirectory = options.cacheDirectory;
-    delete options.cacheDirectory;
-
-    if (cacheDirectory === true) cacheDirectory = os.tmpdir();
-
-    if (cacheDirectory){
-        cachedTranspile(cacheDirectory, source, options, onResult);
+    if (options.cacheDirectory){
+        cachedTranspile(options.cacheDirectory, source, options, onResult);
     } else {
         onResult(null, transpile(source, options));
     }
