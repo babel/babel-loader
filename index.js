@@ -13,22 +13,29 @@ module.exports = function (source, inputSourceMap) {
     var queryOptions = loaderUtils.parseQuery(this.query),
         callback = this.async(),
         options = assign({}, this.options.babel, queryOptions, {
-            sourceMap: this.sourceMap,
             inputSourceMap: inputSourceMap,
             filename: loaderUtils.getRemainingRequest(this),
         }),
         result;
 
-    if (this.cacheable) {
-        this.cacheable();
+
+    this.cacheable();
+
+
+    if (!options.sourceMap) {
+        options.sourceMap = this.sourceMap;
     }
 
     if (options.cacheDirectory === true) options.cacheDirectory = os.tmpdir();
 
     if (options.cacheDirectory){
-        cachedTranspile(options.cacheDirectory, source, options, onResult);
+        cachedTranspile(options.cacheDirectory, source, options, function (err, result) {
+            if (err) { throw err; }
+            callback(null, result.code, result.map);
+        });
     } else {
-        onResult(null, transpile(source, options));
+        result = transpile(source, options);
+        callback(null, result.code, result.map);
     }
 
     function onResult(err, result){
@@ -39,10 +46,12 @@ module.exports = function (source, inputSourceMap) {
 };
 
 function transpile(source, options){
+
     var result = babel.transform(source, options);
 
     var code = result.code;
     var map = result.map;
+
     if (map) {
         map.sourcesContent = [source];
     }
