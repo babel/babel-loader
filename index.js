@@ -1,16 +1,17 @@
 var loaderUtils = require('loader-utils'),
+    pkg = require('./package.json'),
     babel = require('babel-core'),
-    crypto = require('crypto'),
-    fs = require('fs'),
-    path = require('path'),
-    os = require('os'),
-    zlib = require('zlib'),
-    version = require('./package').version,
+    cache = require('./lib/fs-cache.js'),
     toBoolean = function (val) {
         if (val === 'true') { return true; }
         if (val === 'false') { return false; }
         return val;
-    };
+    },
+    // Create an identifier for the cache function
+    identifier = JSON.stringify({
+        loader: pkg.version,
+        babel: babel.version
+    });
 
 module.exports = function (source, inputSourceMap) {
 
@@ -35,18 +36,19 @@ module.exports = function (source, inputSourceMap) {
     cacheDirectory = options.cacheDirectory;
     delete options.cacheDirectory;
 
-    if (cacheDirectory === true) cacheDirectory = os.tmpdir();
-
     if (cacheDirectory){
-        cachedTranspile(cacheDirectory, source, options, onResult);
+        cache({
+            directory: cacheDirectory,
+            identifier: identifier,
+            source: source,
+            options: options,
+            transform: transpile,
+        }, function (err, result) {
+            callback(err, result.code, result.map);
+        });
     } else {
-        onResult(null, transpile(source, options));
-    }
-
-    function onResult(err, result){
-        if (err) return callback(err);
-
-        callback(err, err ? null : result.code, err ? null : result.map);
+        result = transpile(source, options);
+        callback(null, result.code, result.map);
     }
 };
 
@@ -63,63 +65,4 @@ function transpile(source, options){
         code: code,
         map: map
     };
-}
-
-function cachedTranspile(cacheDirectory, source, options, callback){
-    var cacheFile = path.join(cacheDirectory, buildCachePath(cacheDirectory, source, options));
-
-    readCache(cacheFile, function(err, result){
-        if (err){
-            try {
-                result = transpile(source, options);
-            } catch (e){
-                return callback(e);
-            }
-
-            writeCache(cacheFile, result, function(err){
-                callback(err, result);
-            });
-        } else {
-            callback(null, result);
-        }
-    });
-}
-
-function readCache(cacheFile, callback){
-    fs.readFile(cacheFile, function(err, data){
-        if (err) return callback(err);
-
-        zlib.gunzip(data, function(err, content){
-            if (err) return callback(err);
-
-            try {
-                content = JSON.parse(content);
-            } catch (e){
-                return callback(e);
-            }
-
-            callback(null, content);
-        });
-    });
-}
-
-function writeCache(cacheFile, result, callback){
-    var content = JSON.stringify(result);
-
-    zlib.gzip(content, function(err, data){
-        if (err) return callback(err);
-
-        fs.writeFile(cacheFile, data, callback);
-    });
-}
-
-function buildCachePath(dir, source, options){
-    var hash = crypto.createHash('SHA1');
-    hash.end(JSON.stringify({
-        loaderVersion: version,
-        babelVersion: babel.version,
-        source: source,
-        options: options
-    }));
-    return 'babel-loader-cache-' + hash.read().toString('hex') + '.json.gzip';
 }
