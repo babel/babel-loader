@@ -5,12 +5,7 @@ var loaderUtils = require('loader-utils'),
     path = require('path'),
     os = require('os'),
     zlib = require('zlib'),
-    version = require('./package').version,
-    toBoolean = function (val) {
-        if (val === 'true') { return true; }
-        if (val === 'false') { return false; }
-        return val;
-    };
+    version = require('./package').version;
 
 module.exports = function (source, inputSourceMap) {
 
@@ -21,12 +16,6 @@ module.exports = function (source, inputSourceMap) {
     if (this.cacheable) {
         this.cacheable();
     }
-
-    // Convert 'true'/'false' to true/false
-    options = Object.keys(options).reduce(function (accumulator, key) {
-        accumulator[key] = toBoolean(options[key]);
-        return accumulator;
-    }, {});
 
     options.sourceMap = this.sourceMap;
     options.inputSourceMap = inputSourceMap;
