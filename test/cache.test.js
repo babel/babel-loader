@@ -61,6 +61,34 @@ describe('Filesystem Cache', function () {
         });
     });
 
+    it('should read from cache directory if cached file exists', function (done) {
+        var config = assign({}, globalConfig, {
+            module: {
+                loaders: [{
+                    test: /\.jsx?/,
+                    loader: babelLoader + '?cacheDirectory=' + cacheDir,
+                    exclude: /node_modules/
+                }]
+            }
+        });
+
+        // @TODO Find a way to know if the file as correctly read
+        // without relying on istanbul for coverage.
+        webpack(config, function (err, stats) {
+            expect(err).to.be(null);
+
+            webpack(config, function (err, stats) {
+                expect(err).to.be(null);
+                fs.readdir(cacheDir, function (err, files) {
+                    expect(err).to.be(null);
+                    expect(files).to.not.be.empty();
+                    done();
+                });
+            });
+        });
+
+    });
+
     it('should have one file per module', function (done) {
         var config = assign({}, globalConfig, {
             module: {

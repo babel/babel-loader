@@ -13,6 +13,7 @@
   "devDependencies": {
     "babel-core": "^4.7.16",
     "expect.js": "^0.3.1",
+    "istanbul": "^0.3.11",
     "mkdirp": "^0.5.0",
     "mocha": "^2.2.1",
     "object-assign": "^2.0.0",
