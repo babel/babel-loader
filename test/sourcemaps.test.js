@@ -73,11 +73,14 @@ describe('Sourcemaps', function () {
         });
     });
 
-    it('should output webpack\'s sourcemap', function (done) {
+    it.only('should output babel\'s sourcemap', function (done) {
 
         var config = assign({}, globalConfig, {
-            devtool: 'source-map',
             entry: './test/fixtures/basic.js',
+            babel: {
+                sourceMap: 'inline',
+                sourceMapName: './output/sourcemaps/babel.map'
+            },
             module: {
                 loaders: [{
                     test: /\.jsx?/,
@@ -101,7 +104,7 @@ describe('Sourcemaps', function () {
 
                 fs.readFile(path.resolve(outputDir, map[0]), function (err, data) {
                     expect(err).to.be(null);
-                    expect(data.toString().indexOf('webpack:///')).to.not.equal(-1);
+                    expect(data.toString().indexOf('webpack:///')).to.equal(-1);
                     done();
                 });
 

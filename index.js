@@ -5,8 +5,8 @@ var assign = require('object-assign'),
     pkg = require('./package.json');
 
 module.exports = function (source, inputSourceMap) {
-    var queryOptions = loaderUtils.parseQuery(this.query),
-        callback = this.async(),
+    var callback = this.async(),
+        queryOptions = loaderUtils.parseQuery(this.query),
         options = assign({
             inputSourceMap: inputSourceMap,
             filename: loaderUtils.getRemainingRequest(this),
