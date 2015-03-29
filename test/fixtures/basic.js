@@ -1,4 +1,6 @@
-import test from './test.js';
+/*jshint esnext:true*/
+
+import test from './import.js';
 
 class App {
     constructor(arg='test') {

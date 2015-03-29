@@ -1,16 +1,15 @@
-var crypto = require('crypto'),
-    fs = require('fs'),
-    os = require('os'),
-    path = require('path'),
-    zlib = require('zlib'),
-    assign = require('object-assign'),
+var loaderUtils = require('loader-utils'),
+    pkg = require('./package.json'),
     babel = require('babel-core'),
-    loaderUtils = require('loader-utils'),
-    version = require('./package').version;
+    cache = require('./lib/fs-cache.js'),
+    toBoolean = function (val) {
+        if (val === 'true') { return true; }
+        if (val === 'false') { return false; }
+        return val;
+    };
 
 module.exports = function (source, inputSourceMap) {
-
-    var queryOptions = loaderUtils.parseQuery(this.query),
+    var options = loaderUtils.parseQuery(this.query),
         callback = this.async(),
         options = assign({}, this.options.babel, queryOptions, {
             sourceMap: this.sourceMap,
@@ -23,18 +22,38 @@ module.exports = function (source, inputSourceMap) {
         this.cacheable();
     }
 
-    if (options.cacheDirectory === true) options.cacheDirectory = os.tmpdir();
+    // Convert 'true'/'false' to true/false
+    options = Object.keys(options).reduce(function (accumulator, key) {
+        accumulator[key] = toBoolean(options[key]);
+        return accumulator;
+    }, {});
 
-    if (options.cacheDirectory){
-        cachedTranspile(options.cacheDirectory, source, options, onResult);
+    options.sourceMap = this.sourceMap;
+    options.inputSourceMap = inputSourceMap;
+    options.filename = loaderUtils.getRemainingRequest(this);
+
+    cacheDirectory = options.cacheDirectory;
+    cacheIdentifier = options.cacheIdentifier || JSON.stringify({
+        'babel-loader': pkg.version,
+        'babel-core': babel.version
+    });
+
+    delete options.cacheDirectory;
+    delete options.cacheIdentifier;
+
+    if (cacheDirectory){
+        cache({
+            directory: cacheDirectory,
+            identifier: cacheIdentifier,
+            source: source,
+            options: options,
+            transform: transpile,
+        }, function (err, result) {
+            callback(err, result.code, result.map);
+        });
     } else {
-        onResult(null, transpile(source, options));
-    }
-
-    function onResult(err, result){
-        if (err) return callback(err);
-
-        callback(err, err ? null : result.code, err ? null : result.map);
+        result = transpile(source, options);
+        callback(null, result.code, result.map);
     }
 };
 
@@ -51,63 +70,4 @@ function transpile(source, options){
         code: code,
         map: map
     };
-}
-
-function cachedTranspile(cacheDirectory, source, options, callback){
-    var cacheFile = path.join(cacheDirectory, buildCachePath(cacheDirectory, source, options));
-
-    readCache(cacheFile, function(err, result){
-        if (err){
-            try {
-                result = transpile(source, options);
-            } catch (e){
-                return callback(e);
-            }
-
-            writeCache(cacheFile, result, function(err){
-                callback(err, result);
-            });
-        } else {
-            callback(null, result);
-        }
-    });
-}
-
-function readCache(cacheFile, callback){
-    fs.readFile(cacheFile, function(err, data){
-        if (err) return callback(err);
-
-        zlib.gunzip(data, function(err, content){
-            if (err) return callback(err);
-
-            try {
-                content = JSON.parse(content);
-            } catch (e){
-                return callback(e);
-            }
-
-            callback(null, content);
-        });
-    });
-}
-
-function writeCache(cacheFile, result, callback){
-    var content = JSON.stringify(result);
-
-    zlib.gzip(content, function(err, data){
-        if (err) return callback(err);
-
-        fs.writeFile(cacheFile, data, callback);
-    });
-}
-
-function buildCachePath(dir, source, options){
-    var hash = crypto.createHash('SHA1');
-    hash.end(JSON.stringify({
-        loaderVersion: version,
-        babelVersion: babel.version,
-        source: source,
-        options: options
-    }));
-    return 'babel-loader-cache-' + hash.read().toString('hex') + '.json.gzip';
 }
