@@ -8,7 +8,7 @@ var fs = require('fs'),
 
 describe('Options', function () {
 
-    var outputDir = path.resolve(__dirname, './output'),
+    var outputDir = path.resolve(__dirname, './output/options'),
         babelLoader = path.resolve(__dirname, '../'),
 
         globalConfig = {

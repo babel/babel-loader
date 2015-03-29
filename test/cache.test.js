@@ -8,8 +8,8 @@ var fs = require('fs'),
 
 describe('Filesystem Cache', function () {
 
-    var cacheDir = path.resolve(__dirname, 'output/cache'),
-        outputDir = path.resolve(__dirname, './output'),
+    var cacheDir = path.resolve(__dirname, 'output/cache/cachefiles'),
+        outputDir = path.resolve(__dirname, './output/cache/'),
         babelLoader = path.resolve(__dirname, '../'),
 
         globalConfig = {
