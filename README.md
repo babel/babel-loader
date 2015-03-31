@@ -83,6 +83,8 @@ This loader also supports the following loader-specific option:
   expensive Babel recompilation process on each run. A value of `true` will cause the loader to
   use the default OS temporary file directory.
 
+Note: The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
+
 ## License
 
 MIT © Luis Couto
