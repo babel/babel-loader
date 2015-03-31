@@ -4,11 +4,12 @@
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
+    "babel-core": "^4.7.16",
     "loader-utils": "^0.2.5"
   },
   "peerDependencies": {
-    "babel-core": "^4.7.0",
-    "webpack": "^1.4.5"
+    "babel-core": "*",
+    "webpack": "*"
   },
   "devDependencies": {
     "mocha": "^2.0.1",
