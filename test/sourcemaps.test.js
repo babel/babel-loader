@@ -73,12 +73,12 @@ describe('Sourcemaps', function () {
         });
     });
 
-    it.only('should output babel\'s sourcemap', function (done) {
+    it.skip('should output babel\'s sourcemap', function (done) {
 
         var config = assign({}, globalConfig, {
             entry: './test/fixtures/basic.js',
             babel: {
-                sourceMap: 'inline',
+                sourceMap: true,
                 sourceMapName: './output/sourcemaps/babel.map'
             },
             module: {
