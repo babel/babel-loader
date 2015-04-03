@@ -68,7 +68,7 @@ See the [docs](https://babeljs.io/docs/usage/runtime) for more information.
 ```javascript
 loaders: [
   // the optional 'runtime' transformer tells babel to require the runtime instead of inlining it.
-  { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=runtime' }
+  { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?optional=runtime' }
 ]
 ```
 
