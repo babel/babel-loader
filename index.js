@@ -21,21 +21,21 @@ var transpile = function(source, options) {
 
 module.exports = function(source, inputSourceMap) {
   var callback = this.async();
-
-  // Join the different options sources into a final options object
-  var options = assign({
+  var result = {};
+  // Handle options
+  var defaultOptions = {
     inputSourceMap: inputSourceMap,
     filename: loaderUtils.getRemainingRequest(this),
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
       'babel-core': babel.version,
     }),
-  }, this.options.babel, loaderUtils.parseQuery(this.query));
-  var result;
+  };
+  var globalOptions = this.options.babel;
+  var loaderOptions = loaderUtils.parseQuery(this.query);
+  var options = assign({}, defaultOptions, globalOptions, loaderOptions);
 
-  this.cacheable();
-
-  if (!options.sourceMap) {
+  if (options.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
   }
 
@@ -44,6 +44,8 @@ module.exports = function(source, inputSourceMap) {
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
+
+  this.cacheable();
 
   if (cacheDirectory) {
     cache({

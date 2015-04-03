@@ -1,120 +1,124 @@
-var fs = require('fs'),
-    path = require('path'),
-    assign = require('object-assign'),
-    expect = require('expect.js'),
-    mkdirp = require('mkdirp'),
-    rimraf = require('rimraf'),
-    webpack = require('webpack');
+var fs = require('fs');
+var path = require('path');
+var assign = require('object-assign');
+var expect = require('expect.js');
+var mkdirp = require('mkdirp');
+var rimraf = require('rimraf');
+var webpack = require('webpack');
 
-describe('Options', function () {
+describe('Options', function() {
 
-    var outputDir = path.resolve(__dirname, './output/options'),
-        babelLoader = path.resolve(__dirname, '../'),
+  var outputDir = path.resolve(__dirname, './output/options');
+  var babelLoader = path.resolve(__dirname, '../');
+  var globalConfig = {
+    entry: './test/fixtures/basic.js',
+    output: {
+      path: outputDir,
+      filename: '[id].options.js',
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
 
-        globalConfig = {
-            entry: './test/fixtures/basic.js',
-            output: {
-                path: outputDir,
-                filename: '[id].options.js'
-            },
-            module: {
-                loaders: [
-                    {
-                        test: /\.jsx?/,
-                        loader: babelLoader,
-                        exclude: /node_modules/
-                    }
-                ]
-            }
-        };
+  // Clean generated cache files before each test
+  // so that we can call each test with an empty state.
+  beforeEach(function(done) {
+    rimraf(outputDir, function(err) {
+      if (err) { return done(err); }
+      mkdirp(outputDir, done);
+    });
+  });
 
-    // Clean generated cache files before each test
-    // so that we can call each test with an empty state.
-    beforeEach(function (done) {
-        rimraf(outputDir, function (err) {
-            if (err) { return done(err); }
-            mkdirp(outputDir, done);
-        });
+  it('should interpret options given to the loader', function(done) {
+    var config = assign({}, globalConfig, {
+      entry: './test/fixtures/experimental.js',
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader + '?stage=0',
+            exclude: /node_modules/,
+          },
+        ],
+      },
     });
 
-    it('should interpret options given to the loader', function (done) {
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
 
-        var config = assign({}, globalConfig, {
-            entry: './test/fixtures/experimental.js',
-            module: {
-                loaders: [{
-                    test: /\.jsx?/,
-                    loader: babelLoader + '?stage=0',
-                    exclude: /node_modules/
-                }]
-            }
-        });
+      fs.readdir(outputDir, function(err, files) {
+        expect(err).to.be(null);
+        expect(files).to.not.be.empty();
 
-        webpack(config, function (err, stats) {
-            expect(err).to.be(null);
+        done();
+      });
+    });
+  });
 
-            fs.readdir(outputDir, function (err, files) {
-                expect(err).to.be(null);
-                expect(files).to.not.be.empty();
+  it('should interpret options given globally', function(done) {
 
-                done();
-            });
-        });
+    var config = assign({}, globalConfig, {
+      entry: './test/fixtures/experimental.js',
+      babel: {
+        stage: 0,
+      },
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader,
+            exclude: /node_modules/,
+          },
+        ],
+      },
     });
 
-    it('should interpret options given globally', function (done) {
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
 
-        var config = assign({}, globalConfig, {
-            entry: './test/fixtures/experimental.js',
-            babel: {
-                stage: 0
-            },
-            module: {
-                loaders: [{
-                    test: /\.jsx?/,
-                    loader: babelLoader,
-                    exclude: /node_modules/
-                }]
-            }
-        });
+      fs.readdir(outputDir, function(err, files) {
+        expect(err).to.be(null);
+        expect(files).to.not.be.empty();
 
-        webpack(config, function (err, stats) {
-            expect(err).to.be(null);
+        done();
+      });
+    });
+  });
 
-            fs.readdir(outputDir, function (err, files) {
-                expect(err).to.be(null);
-                expect(files).to.not.be.empty();
-
-                done();
-            });
-        });
+  it('should give priority to loader options', function(done) {
+    var config = assign({}, globalConfig, {
+      entry: './test/fixtures/experimental.js',
+      babel: {
+        stage: 4,
+      },
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader + '?stage=0',
+            exclude: /node_modules/,
+          },
+        ],
+      },
     });
 
-    it('should give priority to loader options', function (done) {
-        var config = assign({}, globalConfig, {
-            entry: './test/fixtures/experimental.js',
-            babel: {
-                stage: 4
-            },
-            module: {
-                loaders: [{
-                    test: /\.jsx?/,
-                    loader: babelLoader + '?stage=0',
-                    exclude: /node_modules/
-                }]
-            }
-        });
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
 
-        webpack(config, function (err, stats) {
-            expect(err).to.be(null);
+      fs.readdir(outputDir, function(err, files) {
+        expect(err).to.be(null);
+        expect(files).to.not.be.empty();
 
-            fs.readdir(outputDir, function (err, files) {
-                expect(err).to.be(null);
-                expect(files).to.not.be.empty();
-
-                done();
-            });
-        });
+        done();
+      });
     });
+  });
 
 });

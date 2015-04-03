@@ -1,16 +1,12 @@
 {
   "name": "babel-loader",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
-    "babel-core": "^5.0.0",
+    "babel-core": "5.0.0",
     "object-assign": "^2.0.0",
     "loader-utils": "^0.2.6"
-  },
-  "peerDependencies": {
-    "babel-core": "*",
-    "webpack": "*"
   },
   "devDependencies": {
     "babel-core": "^5.0.6",
