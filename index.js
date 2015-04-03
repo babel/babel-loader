@@ -1,42 +1,32 @@
-var loaderUtils = require('loader-utils'),
-    pkg = require('./package.json'),
+var assign = require('object-assign'),
     babel = require('babel-core'),
     cache = require('./lib/fs-cache.js'),
-    toBoolean = function (val) {
-        if (val === 'true') { return true; }
-        if (val === 'false') { return false; }
-        return val;
-    };
+    loaderUtils = require('loader-utils'),
+    pkg = require('./package.json');
 
 module.exports = function (source, inputSourceMap) {
-    var options = loaderUtils.parseQuery(this.query),
-        callback = this.async(),
-        options = assign({}, this.options.babel, queryOptions, {
-            sourceMap: this.sourceMap,
+    var callback = this.async(),
+        queryOptions = loaderUtils.parseQuery(this.query),
+        options = assign({
             inputSourceMap: inputSourceMap,
             filename: loaderUtils.getRemainingRequest(this),
-        }),
+            cacheIdentifier: JSON.stringify({
+                'babel-loader': pkg.version,
+                'babel-core': babel.version
+            })
+        }, this.options.babel, queryOptions),
         result;
 
-    if (this.cacheable) {
-        this.cacheable();
+
+    this.cacheable();
+
+    if (!options.sourceMap) {
+        options.sourceMap = this.sourceMap;
     }
 
-    // Convert 'true'/'false' to true/false
-    options = Object.keys(options).reduce(function (accumulator, key) {
-        accumulator[key] = toBoolean(options[key]);
-        return accumulator;
-    }, {});
-
-    options.sourceMap = this.sourceMap;
-    options.inputSourceMap = inputSourceMap;
-    options.filename = loaderUtils.getRemainingRequest(this);
 
     cacheDirectory = options.cacheDirectory;
-    cacheIdentifier = options.cacheIdentifier || JSON.stringify({
-        'babel-loader': pkg.version,
-        'babel-core': babel.version
-    });
+    cacheIdentifier = options.cacheIdentifier;
 
     delete options.cacheDirectory;
     delete options.cacheIdentifier;
@@ -58,10 +48,12 @@ module.exports = function (source, inputSourceMap) {
 };
 
 function transpile(source, options){
+
     var result = babel.transform(source, options);
 
     var code = result.code;
     var map = result.map;
+
     if (map) {
         map.sourcesContent = [source];
     }
