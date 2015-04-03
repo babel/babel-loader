@@ -68,7 +68,7 @@ See the [docs](https://babeljs.io/docs/usage/runtime) for more information.
 ```javascript
 loaders: [
   // the optional 'runtime' transformer tells babel to require the runtime instead of inlining it.
-  { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=runtime' }
+  { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?optional=runtime' }
 ]
 ```
 
@@ -82,6 +82,8 @@ This loader also supports the following loader-specific option:
   Future webpack builds will attempt to read from the cache to avoid needing to run the potentially
   expensive Babel recompilation process on each run. A value of `true` will cause the loader to
   use the default OS temporary file directory.
+
+Note: The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
 ## License
 
