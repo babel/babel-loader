@@ -1,65 +1,62 @@
-var assign = require('object-assign'),
-    babel = require('babel-core'),
-    cache = require('./lib/fs-cache.js'),
-    loaderUtils = require('loader-utils'),
-    pkg = require('./package.json');
+var assign = require('object-assign');
+var babel = require('babel-core');
+var cache = require('./lib/fs-cache.js');
+var loaderUtils = require('loader-utils');
+var pkg = require('./package.json');
 
-module.exports = function (source, inputSourceMap) {
-    var callback = this.async(),
-        queryOptions = loaderUtils.parseQuery(this.query),
-        options = assign({
-            inputSourceMap: inputSourceMap,
-            filename: loaderUtils.getRemainingRequest(this),
-            cacheIdentifier: JSON.stringify({
-                'babel-loader': pkg.version,
-                'babel-core': babel.version
-            })
-        }, this.options.babel, queryOptions),
-        result;
+var transpile = function(source, options) {
+  var result = babel.transform(source, options);
+  var code = result.code;
+  var map = result.map;
 
+  if (map) {
+    map.sourcesContent = [source];
+  }
 
-    this.cacheable();
-
-    if (!options.sourceMap) {
-        options.sourceMap = this.sourceMap;
-    }
-
-
-    cacheDirectory = options.cacheDirectory;
-    cacheIdentifier = options.cacheIdentifier;
-
-    delete options.cacheDirectory;
-    delete options.cacheIdentifier;
-
-    if (cacheDirectory){
-        cache({
-            directory: cacheDirectory,
-            identifier: cacheIdentifier,
-            source: source,
-            options: options,
-            transform: transpile,
-        }, function (err, result) {
-            callback(err, result.code, result.map);
-        });
-    } else {
-        result = transpile(source, options);
-        callback(null, result.code, result.map);
-    }
+  return {
+    code: code,
+    map: map,
+  };
 };
 
-function transpile(source, options){
+module.exports = function(source, inputSourceMap) {
+  var callback = this.async();
 
-    var result = babel.transform(source, options);
+  // Join the different options sources into a final options object
+  var options = assign({
+    inputSourceMap: inputSourceMap,
+    filename: loaderUtils.getRemainingRequest(this),
+    cacheIdentifier: JSON.stringify({
+      'babel-loader': pkg.version,
+      'babel-core': babel.version,
+    }),
+  }, this.options.babel, loaderUtils.parseQuery(this.query));
+  var result;
 
-    var code = result.code;
-    var map = result.map;
+  this.cacheable();
 
-    if (map) {
-        map.sourcesContent = [source];
-    }
+  if (!options.sourceMap) {
+    options.sourceMap = this.sourceMap;
+  }
 
-    return {
-        code: code,
-        map: map
-    };
-}
+  cacheDirectory = options.cacheDirectory;
+  cacheIdentifier = options.cacheIdentifier;
+
+  delete options.cacheDirectory;
+  delete options.cacheIdentifier;
+
+  if (cacheDirectory) {
+    cache({
+      directory: cacheDirectory,
+      identifier: cacheIdentifier,
+      source: source,
+      options: options,
+      transform: transpile,
+    }, function(err, result) {
+      callback(err, result.code, result.map);
+    });
+  } else {
+    result = transpile(source, options);
+    callback(null, result.code, result.map);
+  }
+};
