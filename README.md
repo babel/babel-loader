@@ -6,12 +6,9 @@
   __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
 
 ## Installation
-  You should install [webpack]() and [babel-core]() to use this loader
+
 ```bash
-npm install babel-core --save
-```
-```bash
-npm install webpack babel-loader --save-dev
+npm install babel-loader --save-dev
 ```
 
 __Note:__ [npm](https://npmjs.com) will deprecate [peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required dependencies like babel-core and webpack will have to be installed manually.
@@ -53,17 +50,17 @@ module: {
 
   ```javascript
 babel: {
-    optional: ['runtime'],
-    stage: 0
+  optional: ['runtime'],
+  stage: 0
 },
 module: {
-    loaders: [
-        {
-            test: /\.jsx?$/,
-            exclude: /(node_modules|bower_components)/,
-            loader: 'babel'
-        }
-    ]
+  loaders: [
+    {
+      test: /\.jsx?$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel'
+    }
+  ]
 }
   ```
 
@@ -104,13 +101,13 @@ module: {
 
 ```javascript
 loaders: [
-    // the optional 'runtime' transformer tells babel to require the runtime
-    // instead of inlining it.
-    {
-        test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader?optional[]=runtime'
-    }
+  // the optional 'runtime' transformer tells babel to require the runtime
+  // instead of inlining it.
+  {
+    test: /\.jsx?$/,
+    exclude: /(node_modules|bower_components)/,
+    loader: 'babel-loader?optional[]=runtime'
+  }
 ]
 ```
 ## [License](http://couto.mit-license.org/)
