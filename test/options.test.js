@@ -44,7 +44,7 @@ describe('Options', function () {
             module: {
                 loaders: [{
                     test: /\.jsx?/,
-                    loader: babelLoader + '?experimental',
+                    loader: babelLoader + '?stage=0',
                     exclude: /node_modules/
                 }]
             }
@@ -67,7 +67,7 @@ describe('Options', function () {
         var config = assign({}, globalConfig, {
             entry: './test/fixtures/experimental.js',
             babel: {
-                experimental: true
+                stage: 0
             },
             module: {
                 loaders: [{
@@ -94,12 +94,12 @@ describe('Options', function () {
         var config = assign({}, globalConfig, {
             entry: './test/fixtures/experimental.js',
             babel: {
-                experimental: false
+                stage: 4
             },
             module: {
                 loaders: [{
                     test: /\.jsx?/,
-                    loader: babelLoader + '?experimental',
+                    loader: babelLoader + '?stage=0',
                     exclude: /node_modules/
                 }]
             }
