@@ -5,7 +5,7 @@
 ## Install
 
 ```
-$ npm install --save-dev babel-loader
+$ npm install --save-dev babel-loader babel-core
 ```
 
 ## Usage
