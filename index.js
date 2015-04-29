@@ -1,5 +1,4 @@
 var loaderUtils = require('loader-utils'),
-    babel = require('babel-core'),
     crypto = require('crypto'),
     fs = require('fs'),
     path = require('path'),
@@ -11,6 +10,21 @@ var loaderUtils = require('loader-utils'),
         if (val === 'false') { return false; }
         return val;
     };
+
+try {
+    var babel = require('babel-core');
+
+} catch(err) {
+    if (err.code != 'MODULE_NOT_FOUND') {
+        throw err;
+    }
+
+    console.error(
+        'Error: babel-core package is not installed, please run:\n\n' +
+        '    npm install --save-dev babel-core\n'
+    );
+    process.exit(1);
+}
 
 module.exports = function (source, inputSourceMap) {
 
