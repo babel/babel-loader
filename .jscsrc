@@ -1,0 +1,7 @@
+{
+    "preset": "node-style-guide",
+    "fileExtensions": [ ".js", "jscs" ],
+    "excludeFiles": [
+        "node_modules/**"
+    ]
+}

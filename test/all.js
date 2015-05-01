@@ -1,1 +1,0 @@
-require('./basic.test.js');

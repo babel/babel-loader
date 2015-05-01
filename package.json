@@ -4,21 +4,20 @@
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
-    "loader-utils": "^0.2.5"
-  },
-  "peerDependencies": {
-    "babel-core": "*",
-    "webpack": "*"
+    "object-assign": "^2.0.0",
+    "loader-utils": "^0.2.6"
   },
   "devDependencies": {
-    "babel-core": "^5.1.13",
-    "mocha": "^2.0.1",
-    "mocha-loader": "^0.7.0",
-    "should": "^4.3.1",
-    "webpack-dev-server": "^1.6.6"
+    "babel-core": "^5.0.6",
+    "expect.js": "^0.3.1",
+    "istanbul": "^0.3.13",
+    "mkdirp": "^0.5.0",
+    "mocha": "^2.2.1",
+    "rimraf": "^2.3.2",
+    "webpack": "^1.7.3"
   },
   "scripts": {
-    "test": "webpack-dev-server --config=test/webpack.config.js"
+    "test": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js"
   },
   "repository": {
     "type": "git",
