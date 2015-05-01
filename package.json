@@ -4,7 +4,6 @@
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
-    "babel-core": "5.0.0",
     "object-assign": "^2.0.0",
     "loader-utils": "^0.2.6"
   },

@@ -8,7 +8,7 @@
 ## Installation
 
 ```bash
-npm install babel-loader --save-dev
+npm install babel-loader babel-core --save-dev
 ```
 
 __Note:__ [npm](https://npmjs.com) will deprecate [peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required dependencies like babel-core and webpack will have to be installed manually.
