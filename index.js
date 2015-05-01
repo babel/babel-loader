@@ -1,8 +1,22 @@
 var assign = require('object-assign');
-var babel = require('babel-core');
 var cache = require('./lib/fs-cache.js');
 var loaderUtils = require('loader-utils');
 var pkg = require('./package.json');
+
+try {
+  var babel = require('babel-core');
+
+} catch(err) {
+  if (err.code != 'MODULE_NOT_FOUND') {
+    throw err;
+  }
+
+  console.error(
+    'Error: babel-core package is not installed, please run:\n\n' +
+    '    npm install --save-dev babel-core\n'
+  );
+  process.exit(1);
+}
 
 var transpile = function(source, options) {
   var result = babel.transform(source, options);
