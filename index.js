@@ -1,64 +1,139 @@
-var assign = require('object-assign');
-var babel = require('babel-core');
-var cache = require('./lib/fs-cache.js');
-var loaderUtils = require('loader-utils');
-var pkg = require('./package.json');
+var loaderUtils = require('loader-utils'),
+    crypto = require('crypto'),
+    fs = require('fs'),
+    path = require('path'),
+    os = require('os'),
+    zlib = require('zlib'),
+    version = require('./package').version,
+    toBoolean = function (val) {
+        if (val === 'true') { return true; }
+        if (val === 'false') { return false; }
+        return val;
+    };
 
-var transpile = function(source, options) {
-  var result = babel.transform(source, options);
-  var code = result.code;
-  var map = result.map;
+try {
+    var babel = require('babel-core');
 
-  if (map) {
-    map.sourcesContent = [source];
-  }
+} catch(err) {
+    if (err.code != 'MODULE_NOT_FOUND') {
+        throw err;
+    }
 
-  return {
-    code: code,
-    map: map,
-  };
-};
+    console.error(
+        'Error: babel-core package is not installed, please run:\n\n' +
+        '    npm install --save-dev babel-core\n'
+    );
+    process.exit(1);
+}
 
-module.exports = function(source, inputSourceMap) {
-  var callback = this.async();
-  var result = {};
-  // Handle options
-  var defaultOptions = {
-    inputSourceMap: inputSourceMap,
-    filename: loaderUtils.getRemainingRequest(this),
-    cacheIdentifier: JSON.stringify({
-      'babel-loader': pkg.version,
-      'babel-core': babel.version,
-    }),
-  };
-  var globalOptions = this.options.babel;
-  var loaderOptions = loaderUtils.parseQuery(this.query);
-  var options = assign({}, defaultOptions, globalOptions, loaderOptions);
+module.exports = function (source, inputSourceMap) {
 
-  if (options.sourceMap === undefined) {
+    var options = loaderUtils.parseQuery(this.query),
+        callback = this.async(),
+        result, cacheDirectory;
+
+    if (this.cacheable) {
+        this.cacheable();
+    }
+
+    // Convert 'true'/'false' to true/false
+    options = Object.keys(options).reduce(function (accumulator, key) {
+        accumulator[key] = toBoolean(options[key]);
+        return accumulator;
+    }, {});
+
     options.sourceMap = this.sourceMap;
-  }
+    options.inputSourceMap = inputSourceMap;
+    options.filename = loaderUtils.getRemainingRequest(this);
 
-  cacheDirectory = options.cacheDirectory;
-  cacheIdentifier = options.cacheIdentifier;
+    cacheDirectory = options.cacheDirectory;
+    delete options.cacheDirectory;
 
-  delete options.cacheDirectory;
-  delete options.cacheIdentifier;
+    if (cacheDirectory === true) cacheDirectory = os.tmpdir();
 
-  this.cacheable();
+    if (cacheDirectory){
+        cachedTranspile(cacheDirectory, source, options, onResult);
+    } else {
+        onResult(null, transpile(source, options));
+    }
 
-  if (cacheDirectory) {
-    cache({
-      directory: cacheDirectory,
-      identifier: cacheIdentifier,
-      source: source,
-      options: options,
-      transform: transpile,
-    }, function(err, result) {
-      callback(err, result.code, result.map);
-    });
-  } else {
-    result = transpile(source, options);
-    callback(null, result.code, result.map);
-  }
+    function onResult(err, result){
+        if (err) return callback(err);
+
+        callback(err, err ? null : result.code, err ? null : result.map);
+    }
 };
+
+function transpile(source, options){
+    var result = babel.transform(source, options);
+
+    var code = result.code;
+    var map = result.map;
+    if (map) {
+        map.sourcesContent = [source];
+    }
+
+    return {
+        code: code,
+        map: map
+    };
+}
+
+function cachedTranspile(cacheDirectory, source, options, callback){
+    var cacheFile = path.join(cacheDirectory, buildCachePath(cacheDirectory, source, options));
+
+    readCache(cacheFile, function(err, result){
+        if (err){
+            try {
+                result = transpile(source, options);
+            } catch (e){
+                return callback(e);
+            }
+
+            writeCache(cacheFile, result, function(err){
+                callback(err, result);
+            });
+        } else {
+            callback(null, result);
+        }
+    });
+}
+
+function readCache(cacheFile, callback){
+    fs.readFile(cacheFile, function(err, data){
+        if (err) return callback(err);
+
+        zlib.gunzip(data, function(err, content){
+            if (err) return callback(err);
+
+            try {
+                content = JSON.parse(content);
+            } catch (e){
+                return callback(e);
+            }
+
+            callback(null, content);
+        });
+    });
+}
+
+function writeCache(cacheFile, result, callback){
+    var content = JSON.stringify(result);
+
+    zlib.gzip(content, function(err, data){
+        if (err) return callback(err);
+
+        fs.writeFile(cacheFile, data, callback);
+    });
+}
+
+function buildCachePath(dir, source, options){
+    var hash = crypto.createHash('SHA1');
+    hash.end(JSON.stringify({
+        loaderVersion: version,
+        babelVersion: babel.version,
+        source: source,
+        options: options
+    }));
+    return 'babel-loader-cache-' + hash.read().toString('hex') + '.json.gzip';
+}
