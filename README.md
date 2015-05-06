@@ -72,6 +72,52 @@ loaders: [
 ]
 ```
 
+#### custom polyfills (e.g. Promise library)
+
+Since Babel includes a polyfill that includes a custom [regenerator runtime](https://github.com/facebook/regenerator/blob/master/runtime.js) and [core.js](https://github.com/zloirock/core-js), the following usual shimming method using `webpack.ProvidePlugin` will not work:
+
+```javascript
+// ...
+        new webpack.ProvidePlugin({
+            'Promise': 'bluebird'
+        }),
+// ...
+```
+
+The following approach will not work either:
+
+```javascript
+require('babel-runtime/core-js/promise').default = require('bluebird');
+
+var promise = new Promise;
+```
+
+which outputs to (using `runtime`):
+
+```javascript
+'use strict';
+
+var _Promise = require('babel-runtime/core-js/promise')['default'];
+
+require('babel-runtime/core-js/promise')['default'] = require('bluebird');
+
+var promise = new _Promise();
+```
+
+The previous `Promise` library is referenced and used before it is overridden.
+
+One approach is to have a "bootstrap" step in your application that would first override the default globals before your application:
+
+```javascript
+// bootstrap.js
+
+require('babel-runtime/core-js/promise').default = require('bluebird');
+
+// ...
+
+require('./app');
+```
+
 ## Options
 
 See the `babel` [options](http://babeljs.io/docs/usage/options/)
