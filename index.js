@@ -1,3 +1,7 @@
+/**
+ * Module dependencies
+ */
+
 var loaderUtils = require('loader-utils'),
     babel = require('babel-core'),
     crypto = require('crypto'),
@@ -6,120 +10,157 @@ var loaderUtils = require('loader-utils'),
     os = require('os'),
     zlib = require('zlib'),
     version = require('./package').version,
-    toBoolean = function (val) {
-        if (val === 'true') { return true; }
-        if (val === 'false') { return false; }
-        return val;
-    };
+    syncZlib = !!zlib.gzipSync;
 
 module.exports = function (source, inputSourceMap) {
+    var options, cb, isAsync, cache;
 
-    var options = loaderUtils.parseQuery(this.query),
-        callback = this.async(),
-        result, cacheDirectory;
+    this.cacheable && this.cacheable();
 
-    if (this.cacheable) {
-        this.cacheable();
+    options = loaderUtils.parseQuery(this.query);
+    for (var k in options) {
+        options[k] = toBoolean(options[k]);
     }
-
-    // Convert 'true'/'false' to true/false
-    options = Object.keys(options).reduce(function (accumulator, key) {
-        accumulator[key] = toBoolean(options[key]);
-        return accumulator;
-    }, {});
 
     options.sourceMap = this.sourceMap;
     options.inputSourceMap = inputSourceMap;
     options.filename = loaderUtils.getRemainingRequest(this);
 
-    cacheDirectory = options.cacheDirectory;
+    cb = this.async();
+    isAsync = !!cb;
+    cb = cb || function (err, res) {
+        if (err) throw err;
+        return res;
+    }
+
+    cache = formatCache(options.cacheDirectory, source, options, isAsync);
     delete options.cacheDirectory;
 
-    if (cacheDirectory === true) cacheDirectory = os.tmpdir();
+    return readCache(cache, isAsync, function(err, res) {
+        if (res) return cb(null, res.code, res.map);
+        return transpile(source, options, function(err, res) {
+            if (err) return cb(err);
 
-    if (cacheDirectory){
-        cachedTranspile(cacheDirectory, source, options, onResult);
-    } else {
-        onResult(null, transpile(source, options));
-    }
-
-    function onResult(err, result){
-        if (err) return callback(err);
-
-        callback(err, err ? null : result.code, err ? null : result.map);
-    }
+            return writeCache(cache, res, isAsync, function() {
+                return cb(null, res.code, res.map);
+            });
+        });
+    });
 };
 
-function transpile(source, options){
-    var result = babel.transform(source, options);
-
-    var code = result.code;
-    var map = result.map;
-    if (map) {
-        map.sourcesContent = [source];
+function transpile(source, options, cb) {
+    var result, code, map;
+    try {
+        result = babel.transform(source, options);
+    } catch (err) {
+        return cb(err);
     }
 
-    return {
+    code = result.code;
+    map = result.map;
+    if (map) map.sourcesContent = [source];
+
+    return cb(null, {
         code: code,
         map: map
-    };
-}
-
-function cachedTranspile(cacheDirectory, source, options, callback){
-    var cacheFile = path.join(cacheDirectory, buildCachePath(cacheDirectory, source, options));
-
-    readCache(cacheFile, function(err, result){
-        if (err){
-            try {
-                result = transpile(source, options);
-            } catch (e){
-                return callback(e);
-            }
-
-            writeCache(cacheFile, result, function(err){
-                callback(err, result);
-            });
-        } else {
-            callback(null, result);
-        }
     });
 }
 
-function readCache(cacheFile, callback){
-    fs.readFile(cacheFile, function(err, data){
-        if (err) return callback(err);
+/**
+ * cache interfaces
+ */
 
-        zlib.gunzip(data, function(err, content){
-            if (err) return callback(err);
-
+function readCache(cache, isAsync, cb) {
+    if (!cache) return cb();
+    return read(cache, isAsync, function(err, buf) {
+        if (err) return cb(err);
+        return gunzip(buf, isAsync, function(err, json) {
+            if (err) return cb(err);
             try {
-                content = JSON.parse(content);
-            } catch (e){
-                return callback(e);
+                return cb(null, JSON.parse(json.toString()));
+             } catch (err) {
+                return cb(err);
             }
-
-            callback(null, content);
         });
     });
 }
 
-function writeCache(cacheFile, result, callback){
-    var content = JSON.stringify(result);
-
-    zlib.gzip(content, function(err, data){
-        if (err) return callback(err);
-
-        fs.writeFile(cacheFile, data, callback);
+function writeCache(cache, res, isAsync, cb) {
+    if (!cache) return cb();
+    return gzip(JSON.stringify(res), isAsync, function(err, data) {
+        return write(cache, data, isAsync, cb);
     });
 }
 
-function buildCachePath(dir, source, options){
-    var hash = crypto.createHash('SHA1');
+/**
+ * zlib interfaces
+ */
+
+function gunzip(buf, isAsync, cb) {
+    if (isAsync) return zlib.gunzip(buf, cb);
+    if (!syncZlib) return cb(null, buf);
+    try {
+        return cb(null, zlib.gunzipSync(buf));
+    } catch (err) {
+        return cb(err);
+    }
+}
+
+function gzip(buf, isAsync, cb) {
+    if (isAsync) return zlib.gzip(buf, cb);
+    if (!syncZlib) return cb(null, buf);
+    try {
+        return cb(null, zlib.gzipSync(buf));
+    } catch (err) {
+        return cb(err);
+    }
+}
+
+/**
+ * filesystem interfaces
+ */
+
+function read(file, isAsync, cb) {
+    if (isAsync) return fs.readFile(file, cb);
+    try {
+        return cb(null, fs.readFileSync(file));
+    } catch(err) {
+        return cb(err);
+    }
+}
+
+function write(file, data, isAsync, cb) {
+    if (isAsync) return fs.writeFile(file, data, cb);
+    try {
+        return cb(null, fs.writeFileSync(file, data));
+    } catch(err) {
+        return cb(err);
+    }
+}
+
+/**
+ * utils
+ */
+
+function formatCache(cacheDirectory, source, options, isAsync) {
+    var hash, ext;
+
+    if (!cacheDirectory) return;
+    if (cacheDirectory === true) cacheDirectory = os.tmpdir();
+
+    hash = crypto.createHash('SHA1');
     hash.end(JSON.stringify({
         loaderVersion: version,
         babelVersion: babel.version,
         source: source,
         options: options
     }));
-    return 'babel-loader-cache-' + hash.read().toString('hex') + '.json.gzip';
+    ext = isAsync || syncZlib ? '.gz.json' : '.json';
+    return path.join(cacheDirectory, 'babel-loader-cache-' + hash.read().toString('hex') + ext);
+}
+
+function toBoolean(val) {
+    if (val === 'true') return true;
+    if (val === 'false') return false;
+    return val;
 }
