@@ -46,25 +46,23 @@ module: {
 }
   ```
 
-  or in a less used format, you can set an object in the webpack config.
+  or by using the query property:
 
   ```javascript
-babel: {
-  optional: ['runtime'],
-  stage: 0
-},
 module: {
   loaders: [
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel'
+      loader: 'babel',
+      query: {
+        optional: ['runtime'],
+        stage: 0
+      }
     }
   ]
 }
   ```
-
-  __Note:__ options given directly to the loader take precedence in relation to the *global* object.
 
   This loader also supports the following loader-specific option:
 
