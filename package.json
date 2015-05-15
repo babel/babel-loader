@@ -1,24 +1,28 @@
 {
   "name": "babel-loader",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
-    "babel-core": "^5.0.0",
-    "loader-utils": "^0.2.5"
+    "babel-core": "^5.4.0",
+    "object-assign": "^2.0.0",
+    "loader-utils": "^0.2.7"
   },
   "peerDependencies": {
     "babel-core": "*",
     "webpack": "*"
   },
   "devDependencies": {
-    "mocha": "^2.0.1",
-    "mocha-loader": "^0.7.0",
-    "should": "^4.3.1",
-    "webpack-dev-server": "^1.6.6"
+    "babel-core": "^5.4.2",
+    "expect.js": "^0.3.1",
+    "istanbul": "^0.3.14",
+    "mkdirp": "^0.5.1",
+    "mocha": "^2.2.5",
+    "rimraf": "^2.3.3",
+    "webpack": "^1.9.5"
   },
   "scripts": {
-    "test": "webpack-dev-server --config=test/webpack.config.js"
+    "test": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js"
   },
   "repository": {
     "type": "git",

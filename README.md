@@ -1,90 +1,158 @@
 # babel-loader
+  > Babel is a compiler for writing next generation JavaScript.
 
-> Turn ES6 code into vanilla ES5 with no runtime required using [babel](https://github.com/babel/babel);
+  This package allows the use babel with [webpack](https://github.com/webpack/webpack)
 
-## Install
+  __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
 
+## Installation
+
+```bash
+npm install babel-loader --save-dev
 ```
-$ npm install --save-dev babel-loader
-```
+
+__Note:__ [npm](https://npmjs.com) will deprecate [peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required dependencies like babel-core and webpack will have to be installed manually.
 
 ## Usage
+  Within your webpack configuration object, you'll need to add the babel-loader to the list of modules, like so:
 
-```javascript
-import Animal from 'babel!./Animal.js';
-
-class Person extends Animal {
-  constructor(arg='default') {
-    this.eat = 'Happy Meal';
-  }
-}
-
-export default Person;
-```
-
-```javascript
-var Person = require('babel!./Person.js').default;
-new Person();
-```
-
-Or within the webpack config:
-
-```javascript
+  ```javascript
 module: {
-    loaders: [
-        { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}
-    ]
+  loaders: [
+    {
+      test: /\.jsx?$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel'
+    }
+  ]
 }
-```
+  ```
 
-and then import normally:
+### Options
 
-```javascript
-import Person from './Person.js';
-```
+See the `babel` [options](http://babeljs.io/docs/usage/options/).
+
+You can pass options to the loader by writting them as a [query string](https://github.com/webpack/loader-utils):
+
+  ```javascript
+module: {
+  loaders: [
+    {
+      test: /\.jsx?$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel?optional[]=runtime&stage=0'
+    }
+  ]
+}
+  ```
+
+  or by using the query property:
+
+  ```javascript
+module: {
+  loaders: [
+    {
+      test: /\.jsx?$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel',
+      query: {
+        optional: ['runtime'],
+        stage: 0
+      }
+    }
+  ]
+}
+  ```
+
+  This loader also supports the following loader-specific option:
+
+  * `cacheDirectory`: When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. A value of `true` will cause the loader to use the default OS temporary file directory.
+
+  * `cacheIdentifier`: When set, it will add the given identifier to the cached files. This can be used to force cache busting if the identifier changes. By default the identifier is made by using the babel-core's version and the babel-loader's version.
+
+
+  __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
 ## Troubleshooting
 
-#### babel-loader is slow!
+### babel-loader is slow!
 
-Make sure you are transforming as few files as possible. Because you are probably 
-matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted
-source. See the `exclude` option in the `loaders` config as documented above.
+  Make sure you are transforming as few files as possible. Because you are probably
+  matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted
+  source.
 
-#### babel is injecting helpers into each file and bloating my code!
+  See the `exclude` option in the `loaders` config as documented above.
 
-babel uses very small helpers for common functions such as `_extend`. By default
-this will be added to every file that requires it.
+### babel is injecting helpers into each file and bloating my code!
 
-You can instead require the babel runtime as a separate module to avoid the duplication.
+  babel uses very small helpers for common functions such as `_extend`. By default
+  this will be added to every file that requires it.
 
-The following configuration disables automatic per-file runtime injection in babel, instead
-requiring `babel-runtime` and making all helper references use it.
+  You can instead require the babel runtime as a separate module to avoid the duplication.
 
-See the [docs](https://babeljs.io/docs/usage/runtime) for more information.
+  The following configuration disables automatic per-file runtime injection in babel, instead
+  requiring `babel-runtime` and making all helper references use it.
 
-**NOTE:** You must run `npm install babel-runtime --save` to include this in your project.
+  See the [docs](https://babeljs.io/docs/usage/runtime) for more information.
+
+  **NOTE:** You must run `npm install babel-runtime --save` to include this in your project.
 
 ```javascript
 loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime instead of inlining it.
-  { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?optional=runtime' }
+  // the optional 'runtime' transformer tells babel to require the runtime
+  // instead of inlining it.
+  {
+    test: /\.jsx?$/,
+    exclude: /(node_modules|bower_components)/,
+    loader: 'babel-loader?optional[]=runtime'
+  }
 ]
 ```
 
-## Options
+#### custom polyfills (e.g. Promise library)
 
-See the `babel` [options](http://babeljs.io/docs/usage/options/)
+Since Babel includes a polyfill that includes a custom [regenerator runtime](https://github.com/facebook/regenerator/blob/master/runtime.js) and [core.js](https://github.com/zloirock/core-js), the following usual shimming method using `webpack.ProvidePlugin` will not work:
 
-This loader also supports the following loader-specific option:
+```javascript
+// ...
+        new webpack.ProvidePlugin({
+            'Promise': 'bluebird'
+        }),
+// ...
+```
 
-* `cacheDirectory`: When set, the given directory will be used to cache the results of the loader.
-  Future webpack builds will attempt to read from the cache to avoid needing to run the potentially
-  expensive Babel recompilation process on each run. A value of `true` will cause the loader to
-  use the default OS temporary file directory.
+The following approach will not work either:
 
-Note: The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
+```javascript
+require('babel-runtime/core-js/promise').default = require('bluebird');
 
-## License
+var promise = new Promise;
+```
 
-MIT © Luis Couto
+which outputs to (using `runtime`):
+
+```javascript
+'use strict';
+
+var _Promise = require('babel-runtime/core-js/promise')['default'];
+
+require('babel-runtime/core-js/promise')['default'] = require('bluebird');
+
+var promise = new _Promise();
+```
+
+The previous `Promise` library is referenced and used before it is overridden.
+
+One approach is to have a "bootstrap" step in your application that would first override the default globals before your application:
+
+```javascript
+// bootstrap.js
+
+require('babel-runtime/core-js/promise').default = require('bluebird');
+
+// ...
+
+require('./app');
+```
+
+## [License](http://couto.mit-license.org/)
