@@ -104,12 +104,12 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader?optional[]=runtime'
+    loader: 'babel?optional[]=runtime'
   }
 ]
 ```
 
-### using `cacheDirectory` fails with Error
+### using `cacheDirectory` fails with ENOENT Error
 
 If using cacheDirectory results in an error similar to the following:
 
@@ -124,12 +124,10 @@ That means that most likely, you're not setting the options correctly, and you'r
 
 ```javascript
 loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
-  // instead of inlining it.
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader?cacheDirectory=true'
+    loader: 'babel?cacheDirectory=true'
   }
 ]
 ```
@@ -138,8 +136,6 @@ That's not the correct way of setting boolean values. You should do instead:
 
 ```javascript
 loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
-  // instead of inlining it.
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
