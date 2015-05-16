@@ -109,7 +109,64 @@ loaders: [
 ]
 ```
 
-#### custom polyfills (e.g. Promise library)
+### using `cacheDirectory` fails with Error
+
+If using cacheDirectory results in an error similar to the following:
+
+```
+ERROR in ./frontend/src/main.jsx
+Module build failed: Error: ENOENT, open 'true/350c59cae6b7bce3bb58c8240147581bfdc9cccc.json.gzip'
+ @ multi app
+```
+(notice the `true/` in the filepath)
+
+That means that most likely, you're not setting the options correctly, and you're doing something similar to:
+
+```javascript
+loaders: [
+  // the optional 'runtime' transformer tells babel to require the runtime
+  // instead of inlining it.
+  {
+    test: /\.jsx?$/,
+    exclude: /(node_modules|bower_components)/,
+    loader: 'babel-loader?cacheDirectory=true'
+  }
+]
+```
+
+That's not the correct way of setting boolean values. You should do instead:
+
+```javascript
+loaders: [
+  // the optional 'runtime' transformer tells babel to require the runtime
+  // instead of inlining it.
+  {
+    test: /\.jsx?$/,
+    exclude: /(node_modules|bower_components)/,
+    loader: 'babel-loader?cacheDirectory'
+  }
+]
+```
+
+or use the [query](https://webpack.github.io/docs/using-loaders.html#query-parameters) property:
+
+```javascript
+loaders: [
+  // the optional 'runtime' transformer tells babel to require the runtime
+  // instead of inlining it.
+  {
+    test: /\.jsx?$/,
+    exclude: /(node_modules|bower_components)/,
+    loader: 'babel-loader',
+    query: {
+      cacheDirectory: true
+    }
+  }
+]
+```
+
+
+### custom polyfills (e.g. Promise library)
 
 Since Babel includes a polyfill that includes a custom [regenerator runtime](https://github.com/facebook/regenerator/blob/master/runtime.js) and [core.js](https://github.com/zloirock/core-js), the following usual shimming method using `webpack.ProvidePlugin` will not work:
 
