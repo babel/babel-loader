@@ -1,7 +1,7 @@
 # babel-loader
   > Babel is a compiler for writing next generation JavaScript.
 
-  This package allows the use babel with [webpack](https://github.com/webpack/webpack)
+  This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
 
   __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
 
@@ -14,6 +14,9 @@ npm install babel-loader --save-dev
 __Note:__ [npm](https://npmjs.com) will deprecate [peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required dependencies like babel-core and webpack will have to be installed manually.
 
 ## Usage
+
+[Documentation: Using loaders](http://webpack.github.io/docs/using-loaders.html)
+
   Within your webpack configuration object, you'll need to add the babel-loader to the list of modules, like so:
 
   ```javascript
