@@ -55,16 +55,12 @@ module.exports = function(source, inputSourceMap) {
       options: options,
       transform: transpile,
     }, function(err, result) {
-      return callback(err, result.code, result.map);
+      if (err) { return callback(err); }
+      return callback(null, result.code, result.map);
     });
   }
 
-  try {
-    result = transpile(source, options);
-  } catch(err) {
-    return callback(err);
-  }
-
+  result = transpile(source, options);
   return callback(null, result.code, result.map);
 
 };
