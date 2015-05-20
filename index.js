@@ -48,17 +48,19 @@ module.exports = function(source, inputSourceMap) {
   this.cacheable();
 
   if (cacheDirectory) {
-    cache({
+    return cache({
       directory: cacheDirectory,
       identifier: cacheIdentifier,
       source: source,
       options: options,
       transform: transpile,
     }, function(err, result) {
-      callback(err, result.code, result.map);
+      if (err) { return callback(err); }
+      return callback(null, result.code, result.map);
     });
-  } else {
-    result = transpile(source, options);
-    callback(null, result.code, result.map);
   }
+
+  result = transpile(source, options);
+  return callback(null, result.code, result.map);
+
 };
