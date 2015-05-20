@@ -69,7 +69,7 @@ module: {
 
   This loader also supports the following loader-specific option:
 
-  * `cacheDirectory`: When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. A value of `true` will cause the loader to use the default OS temporary file directory.
+  * `cacheDirectory`: When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. The default value (`loader: 'babel-loader?cacheDirectory'`) will cause the loader to use the default OS temporary file directory.
 
   * `cacheIdentifier`: When set, it will add the given identifier to the cached files. This can be used to force cache busting if the identifier changes. By default the identifier is made by using the babel-core's version and the babel-loader's version.
 
