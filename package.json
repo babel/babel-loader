@@ -16,13 +16,18 @@
     "babel-core": "^5.4.2",
     "expect.js": "^0.3.1",
     "istanbul": "^0.3.14",
+    "jscs": "^1.13.1",
+    "jshint": "^2.8.0",
     "mkdirp": "^0.5.1",
     "mocha": "^2.2.5",
     "rimraf": "^2.3.3",
     "webpack": "^1.9.5"
   },
   "scripts": {
-    "test": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js"
+    "test": "npm run hint && npm run cs && npm run cov",
+    "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
+    "hint": "jshint --exclude test/fixtures --config .jshintrc index.js lib/* test/*",
+    "cs": "jscs --config .jscsrc index.js lib/* test/*"
   },
   "repository": {
     "type": "git",
