@@ -26,7 +26,7 @@
   "scripts": {
     "test": "npm run hint && npm run cs && npm run cov",
     "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
-    "hint": "jshint --exclude test/fixtures --config .jshintrc index.js lib/* test/*",
+    "hint": "jshint --config .jshintrc index.js lib/* test/*",
     "cs": "jscs --config .jscsrc index.js lib/* test/*"
   },
   "repository": {

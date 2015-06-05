@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var path = require('path');
 var assign = require('object-assign');
@@ -126,8 +128,12 @@ describe('Filesystem Cache', function() {
           loaders: [
             {
               test: /\.jsx?/,
-              loader: babelLoader + '?cacheDirectory=' + cacheDir + '&cacheIdentifier=a',
+              loader: babelLoader,
               exclude: /node_modules/,
+              query: {
+                cacheDirectory: cacheDir,
+                cacheIdentifier: 'a',
+              },
             },
           ],
         },
@@ -137,8 +143,12 @@ describe('Filesystem Cache', function() {
           loaders: [
             {
               test: /\.jsx?/,
-              loader: babelLoader + '?cacheDirectory=' + cacheDir + '&cacheIdentifier=b',
+              loader: babelLoader,
               exclude: /node_modules/,
+              query: {
+                cacheDirectory: cacheDir,
+                cacheIdentifier: 'b',
+              },
             },
           ],
         },
