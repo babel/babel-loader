@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var path = require('path');
 var assign = require('object-assign');
@@ -57,8 +59,11 @@ describe('Loader', function() {
         expect(err).to.be(null);
         expect(files.length).to.equal(1);
         fs.readFile(path.resolve(outputDir, files[0]), function(err, data) {
+          var test = 'var App = function App()';
+          var subject = data.toString();
+
           expect(err).to.be(null);
-          expect(data.toString().indexOf('var App = function App()')).to.not.equal(-1);
+          expect(subject.indexOf(test)).to.not.equal(-1);
 
           return done();
         });
