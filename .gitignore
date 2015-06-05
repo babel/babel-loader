@@ -1,4 +1,4 @@
 node_modules
 test/output
 coverage
-.log
+*.log
