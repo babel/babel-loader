@@ -1,3 +1,5 @@
+'use strict';
+
 var assign = require('object-assign');
 var babel = require('babel-core');
 var cache = require('./lib/fs-cache.js');
@@ -39,8 +41,8 @@ module.exports = function(source, inputSourceMap) {
     options.sourceMap = this.sourceMap;
   }
 
-  cacheDirectory = options.cacheDirectory;
-  cacheIdentifier = options.cacheIdentifier;
+  var cacheDirectory = options.cacheDirectory;
+  var cacheIdentifier = options.cacheIdentifier;
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
