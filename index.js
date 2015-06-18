@@ -2,8 +2,9 @@
 
 var assign = require('object-assign');
 var babel = require('babel-core');
-var cache = require('./lib/fs-cache.js');
 var loaderUtils = require('loader-utils');
+var cache = require('./lib/fs-cache.js');
+var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
 
 var transpile = function(source, options) {
@@ -41,11 +42,16 @@ module.exports = function(source, inputSourceMap) {
     options.sourceMap = this.sourceMap;
   }
 
+  if (options.babelrc) {
+    options.cacheIdentifier += resolveRc(process.cwd());
+  }
+
   var cacheDirectory = options.cacheDirectory;
   var cacheIdentifier = options.cacheIdentifier;
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
+  delete options.babelrc;
 
   this.cacheable();
 
