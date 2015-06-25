@@ -1,6 +1,6 @@
 {
   "name": "babel-loader",
-  "version": "5.1.4",
+  "version": "5.2.0",
   "description": "babel module loader for webpack",
   "main": "index.js",
   "dependencies": {
