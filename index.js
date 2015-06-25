@@ -2,9 +2,11 @@
 
 var assign = require('object-assign');
 var babel = require('babel-core');
-var cache = require('./lib/fs-cache.js');
 var loaderUtils = require('loader-utils');
+var cache = require('./lib/fs-cache.js');
+var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
+var babelrc = resolveRc(process.cwd());
 
 var transpile = function(source, options) {
   var result = babel.transform(source, options);
@@ -31,6 +33,7 @@ module.exports = function(source, inputSourceMap) {
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
       'babel-core': babel.version,
+      babelrc: babelrc || '',
     }),
   };
   var globalOptions = this.options.babel;
@@ -46,6 +49,7 @@ module.exports = function(source, inputSourceMap) {
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
+  delete options.babelrc;
 
   this.cacheable();
 
