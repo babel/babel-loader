@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var os = require('os');
 var path = require('path');
 var assign = require('object-assign');
 var expect = require('expect.js');
@@ -57,6 +58,35 @@ describe('Filesystem Cache', function() {
       expect(err).to.be(null);
 
       fs.readdir(cacheDir, function(err, files) {
+        expect(err).to.be(null);
+        expect(files).to.not.be.empty();
+        done();
+      });
+    });
+  });
+
+  it('should output files to OS\'s tmp dir', function(done) {
+    var config = assign({}, globalConfig, {
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader + '?cacheDirectory',
+            exclude: /node_modules/,
+          },
+        ],
+      },
+    });
+
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
+
+      fs.readdir(os.tmpdir(), function(err, files) {
+
+        files = files.filter(function(file) {
+          return /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file);
+        });
+
         expect(err).to.be(null);
         expect(files).to.not.be.empty();
         done();

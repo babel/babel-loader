@@ -71,7 +71,7 @@ module: {
 
   * `cacheDirectory`: When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. The default value (`loader: 'babel-loader?cacheDirectory'`) will cause the loader to use the default OS temporary file directory.
 
-  * `cacheIdentifier`: When set, it will add the given identifier to the cached files. This can be used to force cache busting if the identifier changes. By default the identifier is made by using the babel-core's version and the babel-loader's version.
+  * `cacheIdentifier`: When set, it will add the given identifier to the cached files. This can be used to force cache busting if the identifier changes. By default the identifier is composed by the babel-core's version, the babel-loader's version and the .babelrc file if it exists.
 
 
   __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
@@ -107,12 +107,12 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader?optional[]=runtime'
+    loader: 'babel?optional[]=runtime'
   }
 ]
 ```
 
-### using `cacheDirectory` fails with Error
+### using `cacheDirectory` fails with ENOENT Error
 
 If using cacheDirectory results in an error similar to the following:
 
@@ -127,12 +127,10 @@ That means that most likely, you're not setting the options correctly, and you'r
 
 ```javascript
 loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
-  // instead of inlining it.
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader?cacheDirectory=true'
+    loader: 'babel?cacheDirectory=true'
   }
 ]
 ```
@@ -141,8 +139,6 @@ That's not the correct way of setting boolean values. You should do instead:
 
 ```javascript
 loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
-  // instead of inlining it.
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
