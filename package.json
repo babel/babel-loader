@@ -6,8 +6,7 @@
   "dependencies": {
     "babel-core": "^5.4.0",
     "loader-utils": "^0.2.9",
-    "object-assign": "^3.0.0",
-    "path-is-absolute": "^1.0.0"
+    "object-assign": "^3.0.0"
   },
   "peerDependencies": {
     "babel-core": "*",
