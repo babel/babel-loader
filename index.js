@@ -24,7 +24,6 @@ var transpile = function(source, options) {
 };
 
 module.exports = function(source, inputSourceMap) {
-  var callback = this.async();
   var result = {};
   // Handle options
   var defaultOptions = {
@@ -54,6 +53,7 @@ module.exports = function(source, inputSourceMap) {
   this.cacheable();
 
   if (cacheDirectory) {
+    var callback = this.async();
     return cache({
       directory: cacheDirectory,
       identifier: cacheIdentifier,
@@ -67,6 +67,6 @@ module.exports = function(source, inputSourceMap) {
   }
 
   result = transpile(source, options);
-  return callback(null, result.code, result.map);
+  this.callback(null, result.code, result.map);
 
 };
