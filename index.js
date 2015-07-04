@@ -35,7 +35,7 @@ module.exports = function(source, inputSourceMap) {
       babelrc: babelrc || '',
     }),
   };
-  var globalOptions = this.options.babel;
+  var globalOptions = this.options.babel || {};
   var loaderOptions = loaderUtils.parseQuery(this.query);
   var options = assign({}, defaultOptions, globalOptions, loaderOptions);
 
