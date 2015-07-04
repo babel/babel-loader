@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.3.1
+
+  * Merge [PR #82](https://github.com/babel/babel-loader/pull/82) - Fallback global options to empty object to avoid conflicts with object-assign polyfill.
+
 ## v5.3.0
 
   * Merge [PR #79](https://github.com/babel/babel-loader/pull/79) - This should allow babel-loader to work with [enhanced-require](https://github.com/webpack/enhanced-require).
