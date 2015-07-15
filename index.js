@@ -13,7 +13,7 @@ var transpile = function(source, options) {
   var code = result.code;
   var map = result.map;
 
-  if (map) {
+  if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
   }
 
