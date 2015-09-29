@@ -33,6 +33,7 @@ module.exports = function(source, inputSourceMap) {
       'babel-loader': pkg.version,
       'babel-core': babel.version,
       babelrc: babelrc || '',
+      env: process.env.BABEL_ENV || process.env.NODE_ENV || '',
     }),
   };
   var globalOptions = this.options.babel || {};
