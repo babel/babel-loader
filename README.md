@@ -25,7 +25,7 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel'
+      loader: 'babel' // 'babel-loader' is also a legal name to reference
     }
   ]
 }
