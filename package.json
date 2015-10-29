@@ -9,7 +9,7 @@
     "object-assign": "^3.0.0"
   },
   "peerDependencies": {
-    "babel-core": "*",
+    "babel-core": "^5.0.0",
     "webpack": "*"
   },
   "devDependencies": {
