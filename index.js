@@ -68,5 +68,4 @@ module.exports = function(source, inputSourceMap) {
 
   result = transpile(source, options);
   this.callback(null, result.code, result.map);
-
 };
