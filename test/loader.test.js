@@ -45,7 +45,7 @@ describe('Loader', function() {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader,
+            loader: babelLoader + '?presets[]=es2015',
             exclude: /node_modules/,
           },
         ],
@@ -78,7 +78,7 @@ describe('Loader', function() {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader,
+            loader: babelLoader + '?presets[]=es2015',
             exclude: /node_modules/,
           },
         ],
@@ -86,7 +86,7 @@ describe('Loader', function() {
     });
 
     webpack(config, function(err, stats) {
-      expect(stats.compilation.errors).to.have.length();
+      expect(stats.compilation.errors.length).to.be(1);
       expect(stats.compilation.errors[0]).to.be.an(Error);
 
       return done();

@@ -11,7 +11,7 @@
 npm install babel-loader --save-dev
 ```
 
-__Note:__ [npm](https://npmjs.com) will deprecate [peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required dependencies like babel-core and webpack will have to be installed manually.
+__Note:__ [npm](https://npmjs.com) will deprecate [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required peer dependencies like babel-core and webpack will have to be listed explicitly in your `package.json`.
 
 ## Usage
 
@@ -43,7 +43,7 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel?optional[]=runtime&stage=0'
+      loader: 'babel?presets[]=es2015'
     }
   ]
 }
@@ -59,8 +59,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel',
       query: {
-        optional: ['runtime'],
-        stage: 0
+        presets: ['es2015']
       }
     }
   ]
@@ -107,7 +106,7 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel?optional[]=runtime'
+    loader: 'babel?presets[]=es2015'
   }
 ]
 ```

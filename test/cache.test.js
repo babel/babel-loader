@@ -42,12 +42,13 @@ describe('Filesystem Cache', function() {
 
   it('should output files to cache directory', function(done) {
 
+    var loader = babelLoader + '?presets[]=es2015&cacheDirectory=' + cacheDir;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory=' + cacheDir,
+            loader: loader,
             exclude: /node_modules/,
           },
         ],
@@ -71,7 +72,7 @@ describe('Filesystem Cache', function() {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory',
+            loader: babelLoader + '?presets[]=es2015cacheDirectory',
             exclude: /node_modules/,
           },
         ],
@@ -95,12 +96,13 @@ describe('Filesystem Cache', function() {
   });
 
   it('should read from cache directory if cached file exists', function(done) {
+    var loader = babelLoader + '?presets[]=es2015&cacheDirectory=' + cacheDir;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory=' + cacheDir,
+            loader: loader,
             exclude: /node_modules/,
           },
         ],
@@ -125,12 +127,13 @@ describe('Filesystem Cache', function() {
   });
 
   it('should have one file per module', function(done) {
+    var loader = babelLoader + '?presets[]=es2015&cacheDirectory=' + cacheDir;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory=' + cacheDir,
+            loader: loader,
             exclude: /node_modules/,
           },
         ],
@@ -163,6 +166,7 @@ describe('Filesystem Cache', function() {
               query: {
                 cacheDirectory: cacheDir,
                 cacheIdentifier: 'a',
+                presets: ['es2015'],
               },
             },
           ],
@@ -178,6 +182,7 @@ describe('Filesystem Cache', function() {
               query: {
                 cacheDirectory: cacheDir,
                 cacheIdentifier: 'b',
+                presets: ['es2015'],
               },
             },
           ],
