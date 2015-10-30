@@ -8,10 +8,11 @@
 ## Installation
 
 ```bash
-npm install babel-loader --save-dev
+npm install babel-loader babel-core babel-preset-es2015 --save-dev
 ```
 
 __Note:__ [npm](https://npmjs.com) will deprecate [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required peer dependencies like babel-core and webpack will have to be listed explicitly in your `package.json`.
+
 
 ## Usage
 
@@ -35,7 +36,7 @@ module: {
 
 See the `babel` [options](http://babeljs.io/docs/usage/options/).
 
-You can pass options to the loader by writting them as a [query string](https://github.com/webpack/loader-utils):
+You can pass options to the loader by writing them as a [query string](https://github.com/webpack/loader-utils):
 
   ```javascript
 module: {
