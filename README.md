@@ -43,7 +43,7 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel?optional[]=runtime&stage=0'
+      loader: 'babel?presets[]=es2015'
     }
   ]
 }
@@ -59,8 +59,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel',
       query: {
-        optional: ['runtime'],
-        stage: 0
+        presets: ['es2015']
       }
     }
   ]
@@ -107,7 +106,7 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel?optional[]=runtime'
+    loader: 'babel?presets[]=es2015'
   }
 ]
 ```
