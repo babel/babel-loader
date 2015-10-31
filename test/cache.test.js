@@ -11,6 +11,8 @@ var webpack = require('webpack');
 
 describe('Filesystem Cache', function() {
 
+  this.timeout(3000);
+
   var cacheDir = path.resolve(__dirname, 'output/cache/cachefiles');
   var outputDir = path.resolve(__dirname, './output/cache/');
   var babelLoader = path.resolve(__dirname, '../');
@@ -42,13 +44,18 @@ describe('Filesystem Cache', function() {
 
   it('should output files to cache directory', function(done) {
 
+    var loader = babelLoader;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory=' + cacheDir,
+            loader: loader,
             exclude: /node_modules/,
+            query: {
+              cacheDirectory: cacheDir,
+              presets: ['es2015'],
+            },
           },
         ],
       },
@@ -71,8 +78,12 @@ describe('Filesystem Cache', function() {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory',
+            loader: babelLoader,
             exclude: /node_modules/,
+            query: {
+              cacheDirectory: cacheDir,
+              presets: ['es2015'],
+            },
           },
         ],
       },
@@ -95,13 +106,18 @@ describe('Filesystem Cache', function() {
   });
 
   it('should read from cache directory if cached file exists', function(done) {
+    var loader = babelLoader;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory=' + cacheDir,
+            loader: loader,
             exclude: /node_modules/,
+            query: {
+              cacheDirectory: cacheDir,
+              presets: ['es2015'],
+            },
           },
         ],
       },
@@ -125,13 +141,18 @@ describe('Filesystem Cache', function() {
   });
 
   it('should have one file per module', function(done) {
+    var loader = babelLoader;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?cacheDirectory=' + cacheDir,
+            loader: loader,
             exclude: /node_modules/,
+            query: {
+              cacheDirectory: cacheDir,
+              presets: ['es2015'],
+            },
           },
         ],
       },
@@ -163,6 +184,7 @@ describe('Filesystem Cache', function() {
               query: {
                 cacheDirectory: cacheDir,
                 cacheIdentifier: 'a',
+                presets: ['es2015'],
               },
             },
           ],
@@ -178,6 +200,7 @@ describe('Filesystem Cache', function() {
               query: {
                 cacheDirectory: cacheDir,
                 cacheIdentifier: 'b',
+                presets: ['es2015'],
               },
             },
           ],

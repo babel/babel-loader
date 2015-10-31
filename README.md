@@ -1,4 +1,4 @@
-# babel-loader
+# babel-loader [![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
   > Babel is a compiler for writing next generation JavaScript.
 
   This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
@@ -8,10 +8,12 @@
 ## Installation
 
 ```bash
-npm install babel-loader --save-dev
+npm install babel-loader babel-core babel-preset-es2015 --save-dev
 ```
 
 __Note:__ [npm](https://npmjs.com) will deprecate [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required peer dependencies like babel-core and webpack will have to be listed explicitly in your `package.json`.
+
+__Note:__ If you're upgrading from babel 5 to babel 6, please take a look [at this guide](https://medium.com/@malyw/how-to-update-babel-5-x-6-x-d828c230ec53#.yqxukuzdk).
 
 ## Usage
 
@@ -35,7 +37,7 @@ module: {
 
 See the `babel` [options](http://babeljs.io/docs/usage/options/).
 
-You can pass options to the loader by writting them as a [query string](https://github.com/webpack/loader-utils):
+You can pass options to the loader by writing them as a [query string](https://github.com/webpack/loader-utils):
 
   ```javascript
 module: {
@@ -43,7 +45,7 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel?optional[]=runtime&stage=0'
+      loader: 'babel?presets[]=es2015'
     }
   ]
 }
@@ -59,8 +61,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel',
       query: {
-        optional: ['runtime'],
-        stage: 0
+        presets: ['es2015']
       }
     }
   ]
@@ -107,7 +108,7 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel?optional[]=runtime'
+    loader: 'babel?presets[]=es2015'
   }
 ]
 ```

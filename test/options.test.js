@@ -40,12 +40,12 @@ describe('Options', function() {
 
   it('should interpret options given to the loader', function(done) {
     var config = assign({}, globalConfig, {
-      entry: './test/fixtures/experimental.js',
+      entry: './test/fixtures/basic.js',
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?stage=0',
+            loader: babelLoader + '?presets[]=es2015',
             exclude: /node_modules/,
           },
         ],
@@ -67,9 +67,9 @@ describe('Options', function() {
   it('should interpret options given globally', function(done) {
 
     var config = assign({}, globalConfig, {
-      entry: './test/fixtures/experimental.js',
+      entry: './test/fixtures/basic.js',
       babel: {
-        stage: 0,
+        presets: ['es2015'],
       },
       module: {
         loaders: [
@@ -96,15 +96,15 @@ describe('Options', function() {
 
   it('should give priority to loader options', function(done) {
     var config = assign({}, globalConfig, {
-      entry: './test/fixtures/experimental.js',
+      entry: './test/fixtures/basic.js',
       babel: {
-        stage: 4,
+        presets: [],
       },
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?stage=0',
+            loader: babelLoader + '?presets[]=es2015',
             exclude: /node_modules/,
           },
         ],

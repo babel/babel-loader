@@ -10,6 +10,8 @@ var webpack = require('webpack');
 
 describe('Loader', function() {
 
+  this.timeout(3000); // @TODO this is worrisome
+
   var outputDir = path.resolve(__dirname, './output/loader');
   var babelLoader = path.resolve(__dirname, '../');
   var globalConfig = {
@@ -23,6 +25,9 @@ describe('Loader', function() {
         {
           test: /\.jsx?/,
           loader: babelLoader,
+          query: {
+            presets: ['es2015'],
+          },
           exclude: /node_modules/,
         },
       ],
@@ -46,6 +51,9 @@ describe('Loader', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader,
+            query: {
+              presets: ['es2015'],
+            },
             exclude: /node_modules/,
           },
         ],
@@ -79,6 +87,9 @@ describe('Loader', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader,
+            query: {
+              presets: ['es2015'],
+            },
             exclude: /node_modules/,
           },
         ],
@@ -86,7 +97,7 @@ describe('Loader', function() {
     });
 
     webpack(config, function(err, stats) {
-      expect(stats.compilation.errors).to.have.length();
+      expect(stats.compilation.errors.length).to.be(1);
       expect(stats.compilation.errors[0]).to.be.an(Error);
 
       return done();

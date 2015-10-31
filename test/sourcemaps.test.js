@@ -47,7 +47,7 @@ describe('Sourcemaps', function() {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader,
+            loader: babelLoader + '?presets[]=es2015',
             exclude: /node_modules/,
           },
         ],
