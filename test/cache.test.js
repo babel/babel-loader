@@ -81,7 +81,7 @@ describe('Filesystem Cache', function() {
             loader: babelLoader,
             exclude: /node_modules/,
             query: {
-              cacheDirectory: cacheDir,
+              cacheDirectory: true,
               presets: ['es2015'],
             },
           },
@@ -93,7 +93,6 @@ describe('Filesystem Cache', function() {
       expect(err).to.be(null);
 
       fs.readdir(os.tmpdir(), function(err, files) {
-
         files = files.filter(function(file) {
           return /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file);
         });
