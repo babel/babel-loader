@@ -10,8 +10,7 @@ var rimraf = require('rimraf');
 var webpack = require('webpack');
 
 describe('Filesystem Cache', function() {
-
-  this.timeout(3000);
+  this.timeout(15000);
 
   var cacheDir = path.resolve(__dirname, 'output/cache/cachefiles');
   var outputDir = path.resolve(__dirname, './output/cache/');
