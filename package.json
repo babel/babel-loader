@@ -2,7 +2,10 @@
   "name": "babel-loader",
   "version": "6.0.0",
   "description": "babel module loader for webpack",
-  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "dependencies": {
     "loader-utils": "^0.2.11",
     "object-assign": "^4.0.1"
