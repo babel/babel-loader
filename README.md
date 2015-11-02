@@ -27,7 +27,7 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel'
+      loader: 'babel' // 'babel-loader' is also a legal name to reference
     }
   ]
 }
@@ -70,9 +70,9 @@ module: {
 
   This loader also supports the following loader-specific option:
 
-  * `cacheDirectory`: When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. The default value (`loader: 'babel-loader?cacheDirectory'`) will cause the loader to use the default OS temporary file directory.
+  * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) the loader will use the default OS temporary file directory.
 
-  * `cacheIdentifier`: When set, it will add the given identifier to the cached files. This can be used to force cache busting if the identifier changes. By default the identifier is composed by the babel-core's version, the babel-loader's version and the .babelrc file if it exists.
+  * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version and the contents of .babelrc file if it exists. This can set to a custom value to force cache busting if the identifier changes.
 
 
   __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
@@ -85,7 +85,10 @@ module: {
   matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted
   source.
 
-  See the `exclude` option in the `loaders` config as documented above.
+  To exclude `node_modules`, see the `exclude` option in the `loaders` config as documented above.
+
+  You can also speed up babel-loader by as much as 2x by using the `cacheDirectory` option.
+  This will cache transformations to the filesystem.
 
 ### babel is injecting helpers into each file and bloating my code!
 
@@ -143,7 +146,7 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader?cacheDirectory'
+    loader: 'babel?cacheDirectory'
   }
 ]
 ```
@@ -157,7 +160,7 @@ loaders: [
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader',
+    loader: 'babel',
     query: {
       cacheDirectory: true
     }
