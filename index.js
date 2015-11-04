@@ -54,7 +54,6 @@ module.exports = function(source, inputSourceMap) {
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
-  delete options.babelrc;
 
   this.cacheable();
 
