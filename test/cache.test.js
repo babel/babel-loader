@@ -15,6 +15,9 @@ describe('Filesystem Cache', function() {
   var cacheDir = path.resolve(__dirname, 'output/cache/cachefiles');
   var outputDir = path.resolve(__dirname, './output/cache/');
   var babelLoader = path.resolve(__dirname, '../');
+
+  console.log('babelLoader', babelLoader);
+
   var globalConfig = {
     entry: './test/fixtures/basic.js',
     output: {
@@ -24,7 +27,7 @@ describe('Filesystem Cache', function() {
     module: {
       loaders: [
         {
-          test: /\.jsx?/,
+          test: /\.js$/,
           loader: babelLoader,
           exclude: /node_modules/,
         },
@@ -43,13 +46,12 @@ describe('Filesystem Cache', function() {
 
   it('should output files to cache directory', function(done) {
 
-    var loader = babelLoader;
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
-            test: /\.jsx?/,
-            loader: loader,
+            test: /\.js$/,
+            loader: babelLoader,
             exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
@@ -222,5 +224,53 @@ describe('Filesystem Cache', function() {
       });
     });
 
+  });
+
+  it('should allow to specify the .babelrc file', function(done) {
+    var config = [
+      assign({}, globalConfig, {
+        entry: './test/fixtures/constant.js',
+        module: {
+          loaders: [
+            {
+              test: /\.jsx?/,
+              loader: babelLoader,
+              exclude: /node_modules/,
+              query: {
+                cacheDirectory: cacheDir,
+                babelrc: path.resolve(__dirname, 'fixtures/babelrc'),
+                presets: ['es2015'],
+              },
+            },
+          ],
+        },
+      }),
+      assign({}, globalConfig, {
+        entry: './test/fixtures/constant.js',
+        module: {
+          loaders: [
+            {
+              test: /\.jsx?/,
+              loader: babelLoader,
+              exclude: /node_modules/,
+              query: {
+                cacheDirectory: cacheDir,
+                presets: ['es2015'],
+              },
+            },
+          ],
+        },
+      }),
+    ];
+
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
+
+      fs.readdir(cacheDir, function(err, files) {
+        expect(err).to.be(null);
+        expect(files).to.have.length(2);
+        done();
+      });
+    });
   });
 });

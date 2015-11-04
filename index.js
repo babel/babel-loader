@@ -4,9 +4,10 @@ var assign = require('object-assign');
 var babel = require('babel-core');
 var loaderUtils = require('loader-utils');
 var cache = require('./lib/fs-cache.js');
+var exists = require('./lib/helpers/exists')();
+var read = require('./lib/helpers/read')();
 var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
-var babelrc = resolveRc(process.cwd());
 
 var transpile = function(source, options) {
   var result = babel.transform(source, options);
@@ -25,21 +26,26 @@ var transpile = function(source, options) {
 
 module.exports = function(source, inputSourceMap) {
   var result = {};
+
   // Handle options
+  var globalOptions = this.options.babel || {};
+  var loaderOptions = loaderUtils.parseQuery(this.query);
+  var userOptions = assign({}, globalOptions, loaderOptions);
   var defaultOptions = {
     inputSourceMap: inputSourceMap,
     filename: loaderUtils.getRemainingRequest(this),
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
       'babel-core': babel.version,
-      babelrc: babelrc || '',
+      babelrc: exists(userOptions.babelrc) ?
+          read(userOptions.babelrc) :
+          resolveRc(process.cwd()),
     }),
   };
-  var globalOptions = this.options.babel || {};
-  var loaderOptions = loaderUtils.parseQuery(this.query);
-  var options = assign({}, defaultOptions, globalOptions, loaderOptions);
 
-  if (options.sourceMap === undefined) {
+  var options = assign({}, defaultOptions, userOptions);
+
+  if (userOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
   }
 
@@ -64,8 +70,8 @@ module.exports = function(source, inputSourceMap) {
       if (err) { return callback(err); }
       return callback(null, result.code, result.map);
     });
+  } else {
+    result = transpile(source, options);
+    this.callback(null, result.code, result.map);
   }
-
-  result = transpile(source, options);
-  this.callback(null, result.code, result.map);
 };
