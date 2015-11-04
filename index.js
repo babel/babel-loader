@@ -26,9 +26,11 @@ var transpile = function(source, options) {
 module.exports = function(source, inputSourceMap) {
   var result = {};
   // Handle options
+  var webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
+  var filename = webpackRemainingChain[webpackRemainingChain.length - 1];
   var defaultOptions = {
     inputSourceMap: inputSourceMap,
-    filename: loaderUtils.getRemainingRequest(this),
+    filename: filename,
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
       'babel-core': babel.version,
