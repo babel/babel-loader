@@ -40,6 +40,7 @@ module.exports = function(source, inputSourceMap) {
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
           resolveRc(process.cwd()),
+      env: process.env.BABEL_ENV || process.env.NODE_ENV,
     }),
   };
 
