@@ -1,5 +1,16 @@
 # Changelog
 
+## v6.1.0
+
+  * Merge [PR #146](https://github.com/babel/babel-loader/pull/146) Set source file name relative to options.sourceRoot
+  * Merge [PR #136](https://github.com/babel/babel-loader/pull/136) use container-based infrastructure for faster build
+  * Merge [PR #121](https://github.com/babel/babel-loader/pull/121) Make babelrc configurable
+  * Merge [PR #113](https://github.com/babel/babel-loader/pull/113) Include BABEL_ENV || NODE_ENV in cacheIdentifier
+
+## v6.0.1
+
+  * Update to babel v6.
+
 ## v5.3.1
 
   * Merge [PR #85](https://github.com/babel/babel-loader/pull/85) - Don't override sourcemap if sourcesContent already exists.
