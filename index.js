@@ -7,6 +7,7 @@ var cache = require('./lib/fs-cache.js');
 var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
 var babelrc = resolveRc(process.cwd());
+var path = require('path');
 
 var transpile = function(source, options) {
   var result = babel.transform(source, options);
@@ -28,6 +29,7 @@ module.exports = function(source, inputSourceMap) {
   // Handle options
   var defaultOptions = {
     inputSourceMap: inputSourceMap,
+    sourceRoot: process.cwd(),
     filename: loaderUtils.getRemainingRequest(this),
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
@@ -41,6 +43,13 @@ module.exports = function(source, inputSourceMap) {
 
   if (options.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
+  }
+
+  if (options.sourceFileName === undefined) {
+    options.sourceFileName = path.relative(
+        options.sourceRoot,
+        options.filename
+    );
   }
 
   var cacheDirectory = options.cacheDirectory;
