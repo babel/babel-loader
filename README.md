@@ -98,20 +98,20 @@ module: {
   You can instead require the babel runtime as a separate module to avoid the duplication.
 
   The following configuration disables automatic per-file runtime injection in babel, instead
-  requiring `babel-runtime` and making all helper references use it.
+  requiring `babel-plugin-transform-runtime` and making all helper references use it.
 
-  See the [docs](https://babeljs.io/docs/usage/runtime) for more information.
+  See the [docs](http://babeljs.io/docs/plugins/transform-runtime/) for more information.
 
-  **NOTE:** You must run `npm install babel-runtime --save` to include this in your project.
+  **NOTE:** You must run `npm install babel-plugin-transform-runtime --save` to include this in your project.
 
 ```javascript
 loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
+  // the 'transform-runtime' plugin tells babel to require the runtime
   // instead of inlining it.
   {
     test: /\.jsx?$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel?presets[]=es2015'
+    loader: 'babel?presets[]=es2015&plugins[]=transform-runtime'
   }
 ]
 ```
