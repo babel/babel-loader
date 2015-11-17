@@ -28,6 +28,10 @@ var transpile = function(source, options) {
 module.exports = function(source, inputSourceMap) {
   var result = {};
 
+  // Handle filenames (#106)
+  var webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
+  var filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+
   // Handle options
   var globalOptions = this.options.babel || {};
   var loaderOptions = loaderUtils.parseQuery(this.query);
@@ -35,7 +39,7 @@ module.exports = function(source, inputSourceMap) {
   var defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
-    filename: loaderUtils.getRemainingRequest(this),
+    filename: filename,
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
       'babel-core': babel.version,
