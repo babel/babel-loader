@@ -8,7 +8,7 @@
 ## Installation
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 --save-dev
+npm install babel-loader babel-core babel-preset-es2015 babel-preset-react --save-dev
 ```
 
 __Note:__ [npm](https://npmjs.com) will deprecate [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) on the next major release, so required peer dependencies like babel-core and webpack will have to be listed explicitly in your `package.json`.
@@ -27,7 +27,10 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel' // 'babel-loader' is also a legal name to reference
+      loader: 'babel', // 'babel-loader' is also a legal name to reference
+      query: {
+        presets: ['react', 'es2015']
+      }
     }
   ]
 }
