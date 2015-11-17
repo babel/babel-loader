@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.2.0
+  * Pass true filenames [#106](https://github.com/babel/babel-loader/issues/106)
+  * Remove babel-core from devDependencies
+
 ## v6.1.0
 
   * Merge [PR #146](https://github.com/babel/babel-loader/pull/146) Set source file name relative to options.sourceRoot
