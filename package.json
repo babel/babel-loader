@@ -11,8 +11,7 @@
     "object-assign": "^4.0.1"
   },
   "peerDependencies": {
-    "babel-core": "^6.0.0",
-    "webpack": "*"
+    "babel-core": "^6.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
