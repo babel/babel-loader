@@ -1,6 +1,6 @@
 {
   "name": "babel-loader",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "description": "babel module loader for webpack",
   "files": [
     "index.js",
@@ -8,6 +8,7 @@
   ],
   "dependencies": {
     "loader-utils": "^0.2.11",
+    "mkdirp": "^0.5.1",
     "object-assign": "^4.0.1"
   },
   "peerDependencies": {
