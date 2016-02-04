@@ -4,6 +4,5 @@ node_js:
   - stable
   - '0'
   - '0.10'
-install:
-  - npm install
+before_script:
   - npm install babel-core babel-preset-es2015
