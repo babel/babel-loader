@@ -1,6 +1,6 @@
 {
   "name": "babel-loader",
-  "version": "6.2.1",
+  "version": "6.2.2",
   "description": "babel module loader for webpack",
   "files": [
     "index.js",
@@ -20,13 +20,12 @@
     "istanbul": "^0.4.0",
     "jscs": "^2.5.0",
     "jshint": "^2.8.0",
-    "mkdirp": "^0.5.1",
     "mocha": "^2.3.3",
     "rimraf": "^2.4.3",
     "webpack": "^1.12.2"
   },
   "scripts": {
-    "test": "npm install babel-core babel-preset-es2015 && npm run hint && npm run cs && npm run cov",
+    "test": "npm run hint && npm run cs && npm run cov",
     "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
     "hint": "jshint --config .jshintrc index.js lib/* test/*",
     "cs": "jscs --config .jscsrc index.js lib/* test/*"
