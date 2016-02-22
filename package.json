@@ -13,7 +13,7 @@
   },
   "peerDependencies": {
     "babel-core": "^6.0.0",
-    "webpack": "^1 || ^2.1.0-beta.2"
+    "webpack": "1 || ^2.1.0-beta.2"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
