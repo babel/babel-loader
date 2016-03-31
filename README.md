@@ -29,7 +29,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel', // 'babel-loader' is also a legal name to reference
       query: {
-        presets: ['react', 'es2015']
+        presets: ['es2015']
       }
     }
   ]
@@ -48,7 +48,7 @@ module: {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel?presets[]=react,presets[]=es2015'
+      loader: 'babel?presets[]=es2015'
     }
   ]
 }
@@ -64,7 +64,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel',
       query: {
-        presets: ['react', 'es2015']
+        presets: ['es2015']
       }
     }
   ]
@@ -116,7 +116,7 @@ loaders: [
     exclude: /(node_modules|bower_components)/,
     loader: 'babel',
     query: {
-      presets: ['react', 'es2015'],
+      presets: ['es2015'],
       plugins: ['transform-runtime']
     }
   }
