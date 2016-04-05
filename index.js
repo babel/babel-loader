@@ -57,10 +57,10 @@ module.exports = function(source, inputSourceMap) {
   }
 
   if (options.sourceFileName === undefined) {
-    options.sourceFileName = '.' + path.sep + path.relative(
+    options.sourceFileName = path.resolve(path.relative(
         options.sourceRoot,
         options.filename
-    );
+    ));
   }
 
   var cacheDirectory = options.cacheDirectory;
