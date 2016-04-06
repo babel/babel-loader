@@ -36,6 +36,10 @@ module.exports = function(source, inputSourceMap) {
   var globalOptions = this.options.babel || {};
   var loaderOptions = loaderUtils.parseQuery(this.query);
   var userOptions = assign({}, globalOptions, loaderOptions);
+  var babelrc = exists(userOptions.babelrc) ?
+    read(userOptions.babelrc) :
+    resolveRc(process.cwd());
+  var babelrcOpts = JSON.parse(babelrc || '{}');
   var defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
@@ -43,14 +47,14 @@ module.exports = function(source, inputSourceMap) {
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
       'babel-core': babel.version,
-      babelrc: exists(userOptions.babelrc) ?
-          read(userOptions.babelrc) :
-          resolveRc(process.cwd()),
+      babelrc: babelrc,
       env: process.env.BABEL_ENV || process.env.NODE_ENV,
     }),
   };
 
-  var options = assign({}, defaultOptions, userOptions);
+  babelrcOpts.babelWD = process.cwd();
+
+  var options = assign({}, defaultOptions, babelrcOpts, userOptions);
 
   if (userOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
