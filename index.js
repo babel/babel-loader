@@ -1,7 +1,6 @@
 'use strict';
 
 var assign = require('object-assign');
-var babel = require('babel-core');
 var loaderUtils = require('loader-utils');
 var cache = require('./lib/fs-cache.js');
 var exists = require('./lib/helpers/exists')();
@@ -9,21 +8,29 @@ var read = require('./lib/helpers/read')();
 var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
 var path = require('path');
+var ProcessPool = require('process-pool');
+var os = require('os');
 
-var transpile = function(source, options) {
-  var result = babel.transform(source, options);
-  var code = result.code;
-  var map = result.map;
+function transpileTask() {
+  var babel = require('babel-core');
+  return function transpile(source, options) {
+    var result = babel.transform(source, options);
+    var code = result.code;
+    var map = result.map;
 
-  if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
-    map.sourcesContent = [source];
+    if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
+      map.sourcesContent = [source];
+    }
+
+    return {
+      code: code,
+      map: map,
+    };
   }
+}
 
-  return {
-    code: code,
-    map: map,
-  };
-};
+var pool = new ProcessPool({processLimit: os.cpus().length});
+var transpile = pool.prepare(transpileTask);
 
 module.exports = function(source, inputSourceMap) {
   var result = {};
@@ -42,7 +49,7 @@ module.exports = function(source, inputSourceMap) {
     filename: filename,
     cacheIdentifier: JSON.stringify({
       'babel-loader': pkg.version,
-      'babel-core': babel.version,
+      'babel-core': require('babel-core').version,
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
           resolveRc(process.cwd()),
@@ -71,8 +78,9 @@ module.exports = function(source, inputSourceMap) {
 
   this.cacheable();
 
+  var callback = this.async();
+
   if (cacheDirectory) {
-    var callback = this.async();
     return cache({
       directory: cacheDirectory,
       identifier: cacheIdentifier,
@@ -83,8 +91,12 @@ module.exports = function(source, inputSourceMap) {
       if (err) { return callback(err); }
       return callback(null, result.code, result.map);
     });
+  } else {
+    transpile(source, options).then(
+      function(result) {
+        callback(null, result.code, result.map)
+      },
+      callback
+    )
   }
-
-  result = transpile(source, options);
-  this.callback(null, result.code, result.map);
 };
