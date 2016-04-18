@@ -8,10 +8,8 @@ var read = require('./lib/helpers/read')();
 var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
 var path = require('path');
-var ProcessPool = require('process-pool');
-var os = require('os');
+var pool = require('process-pool-singleton');
 
-var pool = new ProcessPool({processLimit: os.cpus().length});
 var transpile = pool.prepare(require('./lib/transpilerWorker'));
 
 module.exports = function(source, inputSourceMap) {
