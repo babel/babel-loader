@@ -23,11 +23,13 @@
     "jshint": "^2.8.0",
     "mocha": "^2.3.3",
     "rimraf": "^2.4.3",
-    "webpack": "^1.12.2"
+    "webpack": "^1.12.2",
+    "babel-core": "^6.0.0",
+    "babel-preset-es2015": "^6.0.0"
   },
   "scripts": {
     "test": "npm run hint && npm run cs && npm run cov",
-    "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
+    "cov": "istanbul cover -x lib/transpilerWorker.js ./node_modules/.bin/_mocha -- test/*.test.js",
     "hint": "jshint --config .jshintrc index.js lib/* test/*",
     "cs": "jscs --config .jscsrc index.js lib/* test/*"
   },

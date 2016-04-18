@@ -11,26 +11,8 @@ var path = require('path');
 var ProcessPool = require('process-pool');
 var os = require('os');
 
-function transpileTask() {
-  var babel = require('babel-core');
-  return function transpile(source, options) {
-    var result = babel.transform(source, options);
-    var code = result.code;
-    var map = result.map;
-
-    if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
-      map.sourcesContent = [source];
-    }
-
-    return {
-      code: code,
-      map: map,
-    };
-  }
-}
-
 var pool = new ProcessPool({processLimit: os.cpus().length});
-var transpile = pool.prepare(transpileTask);
+var transpile = pool.prepare(require('./lib/transpilerWorker'));
 
 module.exports = function(source, inputSourceMap) {
   var result = {};
@@ -91,12 +73,11 @@ module.exports = function(source, inputSourceMap) {
       if (err) { return callback(err); }
       return callback(null, result.code, result.map);
     });
-  } else {
-    transpile(source, options).then(
-      function(result) {
-        callback(null, result.code, result.map)
-      },
-      callback
-    )
   }
+  transpile(source, options).then(
+    function(result) {
+      callback(null, result.code, result.map);
+    },
+    callback
+  );
 };
