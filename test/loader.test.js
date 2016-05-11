@@ -28,7 +28,6 @@ describe('Loader', function() {
           query: {
             presets: ['es2015'],
           },
-          exclude: /node_modules/,
         },
       ],
     },
@@ -54,7 +53,6 @@ describe('Loader', function() {
             query: {
               presets: ['es2015'],
             },
-            exclude: /node_modules/,
           },
         ],
       },
@@ -90,7 +88,6 @@ describe('Loader', function() {
             query: {
               presets: ['es2015'],
             },
-            exclude: /node_modules/,
           },
         ],
       },

@@ -23,7 +23,6 @@ describe('Options', function() {
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          exclude: /node_modules/,
         },
       ],
     },
@@ -46,7 +45,6 @@ describe('Options', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader + '?presets[]=es2015',
-            exclude: /node_modules/,
           },
         ],
       },
@@ -76,7 +74,6 @@ describe('Options', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader,
-            exclude: /node_modules/,
           },
         ],
       },
@@ -105,7 +102,6 @@ describe('Options', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader + '?presets[]=es2015',
-            exclude: /node_modules/,
           },
         ],
       },
