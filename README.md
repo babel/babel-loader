@@ -54,7 +54,7 @@ module: {
 }
   ```
 
-  or by using the query property:
+  or by using the [query property](https://webpack.github.io/docs/using-loaders.html#query-parameters):
 
   ```javascript
 module: {
@@ -73,7 +73,7 @@ module: {
 
   This loader also supports the following loader-specific option:
 
-  * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) the loader will use the default cache directory in `node_modules/.cache/babel-loader`.
+  * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: babel-loader?cacheDirectory=true`) the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
 
   * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
 
@@ -143,60 +143,6 @@ In the case one of your dependencies is installing `babel` and you cannot uninst
     loader: 'babel-loader',
   }
 ```
-
-
-### using `cacheDirectory` fails with ENOENT Error
-
-If using cacheDirectory results in an error similar to the following:
-
-```bash
-ERROR in ./frontend/src/main.js
-Module build failed: Error: ENOENT, open 'true/350c59cae6b7bce3bb58c8240147581bfdc9cccc.json.gzip'
- @ multi app
-```
-(notice the `true/` in the filepath)
-
-That means that most likely, you're not setting the options correctly, and you're doing something similar to:
-
-```javascript
-loaders: [
-  {
-    test: /\.js$/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'babel?cacheDirectory=true'
-  }
-]
-```
-
-That's not the correct way of setting boolean values. You should do instead:
-
-```javascript
-loaders: [
-  {
-    test: /\.js$/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'babel?cacheDirectory'
-  }
-]
-```
-
-or use the [query](https://webpack.github.io/docs/using-loaders.html#query-parameters) property:
-
-```javascript
-loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
-  // instead of inlining it.
-  {
-    test: /\.js$/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'babel',
-    query: {
-      cacheDirectory: true
-    }
-  }
-]
-```
-
 
 ### custom polyfills (e.g. Promise library)
 
