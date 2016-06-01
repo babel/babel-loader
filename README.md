@@ -73,7 +73,12 @@ module: {
 
   This loader also supports the following loader-specific option:
 
-  * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) the loader will use the default OS temporary file directory.
+  * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If you want loader to use the default OS temporary file directory, you can set set it to true.
+  ```javascript
+    query: {
+      cacheDirectory: true
+    }
+  ```
 
   * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version and the contents of .babelrc file if it exists. This can set to a custom value to force cache busting if the identifier changes.
 
