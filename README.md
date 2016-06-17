@@ -105,7 +105,7 @@ module: {
 
   See the [docs](http://babeljs.io/docs/plugins/transform-runtime/) for more information.
 
-  **NOTE:** You must run `npm install babel-plugin-transform-runtime --save` to include this in your project.
+  **NOTE:** You must run `npm install babel-plugin-transform-runtime --save-dev` to include this in your project.
 
 ```javascript
 loaders: [
