@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "babel-core": "^5.0.0",
-    "webpack": "*"
+    "webpack": "1 || 2 || ^2.1.0-beta"
   },
   "devDependencies": {
     "babel-core": "^5.5.8",
