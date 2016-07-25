@@ -3,6 +3,10 @@
   "version": "5.4.1",
   "description": "babel module loader for webpack",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "dependencies": {
     "babel-core": "^5.4.0",
     "loader-utils": "^0.2.9",
