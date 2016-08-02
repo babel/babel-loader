@@ -14,4 +14,4 @@
 
   If, however, you want to ensure that you're following the node style guide, you can use [JSCS](https://github.com/jscs-dev/node-jscs). The rules are already set on the [.jscsrc](https://github.com/babel/babel-loader/blob/master/.jscsrc) file and there's most likely some [package](http://jscs.info/overview.html#friendly-packages) to your editor already.
 
-  Documentation, wether in the state of JavaDoc or simple line comments are always welcome.
+  Documentation, whether in the state of JavaDoc or simple line comments are always welcome.
