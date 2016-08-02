@@ -23,7 +23,6 @@ describe('Sourcemaps', function() {
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          exclude: /node_modules/,
         },
       ],
     },
@@ -48,7 +47,6 @@ describe('Sourcemaps', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader + '?presets[]=es2015',
-            exclude: /node_modules/,
           },
         ],
       },
@@ -89,7 +87,6 @@ describe('Sourcemaps', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader,
-            exclude: /node_modules/,
           },
         ],
       },

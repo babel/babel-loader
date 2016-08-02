@@ -29,7 +29,6 @@ describe('Filesystem Cache', function() {
         {
           test: /\.js$/,
           loader: babelLoader,
-          exclude: /node_modules/,
         },
       ],
     },
@@ -52,7 +51,6 @@ describe('Filesystem Cache', function() {
           {
             test: /\.js$/,
             loader: babelLoader,
-            exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
               presets: ['es2015'],
@@ -80,7 +78,6 @@ describe('Filesystem Cache', function() {
           {
             test: /\.jsx?/,
             loader: babelLoader,
-            exclude: /node_modules/,
             query: {
               cacheDirectory: true,
               presets: ['es2015'],
@@ -113,7 +110,6 @@ describe('Filesystem Cache', function() {
           {
             test: /\.jsx?/,
             loader: loader,
-            exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
               presets: ['es2015'],
@@ -148,7 +144,6 @@ describe('Filesystem Cache', function() {
           {
             test: /\.jsx?/,
             loader: loader,
-            exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
               presets: ['es2015'],
@@ -180,7 +175,6 @@ describe('Filesystem Cache', function() {
             {
               test: /\.jsx?/,
               loader: babelLoader,
-              exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
                 cacheIdentifier: 'a',
@@ -196,7 +190,6 @@ describe('Filesystem Cache', function() {
             {
               test: /\.jsx?/,
               loader: babelLoader,
-              exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
                 cacheIdentifier: 'b',
@@ -235,7 +228,6 @@ describe('Filesystem Cache', function() {
             {
               test: /\.jsx?/,
               loader: babelLoader,
-              exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
                 babelrc: path.resolve(__dirname, 'fixtures/babelrc'),
@@ -252,7 +244,6 @@ describe('Filesystem Cache', function() {
             {
               test: /\.jsx?/,
               loader: babelLoader,
-              exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
                 presets: ['es2015'],
