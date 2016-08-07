@@ -13,8 +13,6 @@ env:
   - export WEBPACK_VERSION="1"
 matrix:
   fast_finish: true
-  allow_failures:
-    - os: osx
 before_install:
   - nvm --version
   - node --version
