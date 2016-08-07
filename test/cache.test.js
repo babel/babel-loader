@@ -10,7 +10,7 @@ const rimraf = require('rimraf');
 const webpack = require('webpack');
 
 describe('Filesystem Cache', function() {
-  this.timeout(60000); // @TODO Figure out what this is necessary on node4 / osx
+  this.timeout(60000); // Necessary becuase of containerized CI & shared file system perf.
 
   const cacheDir = path.resolve(__dirname, 'output/cache/cachefiles');
   const outputDir = path.resolve(__dirname, './output/cache/');
