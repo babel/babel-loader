@@ -1,8 +1,28 @@
 sudo: false
 language: node_js
+os:
+  - linux
+  - osx
 node_js:
-  - stable
-  - '0'
-  - '0.10'
+  - node
+  - "6"
+  - "5"
+  - "4"
+env:
+  - export WEBPACK_VERSION="2.1.0-beta"
+  - export WEBPACK_VERSION="1"
+matrix:
+  fast_finish: true
+  allow_failures:
+    - os: osx
+before_install:
+  - nvm --version
+  - node --version
+  - npm --version
 before_script:
+  - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@^$WEBPACK_VERSION; fi'
   - npm install babel-core babel-preset-es2015
+script:
+  - npm run travis
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
