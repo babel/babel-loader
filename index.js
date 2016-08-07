@@ -45,7 +45,7 @@ module.exports = function(source, inputSourceMap) {
       'babel-core': babel.version,
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
-          resolveRc(process.cwd()),
+          resolveRc(path.dirname(filename)),
       env: process.env.BABEL_ENV || process.env.NODE_ENV,
     }),
   };
