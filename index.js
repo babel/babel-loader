@@ -66,15 +66,13 @@ var transpile = function(source, options) {
   return {
     code: code,
     map: map,
-    metadata: metadata
+    metadata: metadata,
   };
 };
 
 
 function passMetadata(s, context, metadata) {
-  //console.log("s:",s,"metadata:",metadata,"context:",context);
   if (context[s]) {
-    //console.log("context function:",context[s].toString());
     context[s](metadata);
   }
 }
@@ -139,12 +137,16 @@ module.exports = function(source, inputSourceMap) {
       transform: transpile,
     }, function(err, result) {
       if (err) { return callback(err); }
-      metadataSubscribers.map(function (s) {passMetadata(s, context, result.metadata);});
+      metadataSubscribers.map(function(s) {
+        passMetadata(s, context, result.metadata);
+      });
       return callback(null, result.code, result.map);
     });
   }
 
   result = transpile(source, options);
-  metadataSubscribers.map(function (s) {passMetadata(s, context, result.metadata);});
+  metadataSubscribers.map(function(s) {
+    passMetadata(s, context, result.metadata);
+  });
   this.callback(null, result.code, result.map);
 };
