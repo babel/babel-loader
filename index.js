@@ -139,12 +139,12 @@ module.exports = function(source, inputSourceMap) {
       transform: transpile,
     }, function(err, result) {
       if (err) { return callback(err); }
-      metadataSubscribers.map(function (s) {passMetadata(s, context, result.metadata)});
+      metadataSubscribers.map(function (s) {passMetadata(s, context, result.metadata);});
       return callback(null, result.code, result.map);
     });
   }
 
   result = transpile(source, options);
-  metadataSubscribers.map(function (s) {passMetadata(s, context, result.metadata)});
+  metadataSubscribers.map(function (s) {passMetadata(s, context, result.metadata);});
   this.callback(null, result.code, result.map);
 };
