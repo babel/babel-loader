@@ -1,17 +1,17 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var expect = require('expect.js');
-var resolveRc = require('../lib/resolve-rc.js');
-var exists = require('../lib/helpers/exists.js');
-var read = require('../lib/helpers/read.js');
+const fs = require('fs');
+const path = require('path');
+const expect = require('expect.js');
+const resolveRc = require('../lib/resolve-rc.js');
+const exists = require('../lib/helpers/exists.js');
+const read = require('../lib/helpers/read.js');
 
 describe('ResolveRc', function() {
 
   it('should find the .babelrc file', function() {
-    var start = path.resolve(__dirname, 'fixtures/babelrc-test/1/2/3');
-    var result = resolveRc(start);
+    const start = path.resolve(__dirname, 'fixtures/babelrc-test/1/2/3');
+    const result = resolveRc(start);
 
     expect(result).to.be.a('string');
   });
@@ -19,15 +19,15 @@ describe('ResolveRc', function() {
 
 describe('exists', function() {
 
-  var cache = {};
-  var files  = {
+  const cache = {};
+  const files = {
     existent: path.resolve(__dirname, 'fixtures/basic.js'),
     fake: path.resolve(__dirname, 'fixtures/nonExistentFile.js'),
   };
 
   it('should return boolean if file exists', function() {
-    var realFile = exists(cache)(files.existent);
-    var fakeFile = exists(cache)(files.fake);
+    const realFile = exists(cache)(files.existent);
+    const fakeFile = exists(cache)(files.fake);
 
     expect(realFile).to.equal(true);
     expect(fakeFile).to.equal(false);
@@ -42,16 +42,16 @@ describe('exists', function() {
 
 describe('read', function() {
 
-  var cache = {};
-  var files  = {
+  const cache = {};
+  const files = {
     existent: path.resolve(__dirname, 'fixtures/basic.js'),
     fake: path.resolve(__dirname, 'fixtures/nonExistentFile.js'),
   };
 
-  var content = fs.readFileSync(files.existent, 'utf8');
+  const content = fs.readFileSync(files.existent, 'utf8');
 
   it('should return contents if file exists', function() {
-    var realFile = read(cache)(files.existent);
+    const realFile = read(cache)(files.existent);
     expect(realFile).to.equal(content);
   });
 

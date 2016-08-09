@@ -1,31 +1,29 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var assign = require('object-assign');
-var expect = require('expect.js');
-var mkdirp = require('mkdirp');
-var rimraf = require('rimraf');
-var webpack = require('webpack');
+const fs = require('fs');
+const path = require('path');
+const assign = require('object-assign');
+const expect = require('expect.js');
+const mkdirp = require('mkdirp');
+const rimraf = require('rimraf');
+const webpack = require('webpack');
 
 describe('Options', function() {
 
-  var outputDir = path.resolve(__dirname, './output/options');
-  var babelLoader = path.resolve(__dirname, '../');
-  var globalConfig = {
+  const outputDir = path.resolve(__dirname, './output/options');
+  const babelLoader = path.resolve(__dirname, '../');
+  const globalConfig = {
     entry: './test/fixtures/basic.js',
     output: {
       path: outputDir,
       filename: '[id].options.js',
     },
     module: {
-      loaders: [
-        {
-          test: /\.jsx?/,
-          loader: babelLoader,
-          exclude: /node_modules/,
-        },
-      ],
+      loaders: [{
+        test: /\.jsx?/,
+        loader: babelLoader,
+        exclude: /node_modules/,
+      }, ],
     },
   };
 
@@ -33,26 +31,26 @@ describe('Options', function() {
   // so that we can call each test with an empty state.
   beforeEach(function(done) {
     rimraf(outputDir, function(err) {
-      if (err) { return done(err); }
+      if (err) {
+        return done(err);
+      }
       mkdirp(outputDir, done);
     });
   });
 
   it('should interpret options given to the loader', function(done) {
-    var config = assign({}, globalConfig, {
+    const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js',
       module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader + '?presets[]=es2015',
-            exclude: /node_modules/,
-          },
-        ],
+        loaders: [{
+          test: /\.jsx?/,
+          loader: babelLoader + '?presets[]=es2015',
+          exclude: /node_modules/,
+        }, ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(outputDir, function(err, files) {
@@ -66,23 +64,21 @@ describe('Options', function() {
 
   it('should interpret options given globally', function(done) {
 
-    var config = assign({}, globalConfig, {
+    const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js',
       babel: {
         presets: ['es2015'],
       },
       module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-          },
-        ],
+        loaders: [{
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+        }, ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(outputDir, function(err, files) {
@@ -95,23 +91,21 @@ describe('Options', function() {
   });
 
   it('should give priority to loader options', function(done) {
-    var config = assign({}, globalConfig, {
+    const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js',
       babel: {
         presets: [],
       },
       module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader + '?presets[]=es2015',
-            exclude: /node_modules/,
-          },
-        ],
+        loaders: [{
+          test: /\.jsx?/,
+          loader: babelLoader + '?presets[]=es2015',
+          exclude: /node_modules/,
+        }, ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(outputDir, function(err, files) {

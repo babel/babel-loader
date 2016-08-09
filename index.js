@@ -1,19 +1,19 @@
 'use strict';
 
-var assign = require('object-assign');
-var babel = require('babel-core');
-var loaderUtils = require('loader-utils');
-var cache = require('./lib/fs-cache.js');
-var exists = require('./lib/helpers/exists')();
-var read = require('./lib/helpers/read')();
-var resolveRc = require('./lib/resolve-rc.js');
-var pkg = require('./package.json');
-var path = require('path');
+const assign = require('object-assign');
+const babel = require('babel-core');
+const loaderUtils = require('loader-utils');
+const cache = require('./lib/fs-cache.js');
+const exists = require('./lib/helpers/exists')();
+const read = require('./lib/helpers/read')();
+const resolveRc = require('./lib/resolve-rc.js');
+const pkg = require('./package.json');
+const path = require('path');
 
-var transpile = function(source, options) {
-  var result = babel.transform(source, options);
-  var code = result.code;
-  var map = result.map;
+const transpile = function(source, options) {
+  const result = babel.transform(source, options);
+  const code = result.code;
+  const map = result.map;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
@@ -26,17 +26,17 @@ var transpile = function(source, options) {
 };
 
 module.exports = function(source, inputSourceMap) {
-  var result = {};
+  let result = {};
 
   // Handle filenames (#106)
-  var webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
-  var filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+  const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
+  const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  var globalOptions = this.options.babel || {};
-  var loaderOptions = loaderUtils.parseQuery(this.query);
-  var userOptions = assign({}, globalOptions, loaderOptions);
-  var defaultOptions = {
+  const globalOptions = this.options.babel || {};
+  const loaderOptions = loaderUtils.parseQuery(this.query);
+  const userOptions = assign({}, globalOptions, loaderOptions);
+  const defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
     filename: filename,
@@ -44,13 +44,12 @@ module.exports = function(source, inputSourceMap) {
       'babel-loader': pkg.version,
       'babel-core': babel.version,
       babelrc: exists(userOptions.babelrc) ?
-          read(userOptions.babelrc) :
-          resolveRc(path.dirname(filename)),
+        read(userOptions.babelrc) : resolveRc(path.dirname(filename)),
       env: process.env.BABEL_ENV || process.env.NODE_ENV,
     }),
   };
 
-  var options = assign({}, defaultOptions, userOptions);
+  const options = assign({}, defaultOptions, userOptions);
 
   if (userOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
@@ -58,13 +57,13 @@ module.exports = function(source, inputSourceMap) {
 
   if (options.sourceFileName === undefined) {
     options.sourceFileName = path.relative(
-        options.sourceRoot,
-        options.filename
+      options.sourceRoot,
+      options.filename
     );
   }
 
-  var cacheDirectory = options.cacheDirectory;
-  var cacheIdentifier = options.cacheIdentifier;
+  const cacheDirectory = options.cacheDirectory;
+  const cacheIdentifier = options.cacheIdentifier;
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
@@ -72,7 +71,7 @@ module.exports = function(source, inputSourceMap) {
   this.cacheable();
 
   if (cacheDirectory) {
-    var callback = this.async();
+    let callback = this.async();
     return cache({
       directory: cacheDirectory,
       identifier: cacheIdentifier,
@@ -80,7 +79,9 @@ module.exports = function(source, inputSourceMap) {
       options: options,
       transform: transpile,
     }, function(err, result) {
-      if (err) { return callback(err); }
+      if (err) {
+        return callback(err);
+      }
       return callback(null, result.code, result.map);
     });
   }

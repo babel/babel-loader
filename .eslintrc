@@ -1,0 +1,14 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": [
+    "eslint-config-babel"
+  ],
+  "rules": {
+    "max-len": [1, {"code": 110, "ignoreUrls": true}],
+    "quotes": [2, "single"]
+  }
+}

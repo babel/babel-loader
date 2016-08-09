@@ -1,5 +1,3 @@
-/*jshint esnext:true*/
-
 import test from './import.js';
 
 class App {
