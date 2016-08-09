@@ -82,6 +82,18 @@ describe('Metadata', function() {
     });
   });
 
+  it('should throw error ', function(done) {
+    var config = assign({}, globalConfig, {
+      entry: './test/fixtures/metadataErr.js',
+    });
+
+    webpack(config, function(err, stats) {
+      expect(stats.compilation.errors.length).to.be.greaterThan(0);
+      return done();
+    });
+  });
+
+
 });
 
 
