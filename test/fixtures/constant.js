@@ -1,1 +1,1 @@
-const LOADER = true; // eslint-disable-line no-unused-vars
+const LOADER = true;
