@@ -1,6 +1,6 @@
 {
   "name": "babel-loader",
-  "version": "6.2.4",
+  "version": "6.2.5",
   "description": "babel module loader for webpack",
   "files": [
     "index.js",
@@ -29,7 +29,7 @@
     "test": "npm run hint && npm run cs && npm run cover",
     "travis": "npm run cover -- --report lcovonly",
     "cover": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
-    "postcover":"npm run hint && npm run cs",
+    "postcover": "npm run hint && npm run cs",
     "hint": "jshint --config .jshintrc index.js lib/* test/*",
     "cs": "jscs --config .jscsrc index.js lib/* test/*"
   },
