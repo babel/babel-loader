@@ -10,8 +10,51 @@ var resolveRc = require('./lib/resolve-rc.js');
 var pkg = require('./package.json');
 var path = require('path');
 
+/**
+ * Error thrown by Babel formatted to conform to Webpack reporting.
+ */
+function BabelLoaderError(name, message, codeFrame, hideStack, error) {
+  Error.call(this);
+  Error.captureStackTrace(this, BabelLoaderError);
+
+  this.name = 'BabelLoaderError';
+  this.message = formatMessage(name, message, codeFrame);
+  this.hideStack = hideStack;
+  this.error = error;
+}
+
+BabelLoaderError.prototype = Object.create(Error.prototype);
+BabelLoaderError.prototype.constructor = BabelLoaderError;
+
+var STRIP_FILENAME_RE = /^[^:]+: /;
+
+var formatMessage = function(name, message, codeFrame) {
+  return (name ? name + ': ' : '') + message + '\n\n' + codeFrame + '\n';
+};
+
 var transpile = function(source, options) {
-  var result = babel.transform(source, options);
+  var result;
+  try {
+    result = babel.transform(source, options);
+  } catch (error) {
+    if (error.message && error.codeFrame) {
+      var message = error.message;
+      var name;
+      var hideStack;
+      if (error instanceof SyntaxError) {
+        message = message.replace(STRIP_FILENAME_RE, '');
+        name = 'SyntaxError';
+        hideStack = true;
+      } else if (error instanceof TypeError) {
+        message = message.replace(STRIP_FILENAME_RE, '');
+        hideStack = true;
+      }
+      throw new BabelLoaderError(
+        name, message, error.codeFrame, hideStack, error);
+    } else {
+      throw error;
+    }
+  }
   var code = result.code;
   var map = result.map;
 
