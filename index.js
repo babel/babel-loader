@@ -96,7 +96,12 @@ module.exports = function(source, inputSourceMap) {
   var options = assign({}, defaultOptions, userOptions);
 
   if (userOptions.sourceMap === undefined) {
-    options.sourceMap = this.sourceMap;
+    var devtool = this.options.devtool;
+    if (typeof devtool === 'string' && devtool.indexOf('inline') >= 0) {
+      options.sourceMap = 'inline';
+    } else {
+      options.sourceMap = this.sourceMap;
+    }
   }
 
   if (options.sourceFileName === undefined) {

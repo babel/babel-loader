@@ -38,6 +38,44 @@ describe('Sourcemaps', function() {
     });
   });
 
+  it('should not output webpack\'s sourcemap', function(done) {
+
+    var config = assign({}, globalConfig, {
+      // No devtool selected
+      entry: './test/fixtures/basic.js',
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader + '?presets[]=es2015',
+            exclude: /node_modules/,
+          },
+        ],
+      },
+    });
+
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
+
+      fs.readdir(outputDir, function(err, files) {
+        expect(err).to.be(null);
+
+        var map = files.filter(function(file) {
+          return (file.indexOf('.js') !== -1);
+        });
+
+        expect(map).to.not.be.empty();
+
+        fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
+          expect(err).to.be(null);
+          expect(data.toString().indexOf('//# sourceMappingURL')).to.equal(-1);
+          done();
+        });
+
+      });
+    });
+  });
+
   it('should output webpack\'s sourcemap', function(done) {
 
     var config = assign({}, globalConfig, {
@@ -69,6 +107,45 @@ describe('Sourcemaps', function() {
         fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
           expect(err).to.be(null);
           expect(data.toString().indexOf('webpack:///')).to.not.equal(-1);
+          done();
+        });
+
+      });
+    });
+  });
+
+  it('should output webpack\'s sourcemap inlined', function(done) {
+
+    var config = assign({}, globalConfig, {
+      devtool: 'inline-source-map',
+      entry: './test/fixtures/basic.js',
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader + '?presets[]=es2015',
+            exclude: /node_modules/,
+          },
+        ],
+      },
+    });
+
+    webpack(config, function(err, stats) {
+      expect(err).to.be(null);
+
+      fs.readdir(outputDir, function(err, files) {
+        expect(err).to.be(null);
+
+        var map = files.filter(function(file) {
+          return (file.indexOf('.js') !== -1);
+        });
+
+        expect(map).to.not.be.empty();
+
+        fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
+          expect(err).to.be(null);
+          var souceMapComment = '//# sourceMappingURL=data:application/json';
+          expect(data.toString().indexOf(souceMapComment)).to.not.equal(-1);
           done();
         });
 
