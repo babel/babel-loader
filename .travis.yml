@@ -21,6 +21,7 @@ before_install:
   - npm --version
 before_script:
   - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@^$WEBPACK_VERSION; fi'
+  - npm install babel-core babel-preset-es2015
 script:
   - npm run travis
 after_success:

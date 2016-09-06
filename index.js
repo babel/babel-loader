@@ -57,6 +57,7 @@ var transpile = function(source, options) {
   }
   var code = result.code;
   var map = result.map;
+  var metadata = result.metadata;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
@@ -65,8 +66,16 @@ var transpile = function(source, options) {
   return {
     code: code,
     map: map,
+    metadata: metadata,
   };
 };
+
+
+function passMetadata(s, context, metadata) {
+  if (context[s]) {
+    context[s](metadata);
+  }
+}
 
 module.exports = function(source, inputSourceMap) {
   var result = {};
@@ -80,6 +89,7 @@ module.exports = function(source, inputSourceMap) {
   var loaderOptions = loaderUtils.parseQuery(this.query);
   var userOptions = assign({}, globalOptions, loaderOptions);
   var defaultOptions = {
+    metadataSubscribers: [],
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
     filename: filename,
@@ -108,11 +118,14 @@ module.exports = function(source, inputSourceMap) {
 
   var cacheDirectory = options.cacheDirectory;
   var cacheIdentifier = options.cacheIdentifier;
+  var metadataSubscribers = options.metadataSubscribers;
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
+  delete options.metadataSubscribers;
 
   this.cacheable();
+  var context = this;
 
   if (cacheDirectory) {
     var callback = this.async();
@@ -124,10 +137,16 @@ module.exports = function(source, inputSourceMap) {
       transform: transpile,
     }, function(err, result) {
       if (err) { return callback(err); }
+      metadataSubscribers.map(function(s) {
+        passMetadata(s, context, result.metadata);
+      });
       return callback(null, result.code, result.map);
     });
   }
 
   result = transpile(source, options);
+  metadataSubscribers.map(function(s) {
+    passMetadata(s, context, result.metadata);
+  });
   this.callback(null, result.code, result.map);
 };
