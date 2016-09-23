@@ -136,7 +136,7 @@ If you receive this message it means that you have the npm package `babel` insta
 Webpack then tries to load the `babel` package instead of the `babel-loader`.
 
 To fix this you should uninstall the npm package `babel` as it is deprecated in babel v6. (instead install `babel-cli` or `babel-core`)
-In the case one of your dependencies is isntalling `babel` and you cannot uninstall it, use the complete name of the loader in the webpack config:
+In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the webpack config:
 ```js
   {
     test: /\.js$/,
