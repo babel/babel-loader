@@ -18,6 +18,9 @@
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
+    "add-stream": "^1.0.0",
+    "conventional-changelog": "^1.1.0",
+    "cz-conventional-changelog": "^1.1.6",
     "expect.js": "^0.3.1",
     "istanbul": "^0.4.0",
     "jscs": "^3.0.7",
@@ -26,6 +29,7 @@
     "rimraf": "^2.4.3"
   },
   "scripts": {
+    "generate.changelog": "node scripts/release/generate-changelog.js",
     "test": "npm run hint && npm run cs && npm run cover",
     "travis": "npm run cover -- --report lcovonly",
     "cover": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
@@ -50,6 +54,11 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/babel/babel-loader/issues"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "homepage": "https://github.com/babel/babel-loader"
 }
