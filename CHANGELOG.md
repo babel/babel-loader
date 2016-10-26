@@ -1,5 +1,19 @@
 # Changelog
 
+## v6.2.6
+
+### 🐛 Bug Fix
+
+- Use standard cache dir as default `cacheDirectory` @fson
+
+Use the common cache directory, `./node_modules/.cache/babel-loader`, as the default cache directory (when the cacheDirectory setting is enabled).
+
+```js
+query: {
+  cacheDirectory: true
+}
+```
+
 ## v6.2.5
 
 - Don't show the call stack for a Babel error (such as when you have a syntax error)
