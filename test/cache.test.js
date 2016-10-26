@@ -12,6 +12,8 @@ var webpack = require('webpack');
 describe('Filesystem Cache', function() {
   this.timeout(15000);
 
+  var defaultCacheDir = path.resolve(__dirname,
+    '../node_modules/.cache/babel-loader');
   var cacheDir = path.resolve(__dirname, 'output/cache/cachefiles');
   var outputDir = path.resolve(__dirname, './output/cache/');
   var babelLoader = path.resolve(__dirname, '../');
@@ -43,6 +45,9 @@ describe('Filesystem Cache', function() {
       mkdirp(cacheDir, done);
     });
   });
+  beforeEach(function(done) {
+    rimraf(defaultCacheDir, done);
+  });
 
   it('should output files to cache directory', function(done) {
 
@@ -73,7 +78,7 @@ describe('Filesystem Cache', function() {
     });
   });
 
-  it('should output files to OS\'s tmp dir', function(done) {
+  it('should output files to standard cache dir by default', function(done) {
     var config = assign({}, globalConfig, {
       module: {
         loaders: [
@@ -93,7 +98,7 @@ describe('Filesystem Cache', function() {
     webpack(config, function(err, stats) {
       expect(err).to.be(null);
 
-      fs.readdir(os.tmpdir(), function(err, files) {
+      fs.readdir(defaultCacheDir, function(err, files) {
         files = files.filter(function(file) {
           return /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file);
         });

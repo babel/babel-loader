@@ -7,6 +7,7 @@
     "lib"
   ],
   "dependencies": {
+    "find-cache-dir": "^0.1.1",
     "loader-utils": "^0.2.11",
     "mkdirp": "^0.5.1",
     "object-assign": "^4.0.1"
