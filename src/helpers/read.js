@@ -1,4 +1,4 @@
-var fs = require('fs');
+let fs = require("fs");
 /**
  * Read the file and cache the result
  * return the result in cache
@@ -13,10 +13,10 @@ module.exports = function(cache) {
   return function(filename) {
 
     if (!filename) {
-      throw new Error('filename must be a string');
+      throw new Error("filename must be a string");
     }
 
-    cache[filename] = cache[filename] || fs.readFileSync(filename, 'utf8');
+    cache[filename] = cache[filename] || fs.readFileSync(filename, "utf8");
 
     return cache[filename];
   };

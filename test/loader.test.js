@@ -1,24 +1,24 @@
-'use strict';
+"use strict";
 
-var fs = require('fs');
-var path = require('path');
-var assign = require('object-assign');
-var expect = require('expect.js');
-var mkdirp = require('mkdirp');
-var rimraf = require('rimraf');
-var webpack = require('webpack');
+let fs = require("fs");
+let path = require("path");
+let assign = require("object-assign");
+let expect = require("expect.js");
+let mkdirp = require("mkdirp");
+let rimraf = require("rimraf");
+let webpack = require("webpack");
 
-describe('Loader', function() {
+describe("Loader", function() {
 
   this.timeout(3000); // @TODO this is worrisome
 
-  var outputDir = path.resolve(__dirname, './output/loader');
-  var babelLoader = path.resolve(__dirname, '../');
-  var globalConfig = {
-    entry: './test/fixtures/basic.js',
+  let outputDir = path.resolve(__dirname, "./output/loader");
+  let babelLoader = path.resolve(__dirname, "../");
+  let globalConfig = {
+    entry: "./test/fixtures/basic.js",
     output: {
       path: outputDir,
-      filename: '[id].loader.js',
+      filename: "[id].loader.js",
     },
     module: {
       loaders: [
@@ -26,7 +26,7 @@ describe('Loader', function() {
           test: /\.jsx?/,
           loader: babelLoader,
           query: {
-            presets: ['es2015'],
+            presets: ["es2015"],
           },
           exclude: /node_modules/,
         },
@@ -43,16 +43,16 @@ describe('Loader', function() {
     });
   });
 
-  it('should transpile the code snippet', function(done) {
-    var config = assign({}, globalConfig, {
-      entry: './test/fixtures/basic.js',
+  it("should transpile the code snippet", function(done) {
+    let config = assign({}, globalConfig, {
+      entry: "./test/fixtures/basic.js",
       module: {
         loaders: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             query: {
-              presets: ['es2015'],
+              presets: ["es2015"],
             },
             exclude: /node_modules/,
           },
@@ -60,15 +60,15 @@ describe('Loader', function() {
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(outputDir, function(err, files) {
         expect(err).to.be(null);
         expect(files.length).to.equal(1);
         fs.readFile(path.resolve(outputDir, files[0]), function(err, data) {
-          var test = 'var App = function App()';
-          var subject = data.toString();
+          let test = "var App = function App()";
+          let subject = data.toString();
 
           expect(err).to.be(null);
           expect(subject.indexOf(test)).to.not.equal(-1);
@@ -79,16 +79,16 @@ describe('Loader', function() {
     });
   });
 
-  it('should not throw error on syntax error', function(done) {
-    var config = assign({}, globalConfig, {
-      entry: './test/fixtures/syntax.js',
+  it("should not throw error on syntax error", function(done) {
+    let config = assign({}, globalConfig, {
+      entry: "./test/fixtures/syntax.js",
       module: {
         loaders: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             query: {
-              presets: ['es2015'],
+              presets: ["es2015"],
             },
             exclude: /node_modules/,
           },

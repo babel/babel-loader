@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
-var fs = require('fs');
-var path = require('path');
-var assign = require('object-assign');
-var expect = require('expect.js');
-var mkdirp = require('mkdirp');
-var rimraf = require('rimraf');
-var webpack = require('webpack');
+let fs = require("fs");
+let path = require("path");
+let assign = require("object-assign");
+let expect = require("expect.js");
+let mkdirp = require("mkdirp");
+let rimraf = require("rimraf");
+let webpack = require("webpack");
 
-describe('Sourcemaps', function() {
+describe("Sourcemaps", function() {
 
-  var outputDir = path.resolve(__dirname, './output/sourcemaps');
-  var babelLoader = path.resolve(__dirname, '../');
-  var globalConfig = {
-    entry: './test/fixtures/basic.js',
+  let outputDir = path.resolve(__dirname, "./output/sourcemaps");
+  let babelLoader = path.resolve(__dirname, "../");
+  let globalConfig = {
+    entry: "./test/fixtures/basic.js",
     output: {
       path: outputDir,
-      filename: '[id].options.js',
+      filename: "[id].options.js",
     },
     module: {
       loaders: [
@@ -38,37 +38,37 @@ describe('Sourcemaps', function() {
     });
   });
 
-  it('should output webpack\'s sourcemap', function(done) {
+  it("should output webpack's sourcemap", function(done) {
 
-    var config = assign({}, globalConfig, {
-      devtool: 'source-map',
-      entry: './test/fixtures/basic.js',
+    let config = assign({}, globalConfig, {
+      devtool: "source-map",
+      entry: "./test/fixtures/basic.js",
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: babelLoader + '?presets[]=es2015',
+            loader: babelLoader + "?presets[]=es2015",
             exclude: /node_modules/,
           },
         ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(outputDir, function(err, files) {
         expect(err).to.be(null);
 
-        var map = files.filter(function(file) {
-          return (file.indexOf('.map') !== -1);
+        let map = files.filter(function(file) {
+          return (file.indexOf(".map") !== -1);
         });
 
         expect(map).to.not.be.empty();
 
         fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
           expect(err).to.be(null);
-          expect(data.toString().indexOf('webpack:///')).to.not.equal(-1);
+          expect(data.toString().indexOf("webpack:///")).to.not.equal(-1);
           done();
         });
 
@@ -76,13 +76,13 @@ describe('Sourcemaps', function() {
     });
   });
 
-  it.skip('should output babel\'s sourcemap', function(done) {
+  it.skip("should output babel's sourcemap", function(done) {
 
-    var config = assign({}, globalConfig, {
-      entry: './test/fixtures/basic.js',
+    let config = assign({}, globalConfig, {
+      entry: "./test/fixtures/basic.js",
       babel: {
         sourceMap: true,
-        sourceMapName: './output/sourcemaps/babel.map',
+        sourceMapName: "./output/sourcemaps/babel.map",
       },
       module: {
         loaders: [
@@ -95,21 +95,21 @@ describe('Sourcemaps', function() {
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(outputDir, function(err, files) {
         expect(err).to.be(null);
 
-        var map = files.filter(function(file) {
-          return (file.indexOf('.map') !== -1);
+        let map = files.filter(function(file) {
+          return (file.indexOf(".map") !== -1);
         });
 
         expect(map).to.not.be.empty();
 
         fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
           expect(err).to.be(null);
-          expect(data.toString().indexOf('webpack:///')).to.equal(-1);
+          expect(data.toString().indexOf("webpack:///")).to.equal(-1);
           done();
         });
       });

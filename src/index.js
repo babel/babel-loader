@@ -1,12 +1,12 @@
-var assign = require('object-assign');
-var babel = require('babel-core');
-var loaderUtils = require('loader-utils');
-var path = require('path');
-var cache = require('./fs-cache.js');
-var exists = require('./helpers/exists')();
-var read = require('./helpers/read')();
-var resolveRc = require('./resolve-rc.js');
-var pkg = require('./../package.json');
+let assign = require("object-assign");
+let babel = require("babel-core");
+let loaderUtils = require("loader-utils");
+let path = require("path");
+let cache = require("./fs-cache.js");
+let exists = require("./helpers/exists")();
+let read = require("./helpers/read")();
+let resolveRc = require("./resolve-rc.js");
+let pkg = require("./../package.json");
 
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
@@ -15,7 +15,7 @@ function BabelLoaderError(name, message, codeFrame, hideStack, error) {
   Error.call(this);
   Error.captureStackTrace(this, BabelLoaderError);
 
-  this.name = 'BabelLoaderError';
+  this.name = "BabelLoaderError";
   this.message = formatMessage(name, message, codeFrame);
   this.hideStack = hideStack;
   this.error = error;
@@ -24,27 +24,27 @@ function BabelLoaderError(name, message, codeFrame, hideStack, error) {
 BabelLoaderError.prototype = Object.create(Error.prototype);
 BabelLoaderError.prototype.constructor = BabelLoaderError;
 
-var STRIP_FILENAME_RE = /^[^:]+: /;
+let STRIP_FILENAME_RE = /^[^:]+: /;
 
-var formatMessage = function(name, message, codeFrame) {
-  return (name ? name + ': ' : '') + message + '\n\n' + codeFrame + '\n';
+let formatMessage = function(name, message, codeFrame) {
+  return (name ? name + ": " : "") + message + "\n\n" + codeFrame + "\n";
 };
 
-var transpile = function(source, options) {
-  var result;
+let transpile = function(source, options) {
+  let result;
   try {
     result = babel.transform(source, options);
   } catch (error) {
     if (error.message && error.codeFrame) {
-      var message = error.message;
-      var name;
-      var hideStack;
+      let message = error.message;
+      let name;
+      let hideStack;
       if (error instanceof SyntaxError) {
-        message = message.replace(STRIP_FILENAME_RE, '');
-        name = 'SyntaxError';
+        message = message.replace(STRIP_FILENAME_RE, "");
+        name = "SyntaxError";
         hideStack = true;
       } else if (error instanceof TypeError) {
-        message = message.replace(STRIP_FILENAME_RE, '');
+        message = message.replace(STRIP_FILENAME_RE, "");
         hideStack = true;
       }
       throw new BabelLoaderError(
@@ -53,8 +53,8 @@ var transpile = function(source, options) {
       throw error;
     }
   }
-  var code = result.code;
-  var map = result.map;
+  let code = result.code;
+  let map = result.map;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
@@ -67,23 +67,23 @@ var transpile = function(source, options) {
 };
 
 module.exports = function(source, inputSourceMap) {
-  var result = {};
+  let result = {};
 
   // Handle filenames (#106)
-  var webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
-  var filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+  let webpackRemainingChain = loaderUtils.getRemainingRequest(this).split("!");
+  let filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  var globalOptions = this.options.babel || {};
-  var loaderOptions = loaderUtils.parseQuery(this.query);
-  var userOptions = assign({}, globalOptions, loaderOptions);
-  var defaultOptions = {
+  let globalOptions = this.options.babel || {};
+  let loaderOptions = loaderUtils.parseQuery(this.query);
+  let userOptions = assign({}, globalOptions, loaderOptions);
+  let defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
     filename: filename,
     cacheIdentifier: JSON.stringify({
-      'babel-loader': pkg.version,
-      'babel-core': babel.version,
+      "babel-loader": pkg.version,
+      "babel-core": babel.version,
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
           resolveRc(path.dirname(filename)),
@@ -91,7 +91,7 @@ module.exports = function(source, inputSourceMap) {
     }),
   };
 
-  var options = assign({}, defaultOptions, userOptions);
+  let options = assign({}, defaultOptions, userOptions);
 
   if (userOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
@@ -104,8 +104,8 @@ module.exports = function(source, inputSourceMap) {
     );
   }
 
-  var cacheDirectory = options.cacheDirectory;
-  var cacheIdentifier = options.cacheIdentifier;
+  let cacheDirectory = options.cacheDirectory;
+  let cacheIdentifier = options.cacheIdentifier;
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
@@ -113,7 +113,7 @@ module.exports = function(source, inputSourceMap) {
   this.cacheable();
 
   if (cacheDirectory) {
-    var callback = this.async();
+    let callback = this.async();
     return cache({
       directory: cacheDirectory,
       identifier: cacheIdentifier,

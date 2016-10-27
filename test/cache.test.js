@@ -1,30 +1,29 @@
-'use strict';
+"use strict";
 
-var fs = require('fs');
-var os = require('os');
-var path = require('path');
-var assign = require('object-assign');
-var expect = require('expect.js');
-var mkdirp = require('mkdirp');
-var rimraf = require('rimraf');
-var webpack = require('webpack');
+let fs = require("fs");
+let path = require("path");
+let assign = require("object-assign");
+let expect = require("expect.js");
+let mkdirp = require("mkdirp");
+let rimraf = require("rimraf");
+let webpack = require("webpack");
 
-describe('Filesystem Cache', function() {
+describe("Filesystem Cache", function() {
   this.timeout(15000);
 
-  var defaultCacheDir = path.resolve(__dirname,
-    '../node_modules/.cache/babel-loader');
-  var cacheDir = path.resolve(__dirname, 'output/cache/cachefiles');
-  var outputDir = path.resolve(__dirname, './output/cache/');
-  var babelLoader = path.resolve(__dirname, '../');
+  let defaultCacheDir = path.resolve(__dirname,
+    "../node_modules/.cache/babel-loader");
+  let cacheDir = path.resolve(__dirname, "output/cache/cachefiles");
+  let outputDir = path.resolve(__dirname, "./output/cache/");
+  let babelLoader = path.resolve(__dirname, "../");
 
-  console.log('babelLoader', babelLoader);
+  console.log("babelLoader", babelLoader);
 
-  var globalConfig = {
-    entry: './test/fixtures/basic.js',
+  let globalConfig = {
+    entry: "./test/fixtures/basic.js",
     output: {
       path: outputDir,
-      filename: '[id].cache.js',
+      filename: "[id].cache.js",
     },
     module: {
       loaders: [
@@ -49,9 +48,9 @@ describe('Filesystem Cache', function() {
     rimraf(defaultCacheDir, done);
   });
 
-  it('should output files to cache directory', function(done) {
+  it("should output files to cache directory", function(done) {
 
-    var config = assign({}, globalConfig, {
+    let config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
@@ -60,14 +59,14 @@ describe('Filesystem Cache', function() {
             exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
-              presets: ['es2015'],
+              presets: ["es2015"],
             },
           },
         ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(cacheDir, function(err, files) {
@@ -78,8 +77,8 @@ describe('Filesystem Cache', function() {
     });
   });
 
-  it('should output files to standard cache dir by default', function(done) {
-    var config = assign({}, globalConfig, {
+  it("should output files to standard cache dir by default", function(done) {
+    let config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
@@ -88,14 +87,14 @@ describe('Filesystem Cache', function() {
             exclude: /node_modules/,
             query: {
               cacheDirectory: true,
-              presets: ['es2015'],
+              presets: ["es2015"],
             },
           },
         ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(defaultCacheDir, function(err, files) {
@@ -110,9 +109,9 @@ describe('Filesystem Cache', function() {
     });
   });
 
-  it('should read from cache directory if cached file exists', function(done) {
-    var loader = babelLoader;
-    var config = assign({}, globalConfig, {
+  it("should read from cache directory if cached file exists", function(done) {
+    let loader = babelLoader;
+    let config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
@@ -121,7 +120,7 @@ describe('Filesystem Cache', function() {
             exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
-              presets: ['es2015'],
+              presets: ["es2015"],
             },
           },
         ],
@@ -130,10 +129,10 @@ describe('Filesystem Cache', function() {
 
     // @TODO Find a way to know if the file as correctly read without relying on
     // Istanbul for coverage.
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
-      webpack(config, function(err, stats) {
+      webpack(config, function(err) {
         expect(err).to.be(null);
         fs.readdir(cacheDir, function(err, files) {
           expect(err).to.be(null);
@@ -145,9 +144,9 @@ describe('Filesystem Cache', function() {
 
   });
 
-  it('should have one file per module', function(done) {
-    var loader = babelLoader;
-    var config = assign({}, globalConfig, {
+  it("should have one file per module", function(done) {
+    let loader = babelLoader;
+    let config = assign({}, globalConfig, {
       module: {
         loaders: [
           {
@@ -156,14 +155,14 @@ describe('Filesystem Cache', function() {
             exclude: /node_modules/,
             query: {
               cacheDirectory: cacheDir,
-              presets: ['es2015'],
+              presets: ["es2015"],
             },
           },
         ],
       },
     });
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(cacheDir, function(err, files) {
@@ -176,9 +175,9 @@ describe('Filesystem Cache', function() {
   });
 
 
-  it('should generate a new file if the identifier changes', function(done) {
+  it("should generate a new file if the identifier changes", function(done) {
 
-    var configs = [
+    let configs = [
       assign({}, globalConfig, {
         module: {
           loaders: [
@@ -188,8 +187,8 @@ describe('Filesystem Cache', function() {
               exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
-                cacheIdentifier: 'a',
-                presets: ['es2015'],
+                cacheIdentifier: "a",
+                presets: ["es2015"],
               },
             },
           ],
@@ -204,18 +203,18 @@ describe('Filesystem Cache', function() {
               exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
-                cacheIdentifier: 'b',
-                presets: ['es2015'],
+                cacheIdentifier: "b",
+                presets: ["es2015"],
               },
             },
           ],
         },
       }),
     ];
-    var counter = configs.length;
+    let counter = configs.length;
 
     configs.forEach(function(config) {
-      webpack(config, function(err, stats) {
+      webpack(config, function(err) {
         expect(err).to.be(null);
         counter -= 1;
 
@@ -231,10 +230,10 @@ describe('Filesystem Cache', function() {
 
   });
 
-  it('should allow to specify the .babelrc file', function(done) {
-    var config = [
+  it("should allow to specify the .babelrc file", function(done) {
+    let config = [
       assign({}, globalConfig, {
-        entry: './test/fixtures/constant.js',
+        entry: "./test/fixtures/constant.js",
         module: {
           loaders: [
             {
@@ -243,15 +242,15 @@ describe('Filesystem Cache', function() {
               exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
-                babelrc: path.resolve(__dirname, 'fixtures/babelrc'),
-                presets: ['es2015'],
+                babelrc: path.resolve(__dirname, "fixtures/babelrc"),
+                presets: ["es2015"],
               },
             },
           ],
         },
       }),
       assign({}, globalConfig, {
-        entry: './test/fixtures/constant.js',
+        entry: "./test/fixtures/constant.js",
         module: {
           loaders: [
             {
@@ -260,7 +259,7 @@ describe('Filesystem Cache', function() {
               exclude: /node_modules/,
               query: {
                 cacheDirectory: cacheDir,
-                presets: ['es2015'],
+                presets: ["es2015"],
               },
             },
           ],
@@ -268,7 +267,7 @@ describe('Filesystem Cache', function() {
       }),
     ];
 
-    webpack(config, function(err, stats) {
+    webpack(config, function(err) {
       expect(err).to.be(null);
 
       fs.readdir(cacheDir, function(err, files) {
