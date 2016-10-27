@@ -1,14 +1,12 @@
-'use strict';
-
 var assign = require('object-assign');
 var babel = require('babel-core');
 var loaderUtils = require('loader-utils');
-var cache = require('./lib/fs-cache.js');
-var exists = require('./lib/helpers/exists')();
-var read = require('./lib/helpers/read')();
-var resolveRc = require('./lib/resolve-rc.js');
-var pkg = require('./package.json');
 var path = require('path');
+var cache = require('./fs-cache.js');
+var exists = require('./helpers/exists')();
+var read = require('./helpers/read')();
+var resolveRc = require('./resolve-rc.js');
+var pkg = require('./../package.json');
 
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.

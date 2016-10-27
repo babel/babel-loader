@@ -2,6 +2,7 @@
     "preset": "node-style-guide",
     "fileExtensions": [ ".js", "jscs" ],
     "excludeFiles": [
+        "lib/**",
         "test/fixtures/**",
         "test/output/**",
         "node_modules/**"

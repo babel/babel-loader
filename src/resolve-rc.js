@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * The purpose of this module, is to find the project's .babelrc and
  * use its contents to bust the babel-loader's internal cache whenever an option

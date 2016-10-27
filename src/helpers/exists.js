@@ -1,5 +1,3 @@
-'use strict';
-
 var fs = require('fs');
 /**
  * Check if file exists and cache the result
