@@ -26,7 +26,8 @@
     "jscs": "^3.0.7",
     "jshint": "^2.8.0",
     "mocha": "^3.0.2",
-    "rimraf": "^2.4.3"
+    "rimraf": "^2.4.3",
+    "webpack": "2.1.0-beta.22"
   },
   "scripts": {
     "build": "babel src/ --out-dir lib/",
