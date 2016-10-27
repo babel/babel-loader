@@ -100,10 +100,10 @@ module.exports = function(source, inputSourceMap) {
   }
 
   if (options.sourceFileName === undefined) {
-    options.sourceFileName = path.relative(
+    options.sourceFileName = '.' + path.sep + path.relative(
         options.sourceRoot,
         options.filename
-    );
+    ));
   }
 
   var cacheDirectory = options.cacheDirectory;
