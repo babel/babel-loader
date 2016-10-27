@@ -1,10 +1,18 @@
 # Changelog
 
+## v6.2.7
+
+### 😢 Regression
+
+Fallback to `os.tmpdir()` if no cachedir found (#318) (fixes #317) @danez
+
+Fixes an issue with v6.2.6 when using `babel-loader` as a global package.
+
 ## v6.2.6
 
 ### 🐛 Bug Fix
 
-- Use standard cache dir as default `cacheDirectory` @fson
+- Use standard cache dir as default `cacheDirectory` (#301) @fson
 
 Use the common cache directory, `./node_modules/.cache/babel-loader`, as the default cache directory (when the cacheDirectory setting is enabled).
 
