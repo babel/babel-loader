@@ -1,5 +1,3 @@
-'use strict';
-
 var fs = require('fs');
 /**
  * Read the file and cache the result
