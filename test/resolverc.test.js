@@ -2,7 +2,6 @@
 
 let fs = require("fs");
 let path = require("path");
-let expect = require("expect.js");
 let resolveRc = require("../lib/resolve-rc.js");
 let exists = require("../lib/helpers/exists.js");
 let read = require("../lib/helpers/read.js");
@@ -13,7 +12,7 @@ describe("ResolveRc", function() {
     let start = path.resolve(__dirname, "fixtures/babelrc-test/1/2/3");
     let result = resolveRc(start);
 
-    expect(result).to.be.a("string");
+    expect(typeof result).toBe("string");
   });
 });
 
@@ -29,15 +28,14 @@ describe("exists", function() {
     let realFile = exists(cache)(files.existent);
     let fakeFile = exists(cache)(files.fake);
 
-    expect(realFile).to.equal(true);
-    expect(fakeFile).to.equal(false);
+    expect(realFile).toBe(true);
+    expect(fakeFile).toBe(false);
   });
 
   it("should keep cache of if previous results", function() {
-    expect(cache[files.existent]).to.equal(true);
-    expect(cache[files.fake]).to.equal(false);
+    expect(cache[files.existent]).toBe(true);
+    expect(cache[files.fake]).toBe(false);
   });
-
 });
 
 describe("read", function() {
@@ -52,12 +50,10 @@ describe("read", function() {
 
   it("should return contents if file exists", function() {
     let realFile = read(cache)(files.existent);
-    expect(realFile).to.equal(content);
+    expect(realFile).toBe(content);
   });
 
   it("should keep cache of if previous results", function() {
-    expect(cache[files.existent]).to.equal(content);
+    expect(cache[files.existent]).toBe(content);
   });
-
-
 });

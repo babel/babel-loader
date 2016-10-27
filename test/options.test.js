@@ -3,7 +3,6 @@
 let fs = require("fs");
 let path = require("path");
 let assign = require("object-assign");
-let expect = require("expect.js");
 let mkdirp = require("mkdirp");
 let rimraf = require("rimraf");
 let webpack = require("webpack");
@@ -53,11 +52,11 @@ describe("Options", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files).to.not.be.empty();
+        expect(err).toBeNull();
+        expect(files.length).toBeGreaterThan(0)
 
         done();
       });
@@ -83,11 +82,11 @@ describe("Options", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files).to.not.be.empty();
+        expect(err).toBeNull();
+        expect(files.length).toBeGreaterThan(0)
 
         done();
       });
@@ -112,11 +111,11 @@ describe("Options", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files).to.not.be.empty();
+        expect(err).toBeNull();
+        expect(files.length).toBeGreaterThan(0)
 
         done();
       });

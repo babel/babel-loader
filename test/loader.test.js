@@ -3,15 +3,11 @@
 let fs = require("fs");
 let path = require("path");
 let assign = require("object-assign");
-let expect = require("expect.js");
 let mkdirp = require("mkdirp");
 let rimraf = require("rimraf");
 let webpack = require("webpack");
 
 describe("Loader", function() {
-
-  this.timeout(3000); // @TODO this is worrisome
-
   let outputDir = path.resolve(__dirname, "./output/loader");
   let babelLoader = path.resolve(__dirname, "../");
   let globalConfig = {
@@ -61,17 +57,17 @@ describe("Loader", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files.length).to.equal(1);
+        expect(err).toBeNull();
+        expect(files.length).toBe(1);
         fs.readFile(path.resolve(outputDir, files[0]), function(err, data) {
           let test = "var App = function App()";
           let subject = data.toString();
 
-          expect(err).to.be(null);
-          expect(subject.indexOf(test)).to.not.equal(-1);
+          expect(err).toBeNull();
+          expect(subject.indexOf(test)).not.toBe(-1);
 
           return done();
         });
@@ -97,8 +93,8 @@ describe("Loader", function() {
     });
 
     webpack(config, function(err, stats) {
-      expect(stats.compilation.errors.length).to.be(1);
-      expect(stats.compilation.errors[0]).to.be.an(Error);
+      expect(stats.compilation.errors.length).toBe(1);
+      expect(stats.compilation.errors[0]).toBeInstanceOf(Error);
 
       return done();
     });

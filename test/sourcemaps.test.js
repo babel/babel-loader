@@ -3,7 +3,6 @@
 let fs = require("fs");
 let path = require("path");
 let assign = require("object-assign");
-let expect = require("expect.js");
 let mkdirp = require("mkdirp");
 let rimraf = require("rimraf");
 let webpack = require("webpack");
@@ -55,20 +54,20 @@ describe("Sourcemaps", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
+        expect(err).toBeNull();
 
         let map = files.filter(function(file) {
           return (file.indexOf(".map") !== -1);
         });
 
-        expect(map).to.not.be.empty();
+        expect(map.length).toBeGreaterThan(0);
 
         fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
-          expect(err).to.be(null);
-          expect(data.toString().indexOf("webpack:///")).to.not.equal(-1);
+          expect(err).toBeNull();
+          expect(data.toString().indexOf("webpack:///")).not.toBe(-1);
           done();
         });
 
@@ -96,20 +95,20 @@ describe("Sourcemaps", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
+        expect(err).toBeNull();
 
         let map = files.filter(function(file) {
           return (file.indexOf(".map") !== -1);
         });
 
-        expect(map).to.not.be.empty();
+        expect(map.length).toBeGreaterThan(0);
 
         fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
-          expect(err).to.be(null);
-          expect(data.toString().indexOf("webpack:///")).to.equal(-1);
+          expect(err).toBeNull();
+          expect(data.toString().indexOf("webpack:///")).toBe(-1);
           done();
         });
       });

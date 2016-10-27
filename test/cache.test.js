@@ -3,21 +3,16 @@
 let fs = require("fs");
 let path = require("path");
 let assign = require("object-assign");
-let expect = require("expect.js");
 let mkdirp = require("mkdirp");
 let rimraf = require("rimraf");
 let webpack = require("webpack");
 
 describe("Filesystem Cache", function() {
-  this.timeout(15000);
-
   let defaultCacheDir = path.resolve(__dirname,
     "../node_modules/.cache/babel-loader");
   let cacheDir = path.resolve(__dirname, "output/cache/cachefiles");
   let outputDir = path.resolve(__dirname, "./output/cache/");
   let babelLoader = path.resolve(__dirname, "../");
-
-  console.log("babelLoader", babelLoader);
 
   let globalConfig = {
     entry: "./test/fixtures/basic.js",
@@ -67,11 +62,11 @@ describe("Filesystem Cache", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(cacheDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files).to.not.be.empty();
+        expect(err).toBeNull();
+        expect(files.length).toBeGreaterThan(0);
         done();
       });
     });
@@ -95,15 +90,15 @@ describe("Filesystem Cache", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(defaultCacheDir, function(err, files) {
         files = files.filter(function(file) {
           return /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file);
         });
 
-        expect(err).to.be(null);
-        expect(files).to.not.be.empty();
+        expect(err).toBeNull();
+        expect(files.length).toBeGreaterThan(0)
         done();
       });
     });
@@ -130,13 +125,13 @@ describe("Filesystem Cache", function() {
     // @TODO Find a way to know if the file as correctly read without relying on
     // Istanbul for coverage.
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       webpack(config, function(err) {
-        expect(err).to.be(null);
+        expect(err).toBeNull();
         fs.readdir(cacheDir, function(err, files) {
-          expect(err).to.be(null);
-          expect(files).to.not.be.empty();
+          expect(err).toBeNull();
+          expect(files.length).toBeGreaterThan(0)
           done();
         });
       });
@@ -163,11 +158,11 @@ describe("Filesystem Cache", function() {
     });
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(cacheDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files).to.have.length(3);
+        expect(err).toBeNull();
+        expect(files.length).toBe(3);
         done();
       });
     });
@@ -215,13 +210,13 @@ describe("Filesystem Cache", function() {
 
     configs.forEach(function(config) {
       webpack(config, function(err) {
-        expect(err).to.be(null);
+        expect(err).toBeNull();
         counter -= 1;
 
         if (!counter) {
           fs.readdir(cacheDir, function(err, files) {
-            expect(err).to.be(null);
-            expect(files).to.have.length(6);
+            expect(err).toBeNull();
+            expect(files.length).toBe(6);
             done();
           });
         }
@@ -268,11 +263,11 @@ describe("Filesystem Cache", function() {
     ];
 
     webpack(config, function(err) {
-      expect(err).to.be(null);
+      expect(err).toBeNull();
 
       fs.readdir(cacheDir, function(err, files) {
-        expect(err).to.be(null);
-        expect(files).to.have.length(2);
+        expect(err).toBeNull();
+        expect(files.length).toBe(2);
         done();
       });
     });
