@@ -1,5 +1,12 @@
 {
   "presets": [
     ["latest", { "es2015": { "loose": true } }]
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }

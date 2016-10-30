@@ -6,22 +6,18 @@
  * @see https://github.com/babel/babel-loader/issues/62
  * @see http://git.io/vLEvu
  */
-var fs = require('fs');
-var path = require('path');
-var assign = require('object-assign');
-var exists = require('./helpers/exists')({});
-var read = require('./helpers/read')({});
+const path = require("path");
+const exists = require("./utils/exists")({});
+const read = require("./utils/read")({});
 
-var find = function find(start, rel) {
-  var file = path.join(start, rel);
-  var opts = {};
-  var up = '';
+const find = function find(start, rel) {
+  const file = path.join(start, rel);
 
   if (exists(file)) {
     return read(file);
   }
 
-  up = path.dirname(start);
+  const up = path.dirname(start);
   if (up !== start) {
     // Reached root
     return find(up, rel);
@@ -30,6 +26,7 @@ var find = function find(start, rel) {
 };
 
 module.exports = function(loc, rel) {
-  rel = rel || '.babelrc';
+  rel = rel || ".babelrc";
+
   return find(loc, rel);
 };

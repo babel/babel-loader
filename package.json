@@ -17,27 +17,32 @@
     "webpack": "1 || ^2.1.0-beta"
   },
   "devDependencies": {
+    "ava": "^0.16.0",
     "babel-cli": "^6.18.0",
     "babel-core": "^6.0.0",
-    "babel-preset-latest": "^6.16.0",
+    "babel-eslint": "^7.1.0",
+    "babel-plugin-istanbul": "^2.0.3",
     "babel-preset-es2015": "^6.0.0",
-    "expect.js": "^0.3.1",
-    "istanbul": "^0.4.0",
-    "jscs": "^3.0.7",
-    "jshint": "^2.8.0",
-    "mocha": "^3.0.2",
+    "babel-preset-latest": "^6.16.0",
+    "codecov": "^1.0.1",
+    "cross-env": "^2.0.0",
+    "eslint": "^3.8.1",
+    "eslint-config-babel": "^2.0.1",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-flowtype": "^2.25.0",
+    "nyc": "^8.3.2",
     "rimraf": "^2.4.3",
     "webpack": "2.1.0-beta.22"
   },
   "scripts": {
     "build": "babel src/ --out-dir lib/",
-    "test": "npm run build && npm run hint && npm run cs && npm run cover",
-    "travis": "npm run build && npm run cover -- --report lcovonly",
-    "cover": "istanbul cover ./node_modules/.bin/_mocha -- test/*.test.js",
-    "postcover": "npm run hint && npm run cs",
+    "coverage": "nyc report --reporter=json && codecov -f coverage/coverage-final.json",
+    "lint": "eslint src test",
+    "preversion": "npm test",
     "prepublish": "npm run build",
-    "hint": "jshint --config .jshintrc src/* test/*",
-    "cs": "jscs --config .jscsrc src/* test/*"
+    "test": "npm run lint && npm run build && npm run test-only",
+    "test-ci": "cross-env BABEL_ENV=test npm run build && nyc npm run test-only",
+    "test-only": "ava"
   },
   "repository": {
     "type": "git",
@@ -46,7 +51,6 @@
   "keywords": [
     "webpack",
     "loader",
-    "6to5",
     "babel",
     "es6",
     "transpiler",
@@ -57,5 +61,22 @@
   "bugs": {
     "url": "https://github.com/babel/babel-loader/issues"
   },
-  "homepage": "https://github.com/babel/babel-loader"
+  "homepage": "https://github.com/babel/babel-loader",
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
+  "ava": {
+    "files": [
+      "test/**/*.test.js"
+    ],
+    "source": [
+      "src/**/*.test.js"
+    ],
+    "babel": "inherit"
+  }
 }

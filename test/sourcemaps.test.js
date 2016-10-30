@@ -1,119 +1,75 @@
-'use strict';
+import test from "ava";
+import fs from "fs";
+import path from "path";
+import assign from "object-assign";
+import mkdirp from "mkdirp";
+import rimraf from "rimraf";
+import webpack from "webpack";
 
-var fs = require('fs');
-var path = require('path');
-var assign = require('object-assign');
-var expect = require('expect.js');
-var mkdirp = require('mkdirp');
-var rimraf = require('rimraf');
-var webpack = require('webpack');
+const outputDir = path.join(__dirname, "output/sourcemaps");
+const babelLoader = path.join(__dirname, "..");
+const globalConfig = {
+  entry: path.join(__dirname, "fixtures/basic.js"),
+  output: {
+    path: outputDir,
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.jsx?/,
+        loader: babelLoader,
+        exclude: /node_modules/,
+      },
+    ],
+  },
+};
 
-describe('Sourcemaps', function() {
+// Create a separate directory for each test so that the tests
+// can run in parallel
+test.cb.beforeEach((t) => {
+  const directory = path.join(outputDir, t.title.replace(/ /g, "_"));
+  t.context.directory = directory;
+  rimraf(directory, (err) => {
+    if (err) return t.end(err);
+    mkdirp(directory, t.end);
+  });
+});
 
-  var outputDir = path.resolve(__dirname, './output/sourcemaps');
-  var babelLoader = path.resolve(__dirname, '../');
-  var globalConfig = {
-    entry: './test/fixtures/basic.js',
+test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
+
+test.cb("should output webpack's sourcemap", (t) => {
+  const config = assign({}, globalConfig, {
+    devtool: "source-map",
     output: {
-      path: outputDir,
-      filename: '[id].options.js',
+      path: t.context.directory,
     },
     module: {
       loaders: [
         {
           test: /\.jsx?/,
-          loader: babelLoader,
+          loader: babelLoader + "?presets[]=es2015",
           exclude: /node_modules/,
         },
       ],
     },
-  };
-
-  // Clean generated cache files before each test
-  // so that we can call each test with an empty state.
-  beforeEach(function(done) {
-    rimraf(outputDir, function(err) {
-      if (err) { return done(err); }
-      mkdirp(outputDir, done);
-    });
   });
 
-  it('should output webpack\'s sourcemap', function(done) {
+  webpack(config, (err) => {
+    t.is(err, null);
 
-    var config = assign({}, globalConfig, {
-      devtool: 'source-map',
-      entry: './test/fixtures/basic.js',
-      module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader + '?presets[]=es2015',
-            exclude: /node_modules/,
-          },
-        ],
-      },
-    });
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
 
-    webpack(config, function(err, stats) {
-      expect(err).to.be(null);
+      const map = files.filter((file) => file.indexOf(".map") !== -1);
 
-      fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
+      t.true(map.length > 0);
 
-        var map = files.filter(function(file) {
-          return (file.indexOf('.map') !== -1);
-        });
-
-        expect(map).to.not.be.empty();
-
-        fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
-          expect(err).to.be(null);
-          expect(data.toString().indexOf('webpack:///')).to.not.equal(-1);
-          done();
-        });
-
+      fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
+        t.is(err, null);
+        t.not(data.toString().indexOf("webpack:///"), -1);
+        t.end();
       });
+
     });
   });
-
-  it.skip('should output babel\'s sourcemap', function(done) {
-
-    var config = assign({}, globalConfig, {
-      entry: './test/fixtures/basic.js',
-      babel: {
-        sourceMap: true,
-        sourceMapName: './output/sourcemaps/babel.map',
-      },
-      module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-          },
-        ],
-      },
-    });
-
-    webpack(config, function(err, stats) {
-      expect(err).to.be(null);
-
-      fs.readdir(outputDir, function(err, files) {
-        expect(err).to.be(null);
-
-        var map = files.filter(function(file) {
-          return (file.indexOf('.map') !== -1);
-        });
-
-        expect(map).to.not.be.empty();
-
-        fs.readFile(path.resolve(outputDir, map[0]), function(err, data) {
-          expect(err).to.be(null);
-          expect(data.toString().indexOf('webpack:///')).to.equal(-1);
-          done();
-        });
-      });
-    });
-  });
-
 });
