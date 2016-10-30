@@ -8,13 +8,16 @@ node_js:
   - "0.12"
 matrix:
   include:
-    - node_js: "6"
+    - node_js: "lts/*"
       env: WEBPACK_VERSION="1"
+    - node_js: "lts/*"
+      env: LINT=true
     - node_js: "0.10"
       env: WEBPACK_VERSION="1"
 before_script:
   - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@$WEBPACK_VERSION; fi'
 script:
-  - npm run travis
+  - 'if [ -n "${LINT-}" ]; then npm run lint ; fi'
+  - 'if [ -z "${LINT-}" ]; then npm run test-ci ; fi'
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - npm run coverage
