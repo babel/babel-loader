@@ -1,24 +1,56 @@
-"use strict";
+import test from "ava";
+import fs from "fs";
+import path from "path";
+import assign from "object-assign";
+import mkdirp from "mkdirp";
+import rimraf from "rimraf";
+import webpack from "webpack";
 
-let fs = require("fs");
-let path = require("path");
-let assign = require("object-assign");
-let mkdirp = require("mkdirp");
-let rimraf = require("rimraf");
-let webpack = require("webpack");
+const defaultCacheDir = path.join(__dirname, "../node_modules/.cache/babel-loader");
+const cacheDir = path.join(__dirname, "output/cache/cachefiles");
+const outputDir = path.join(__dirname, "output/cache");
+const babelLoader = path.join(__dirname, "../lib");
 
-describe("Filesystem Cache", function() {
-  let defaultCacheDir = path.resolve(__dirname,
-    "../node_modules/.cache/babel-loader");
-  let cacheDir = path.resolve(__dirname, "output/cache/cachefiles");
-  let outputDir = path.resolve(__dirname, "./output/cache/");
-  let babelLoader = path.resolve(__dirname, "../");
+const globalConfig = {
+  entry: path.join(__dirname, "fixtures/basic.js"),
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: babelLoader,
+        exclude: /node_modules/,
+      },
+    ],
+  },
+};
 
-  let globalConfig = {
-    entry: "./test/fixtures/basic.js",
+// Create a separate directory for each test so that the tests
+// can run in parallel
+
+test.cb.beforeEach((t) => {
+  const directory = path.join(outputDir, t.title.replace(/ /g, "_"));
+  t.context.directory = directory;
+  rimraf(directory, (err) => {
+    if (err) return t.end(err);
+    mkdirp(directory, t.end);
+  });
+});
+test.cb.beforeEach((t) => {
+  const cacheDirectory = path.join(cacheDir, t.title.replace(/ /g, "_"));
+  t.context.cacheDirectory = cacheDirectory;
+  rimraf(cacheDirectory, (err) => {
+    if (err) return t.end(err);
+    mkdirp(cacheDirectory, t.end);
+  });
+});
+test.cb.beforeEach((t) => rimraf(defaultCacheDir, t.end));
+test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
+test.cb.afterEach((t) => rimraf(t.context.cacheDirectory, t.end));
+
+test.cb("should output files to cache directory", (t) => {
+  const config = assign({}, globalConfig, {
     output: {
-      path: outputDir,
-      filename: "[id].cache.js",
+      path: t.context.directory,
     },
     module: {
       loaders: [
@@ -26,54 +58,134 @@ describe("Filesystem Cache", function() {
           test: /\.js$/,
           loader: babelLoader,
           exclude: /node_modules/,
+          query: {
+            cacheDirectory: t.context.cacheDirectory,
+            presets: ["es2015"],
+          },
         },
       ],
     },
-  };
+  });
 
-  // Clean generated cache files before each test
-  // so that we can call each test with an empty state.
-  beforeEach(function(done) {
-    rimraf(outputDir, function(err) {
-      if (err) { return done(err); }
-      mkdirp(cacheDir, done);
+  webpack(config, (err) => {
+    t.is(err, null);
+
+    fs.readdir(t.context.cacheDirectory, (err, files) => {
+      t.is(err, null);
+      t.true(files.length > 0);
+      t.end();
     });
   });
-  beforeEach(function(done) {
-    rimraf(defaultCacheDir, done);
-  });
+});
 
-  it("should output files to cache directory", function(done) {
-
-    let config = assign({}, globalConfig, {
-      module: {
-        loaders: [
-          {
-            test: /\.js$/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-            query: {
-              cacheDirectory: cacheDir,
-              presets: ["es2015"],
-            },
+test.cb.serial("should output files to standard cache dir by default", (t) => {
+  const config = assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          query: {
+            cacheDirectory: true,
+            presets: ["es2015"],
           },
-        ],
-      },
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err) => {
+    t.is(err, null);
+
+    fs.readdir(defaultCacheDir, (err, files) => {
+      files = files.filter((file) => /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file));
+
+      t.is(err, null);
+      t.true(files.length > 0);
+      t.end();
     });
+  });
+});
 
-    webpack(config, function(err) {
-      expect(err).toBeNull();
+test.cb.skip("should read from cache directory if cached file exists", (t) => {
+  const config = assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          query: {
+            cacheDirectory: t.context.cacheDirectory,
+            presets: ["es2015"],
+          },
+        },
+      ],
+    },
+  });
 
-      fs.readdir(cacheDir, function(err, files) {
-        expect(err).toBeNull();
-        expect(files.length).toBeGreaterThan(0);
-        done();
+  // @TODO Find a way to know if the file as correctly read without relying on
+  // Istanbul for coverage.
+  webpack(config, (err) => {
+    t.is(err, null);
+
+    webpack(config, (err) => {
+      t.is(err, null);
+      fs.readdir(t.context.cacheDirectory, (err, files) => {
+        t.is(err, null);
+        t.true(files.length > 0);
+        t.end();
       });
     });
   });
 
-  it("should output files to standard cache dir by default", function(done) {
-    let config = assign({}, globalConfig, {
+});
+
+test.cb("should have one file per module", (t) => {
+  const config = assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          query: {
+            cacheDirectory: t.context.cacheDirectory,
+            presets: ["es2015"],
+          },
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err) => {
+    t.is(err, null);
+
+    fs.readdir(t.context.cacheDirectory, (err, files) => {
+      t.is(err, null);
+      t.true(files.length === 3);
+      t.end();
+    });
+  });
+});
+
+
+test.cb("should generate a new file if the identifier changes", (t) => {
+  const configs = [
+    assign({}, globalConfig, {
+      output: {
+        path: t.context.directory,
+      },
       module: {
         loaders: [
           {
@@ -81,195 +193,103 @@ describe("Filesystem Cache", function() {
             loader: babelLoader,
             exclude: /node_modules/,
             query: {
-              cacheDirectory: true,
+              cacheDirectory: t.context.cacheDirectory,
+              cacheIdentifier: "a",
               presets: ["es2015"],
             },
           },
         ],
       },
-    });
-
-    webpack(config, function(err) {
-      expect(err).toBeNull();
-
-      fs.readdir(defaultCacheDir, function(err, files) {
-        files = files.filter(function(file) {
-          return /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file);
-        });
-
-        expect(err).toBeNull();
-        expect(files.length).toBeGreaterThan(0)
-        done();
-      });
-    });
-  });
-
-  it("should read from cache directory if cached file exists", function(done) {
-    let loader = babelLoader;
-    let config = assign({}, globalConfig, {
+    }),
+    assign({}, globalConfig, {
+      output: {
+        path: t.context.directory,
+      },
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: loader,
+            loader: babelLoader,
             exclude: /node_modules/,
             query: {
-              cacheDirectory: cacheDir,
+              cacheDirectory: t.context.cacheDirectory,
+              cacheIdentifier: "b",
               presets: ["es2015"],
             },
           },
         ],
       },
-    });
+    }),
+  ];
+  let counter = configs.length;
 
-    // @TODO Find a way to know if the file as correctly read without relying on
-    // Istanbul for coverage.
-    webpack(config, function(err) {
-      expect(err).toBeNull();
+  configs.forEach((config) => {
+    webpack(config, (err) => {
+      t.is(err, null);
+      counter -= 1;
 
-      webpack(config, function(err) {
-        expect(err).toBeNull();
-        fs.readdir(cacheDir, function(err, files) {
-          expect(err).toBeNull();
-          expect(files.length).toBeGreaterThan(0)
-          done();
+      if (!counter) {
+        fs.readdir(t.context.cacheDirectory, (err, files) => {
+          t.is(err, null);
+          t.true(files.length === 6);
+          t.end();
         });
-      });
+      }
     });
-
   });
 
-  it("should have one file per module", function(done) {
-    let loader = babelLoader;
-    let config = assign({}, globalConfig, {
+});
+
+test.cb("should allow to specify the .babelrc file", (t) => {
+  const config = [
+    assign({}, globalConfig, {
+      entry: path.join(__dirname, "fixtures/constant.js"),
+      output: {
+        path: t.context.directory,
+      },
       module: {
         loaders: [
           {
             test: /\.jsx?/,
-            loader: loader,
+            loader: babelLoader,
             exclude: /node_modules/,
             query: {
-              cacheDirectory: cacheDir,
+              cacheDirectory: t.context.cacheDirectory,
+              babelrc: path.join(__dirname, "fixtures/babelrc"),
               presets: ["es2015"],
             },
           },
         ],
       },
-    });
-
-    webpack(config, function(err) {
-      expect(err).toBeNull();
-
-      fs.readdir(cacheDir, function(err, files) {
-        expect(err).toBeNull();
-        expect(files.length).toBe(3);
-        done();
-      });
-    });
-
-  });
-
-
-  it("should generate a new file if the identifier changes", function(done) {
-
-    let configs = [
-      assign({}, globalConfig, {
-        module: {
-          loaders: [
-            {
-              test: /\.jsx?/,
-              loader: babelLoader,
-              exclude: /node_modules/,
-              query: {
-                cacheDirectory: cacheDir,
-                cacheIdentifier: "a",
-                presets: ["es2015"],
-              },
+    }),
+    assign({}, globalConfig, {
+      entry: path.join(__dirname, "fixtures/constant.js"),
+      output: {
+        path: t.context.directory,
+      },
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader,
+            exclude: /node_modules/,
+            query: {
+              cacheDirectory: t.context.cacheDirectory,
+              presets: ["es2015"],
             },
-          ],
-        },
-      }),
-      assign({}, globalConfig, {
-        module: {
-          loaders: [
-            {
-              test: /\.jsx?/,
-              loader: babelLoader,
-              exclude: /node_modules/,
-              query: {
-                cacheDirectory: cacheDir,
-                cacheIdentifier: "b",
-                presets: ["es2015"],
-              },
-            },
-          ],
-        },
-      }),
-    ];
-    let counter = configs.length;
+          },
+        ],
+      },
+    }),
+  ];
 
-    configs.forEach(function(config) {
-      webpack(config, function(err) {
-        expect(err).toBeNull();
-        counter -= 1;
+  webpack(config, (err) => {
+    t.is(err, null);
 
-        if (!counter) {
-          fs.readdir(cacheDir, function(err, files) {
-            expect(err).toBeNull();
-            expect(files.length).toBe(6);
-            done();
-          });
-        }
-      });
-    });
-
-  });
-
-  it("should allow to specify the .babelrc file", function(done) {
-    let config = [
-      assign({}, globalConfig, {
-        entry: "./test/fixtures/constant.js",
-        module: {
-          loaders: [
-            {
-              test: /\.jsx?/,
-              loader: babelLoader,
-              exclude: /node_modules/,
-              query: {
-                cacheDirectory: cacheDir,
-                babelrc: path.resolve(__dirname, "fixtures/babelrc"),
-                presets: ["es2015"],
-              },
-            },
-          ],
-        },
-      }),
-      assign({}, globalConfig, {
-        entry: "./test/fixtures/constant.js",
-        module: {
-          loaders: [
-            {
-              test: /\.jsx?/,
-              loader: babelLoader,
-              exclude: /node_modules/,
-              query: {
-                cacheDirectory: cacheDir,
-                presets: ["es2015"],
-              },
-            },
-          ],
-        },
-      }),
-    ];
-
-    webpack(config, function(err) {
-      expect(err).toBeNull();
-
-      fs.readdir(cacheDir, function(err, files) {
-        expect(err).toBeNull();
-        expect(files.length).toBe(2);
-        done();
-      });
+    fs.readdir(t.context.cacheDirectory, (err, files) => {
+      t.is(err, null);
+      t.true(files.length === 2);
+      t.end();
     });
   });
 });

@@ -3,8 +3,8 @@ let babel = require("babel-core");
 let loaderUtils = require("loader-utils");
 let path = require("path");
 let cache = require("./fs-cache.js");
-let exists = require("./helpers/exists")();
-let read = require("./helpers/read")();
+let exists = require("./utils/exists")();
+let read = require("./utils/read")();
 let resolveRc = require("./resolve-rc.js");
 let pkg = require("./../package.json");
 

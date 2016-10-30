@@ -7,8 +7,8 @@
  * @see http://git.io/vLEvu
  */
 let path = require("path");
-let exists = require("./helpers/exists")({});
-let read = require("./helpers/read")({});
+let exists = require("./utils/exists")({});
+let read = require("./utils/read")({});
 
 let find = function find(start, rel) {
   let file = path.join(start, rel);

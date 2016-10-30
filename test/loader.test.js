@@ -1,104 +1,80 @@
-"use strict";
+import test from "ava";
+import fs from "fs";
+import path from "path";
+import assign from "object-assign";
+import mkdirp from "mkdirp";
+import rimraf from "rimraf";
+import webpack from "webpack";
 
-let fs = require("fs");
-let path = require("path");
-let assign = require("object-assign");
-let mkdirp = require("mkdirp");
-let rimraf = require("rimraf");
-let webpack = require("webpack");
-
-describe("Loader", function() {
-  let outputDir = path.resolve(__dirname, "./output/loader");
-  let babelLoader = path.resolve(__dirname, "../");
-  let globalConfig = {
-    entry: "./test/fixtures/basic.js",
-    output: {
-      path: outputDir,
-      filename: "[id].loader.js",
-    },
-    module: {
-      loaders: [
-        {
-          test: /\.jsx?/,
-          loader: babelLoader,
-          query: {
-            presets: ["es2015"],
-          },
-          exclude: /node_modules/,
+const outputDir = path.join(__dirname, "output/loader");
+const babelLoader = path.join(__dirname, "../lib");
+const globalConfig = {
+  entry: path.join(__dirname, "fixtures/basic.js"),
+  module: {
+    loaders: [
+      {
+        test: /\.jsx?/,
+        loader: babelLoader,
+        query: {
+          presets: ["es2015"],
         },
-      ],
-    },
-  };
+        exclude: /node_modules/,
+      },
+    ],
+  },
+};
 
-  // Clean generated cache files before each test
-  // so that we can call each test with an empty state.
-  beforeEach(function(done) {
-    rimraf(outputDir, function(err) {
-      if (err) { return done(err); }
-      mkdirp(outputDir, done);
-    });
+// Create a separate directory for each test so that the tests
+// can run in parallel
+test.cb.beforeEach((t) => {
+  const directory = path.join(outputDir, t.title.replace(/ /g, "_"));
+  t.context.directory = directory;
+  rimraf(directory, (err) => {
+    if (err) return t.end(err);
+    mkdirp(directory, t.end);
+  });
+});
+
+test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
+
+test.cb("should transpile the code snippet", (t) => {
+  const config = assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
   });
 
-  it("should transpile the code snippet", function(done) {
-    let config = assign({}, globalConfig, {
-      entry: "./test/fixtures/basic.js",
-      module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            query: {
-              presets: ["es2015"],
-            },
-            exclude: /node_modules/,
-          },
-        ],
-      },
-    });
+  webpack(config, (err) => {
+    t.is(err, null);
 
-    webpack(config, function(err) {
-      expect(err).toBeNull();
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
+      t.true(files.length === 1);
+      fs.readFile(path.resolve(t.context.directory, files[0]), (err, data) => {
+        t.is(err, null);
+        const test = "var App = function App()";
+        const subject = data.toString();
 
-      fs.readdir(outputDir, function(err, files) {
-        expect(err).toBeNull();
-        expect(files.length).toBe(1);
-        fs.readFile(path.resolve(outputDir, files[0]), function(err, data) {
-          let test = "var App = function App()";
-          let subject = data.toString();
+        t.not(subject.indexOf(test), -1);
 
-          expect(err).toBeNull();
-          expect(subject.indexOf(test)).not.toBe(-1);
-
-          return done();
-        });
+        t.end();
       });
     });
   });
+});
 
-  it("should not throw error on syntax error", function(done) {
-    let config = assign({}, globalConfig, {
-      entry: "./test/fixtures/syntax.js",
-      module: {
-        loaders: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            query: {
-              presets: ["es2015"],
-            },
-            exclude: /node_modules/,
-          },
-        ],
-      },
-    });
-
-    webpack(config, function(err, stats) {
-      expect(stats.compilation.errors.length).toBe(1);
-      expect(stats.compilation.errors[0]).toBeInstanceOf(Error);
-
-      return done();
-    });
-
+test.cb("should not throw error on syntax error", (t) => {
+  const config = assign({}, globalConfig, {
+    entry: path.join(__dirname, "fixtures/syntax.js"),
+    output: {
+      path: t.context.directory,
+    },
   });
 
+  webpack(config, (err, stats) => {
+    t.true(stats.compilation.errors.length === 1);
+    t.true(stats.compilation.errors[0] instanceof Error);
+
+    t.end();
+  });
 });
