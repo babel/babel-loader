@@ -6,18 +6,18 @@
  * @see https://github.com/babel/babel-loader/issues/62
  * @see http://git.io/vLEvu
  */
-let path = require("path");
-let exists = require("./utils/exists")({});
-let read = require("./utils/read")({});
+const path = require("path");
+const exists = require("./utils/exists")({});
+const read = require("./utils/read")({});
 
-let find = function find(start, rel) {
-  let file = path.join(start, rel);
+const find = function find(start, rel) {
+  const file = path.join(start, rel);
 
   if (exists(file)) {
     return read(file);
   }
 
-  let up = path.dirname(start);
+  const up = path.dirname(start);
   if (up !== start) {
     // Reached root
     return find(up, rel);

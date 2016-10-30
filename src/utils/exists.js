@@ -1,4 +1,4 @@
-let fs = require("fs");
+const fs = require("fs");
 /**
  * Check if file exists and cache the result
  * return the result in cache

@@ -1,4 +1,4 @@
-let fs = require("fs");
+const fs = require("fs");
 /**
  * Read the file and cache the result
  * return the result in cache

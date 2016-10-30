@@ -7,13 +7,13 @@
  * @see https://github.com/babel/babel-loader/issues/34
  * @see https://github.com/babel/babel-loader/pull/41
  */
-let crypto = require("crypto");
-let mkdirp = require("mkdirp");
-let findCacheDir = require("find-cache-dir");
-let fs = require("fs");
-let os = require("os");
-let path = require("path");
-let zlib = require("zlib");
+const crypto = require("crypto");
+const mkdirp = require("mkdirp");
+const findCacheDir = require("find-cache-dir");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+const zlib = require("zlib");
 
 /**
  * Read the contents from the compressed file.
@@ -22,7 +22,7 @@ let zlib = require("zlib");
  * @params {String} filename
  * @params {Function} callback
  */
-let read = function(filename, callback) {
+const read = function(filename, callback) {
   return fs.readFile(filename, function(err, data) {
     if (err) { return callback(err); }
 
@@ -51,8 +51,8 @@ let read = function(filename, callback) {
  * @params {String} result
  * @params {Function} callback
  */
-let write = function(filename, result, callback) {
-  let content = JSON.stringify(result);
+const write = function(filename, result, callback) {
+  const content = JSON.stringify(result);
 
   return zlib.gzip(content, function(err, data) {
     if (err) { return callback(err); }
@@ -70,9 +70,9 @@ let write = function(filename, result, callback) {
  *
  * @return {String}
  */
-let filename = function(source, identifier, options) {
-  let hash = crypto.createHash("SHA1");
-  let contents = JSON.stringify({
+const filename = function(source, identifier, options) {
+  const hash = crypto.createHash("SHA1");
+  const contents = JSON.stringify({
     source: source,
     options: options,
     identifier: identifier,
@@ -119,10 +119,10 @@ let filename = function(source, identifier, options) {
 module.exports = function(params, callback) {
   // Spread params into named variables
   // Forgive user whenever possible
-  let source = params.source;
-  let options = params.options || {};
-  let transform = params.transform;
-  let identifier = params.identifier;
+  const source = params.source;
+  const options = params.options || {};
+  const transform = params.transform;
+  const identifier = params.identifier;
   let directory;
 
   if (typeof params.directory === "string") {
@@ -131,7 +131,7 @@ module.exports = function(params, callback) {
     directory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
   }
 
-  let file = path.join(directory, filename(source, identifier, options));
+  const file = path.join(directory, filename(source, identifier, options));
 
   // Make sure the directory exists.
   return mkdirp(directory, function(err) {
