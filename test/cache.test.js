@@ -111,6 +111,35 @@ test.cb.serial("should output <hash>.json.gz files to standard cache dir by defa
   });
 });
 
+test.cb.serial("should output files to standard cache dir if set to true in query", (t) => {
+  const config = assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: `${babelLoader}?cacheDirectory=true&presets[]=es2015`,
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err) => {
+    t.is(err, null);
+
+    fs.readdir(defaultCacheDir, (err, files) => {
+      files = files.filter((file) => /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file));
+
+      t.is(err, null);
+      t.true(files.length > 0);
+      t.end();
+    });
+  });
+});
+
 test.cb.skip("should read from cache directory if cached file exists", (t) => {
   const config = assign({}, globalConfig, {
     output: {
