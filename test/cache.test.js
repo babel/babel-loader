@@ -78,7 +78,7 @@ test.cb("should output files to cache directory", (t) => {
   });
 });
 
-test.cb.serial("should output files to standard cache dir by default", (t) => {
+test.cb.serial("should output <hash>.json.gz files to standard cache dir by default", (t) => {
   const config = assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -102,7 +102,7 @@ test.cb.serial("should output files to standard cache dir by default", (t) => {
     t.is(err, null);
 
     fs.readdir(defaultCacheDir, (err, files) => {
-      files = files.filter((file) => /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file));
+      files = files.filter((file) => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
 
       t.is(err, null);
       t.true(files.length > 0);
