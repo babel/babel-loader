@@ -131,7 +131,7 @@ test.cb.serial("should output files to standard cache dir if set to true in quer
     t.is(err, null);
 
     fs.readdir(defaultCacheDir, (err, files) => {
-      files = files.filter((file) => /\b[0-9a-f]{5,40}\.json\.gzip\b/.test(file));
+      files = files.filter((file) => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
 
       t.is(err, null);
       t.true(files.length > 0);
