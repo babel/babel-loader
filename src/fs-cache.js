@@ -80,7 +80,7 @@ const filename = function(source, identifier, options) {
 
   hash.end(contents);
 
-  return hash.read().toString("hex") + ".json.gzip";
+  return hash.read().toString("hex") + ".json.gz";
 };
 
 /**
