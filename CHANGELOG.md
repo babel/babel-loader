@@ -1,5 +1,22 @@
 # Changelog
 
+## v6.2.8
+
+### 🐛 Bug Fix
+
+- gzipped files should have `.gz` as the extension, not `.gzip` (#326) @creeperyang
+
+### 📝 Documentation
+
+- Update README docs for cacheDirectory's actual behaviour (#245) @sohkai
+
+### 🏠 Internal
+
+- Use eslint and nyc (#321) @danez
+- Adjust travis config (#320) @danez
+- Use babel to compile babel-loader (#319) @danez
+- 
+
 ## v6.2.7
 
 ### 😢 Regression
