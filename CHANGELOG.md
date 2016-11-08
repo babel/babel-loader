@@ -4,7 +4,8 @@
 
 ### 🐛 Bug Fix
 
-- gzipped files should have `.gz` as the extension, not `.gzip` (#326) @creeperyang
+- gzipped files should have `.gz` as the extension, not `.gzip` (#326) @bjornstar
+- fix options.sourceFileName gennerate bug (#260) @creeperyang
 
 ### 📝 Documentation
 
