@@ -4,6 +4,7 @@ const loaderUtils = require("loader-utils");
 const path = require("path");
 const cache = require("./fs-cache.js");
 const exists = require("./utils/exists")();
+const relative = require("./utils/relative");
 const read = require("./utils/read")();
 const resolveRc = require("./resolve-rc.js");
 const pkg = require("./../package.json");
@@ -98,9 +99,9 @@ module.exports = function(source, inputSourceMap) {
   }
 
   if (options.sourceFileName === undefined) {
-    options.sourceFileName = path.relative(
-        options.sourceRoot,
-        options.filename
+    options.sourceFileName = relative(
+      options.sourceRoot,
+      options.filename
     );
   }
 
