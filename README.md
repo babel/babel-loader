@@ -27,7 +27,7 @@ module: {
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel', // 'babel-loader' is also a valid name to reference
+      loader: 'babel-loader',
       query: {
         presets: ['es2015']
       }
@@ -48,7 +48,7 @@ module: {
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel?presets[]=es2015'
+      loader: 'babel-loader?presets[]=es2015'
     }
   ]
 }
@@ -62,7 +62,7 @@ module: {
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel',
+      loader: 'babel-loader',
       query: {
         presets: ['es2015']
       }
@@ -114,7 +114,7 @@ loaders: [
   {
     test: /\.js$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel',
+    loader: 'babel-loader',
     query: {
       presets: ['es2015'],
       plugins: ['transform-runtime']
@@ -125,7 +125,7 @@ loaders: [
 
 ### The node API for `babel` has been moved to `babel-core`.
 
-If you receive this message it means that you have the npm package `babel` installed and use the short notation of the loader in the webpack config:
+If you receive this message it means that you have the npm package `babel` installed and use the short notation of the loader in the webpack config (which is not valid anymore as of webpack 2.x):
 ```js
   {
     test: /\.js$/,
