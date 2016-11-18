@@ -17,7 +17,6 @@
 - Use eslint and nyc (#321) @danez
 - Adjust travis config (#320) @danez
 - Use babel to compile babel-loader (#319) @danez
-- 
 
 ## v6.2.7
 
