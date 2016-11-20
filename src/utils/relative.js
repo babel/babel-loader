@@ -11,9 +11,9 @@ module.exports = function relative(aRoot, aPath) {
   if (aRoot === "") {
     aRoot = ".";
   }
-  if (/^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\)*\w([\w.])+$/.test(aRoot)) {
+  if (/^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)/.test(aRoot)) {
     // let Node take care of Windows paths
-    // regex from agent-j
+    // modified from regex by agent-j
     // (http://stackoverflow.com/questions/6416065/c-sharp-regex-for-file-paths-e-g-c-test-test-exe)
     return path.relative(aRoot, aPath);
   }
