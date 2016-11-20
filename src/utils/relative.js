@@ -15,7 +15,7 @@ module.exports = function relative(aRoot, aPath) {
     // let Node take care of Windows paths
     // modified from regex by agent-j
     // (http://stackoverflow.com/questions/6416065/c-sharp-regex-for-file-paths-e-g-c-test-test-exe)
-    return path.relative(aRoot, aPath);
+    return path.win32.relative(aRoot, aPath);
   }
 
   aRoot = aRoot.replace(/\/$/, "");
