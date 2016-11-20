@@ -16,4 +16,6 @@ test("should get correct relative path", (t) => {
 
   t.is(relative("C:\\the\\root", "C:\\the\\root\\one.js"), "one.js");
   t.is(relative("C:\\the", "C:\\the\\root\\one.js"), "root\\one.js");
+  t.is(relative("C:\\the\\root", "C:\\the\\one.js"), "..\\one.js");
+  t.is(relative("C:\\", "C:\\the\\root\\one.js"), "the\\root\\one.js");
 });
