@@ -1,3 +1,5 @@
+const path = require("path");
+
 /**
 * Make a path relative to a URL or another path.
 * Borrowed from https://github.com/mozilla/source-map/blob/master/lib/util.js
@@ -8,6 +10,12 @@
 module.exports = function relative(aRoot, aPath) {
   if (aRoot === "") {
     aRoot = ".";
+  }
+  if (/^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\)*\w([\w.])+$/.test(aRoot)) {
+    // let Node take care of Windows paths
+    // regex from agent-j
+    // (http://stackoverflow.com/questions/6416065/c-sharp-regex-for-file-paths-e-g-c-test-test-exe)
+    return path.relative(aRoot, aPath);
   }
 
   aRoot = aRoot.replace(/\/$/, "");
