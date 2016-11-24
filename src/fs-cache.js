@@ -125,35 +125,36 @@ module.exports = function(params, callback) {
   const identifier = params.identifier;
   let directory;
 
-  if (typeof params.directory === "string") {
-    directory = params.directory;
-  } else {
-    directory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+  try {
+    if (typeof params.directory === "string") {
+      directory = params.directory;
+      mkdirp.sync(directory);
+    } else {
+      directory = findCacheDir({ name: "babel-loader", create: true });
+    }
+  } catch (e) {
+    // Make sure the directory exists and is writable.
+    directory = os.tmpdir();
   }
 
   const file = path.join(directory, filename(source, identifier, options));
 
-  // Make sure the directory exists.
-  return mkdirp(directory, function(err) {
-    if (err) { return callback(err); }
+  return read(file, function(err, content) {
+    let result = {};
+    // No errors mean that the file was previously cached
+    // we just need to return it
+    if (!err) { return callback(null, content); }
 
-    return read(file, function(err, content) {
-      let result = {};
-      // No errors mean that the file was previously cached
-      // we just need to return it
-      if (!err) { return callback(null, content); }
+    // Otherwise just transform the file
+    // return it to the user asap and write it in cache
+    try {
+      result = transform(source, options);
+    } catch (error) {
+      return callback(error);
+    }
 
-      // Otherwise just transform the file
-      // return it to the user asap and write it in cache
-      try {
-        result = transform(source, options);
-      } catch (error) {
-        return callback(error);
-      }
-
-      return write(file, result, function(err) {
-        return callback(err, result);
-      });
+    return write(file, result, function(err) {
+      return callback(err, result);
     });
   });
 };
