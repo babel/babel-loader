@@ -2,12 +2,12 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import assign from "object-assign";
-import mkdirp from "mkdirp";
 import rimraf from "rimraf";
 import webpack from "webpack";
+import createTestDirectory from "./helpers/createTestDirectory";
 
-const outputDir = path.resolve(__dirname, "output/options");
-const babelLoader = path.resolve(__dirname, "..");
+const outputDir = path.join(__dirname, "output/options");
+const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
@@ -24,11 +24,10 @@ const globalConfig = {
 // Create a separate directory for each test so that the tests
 // can run in parallel
 test.cb.beforeEach((t) => {
-  const directory = path.join(outputDir, t.title.replace(/ /g, "_"));
-  t.context.directory = directory;
-  rimraf(directory, (err) => {
+  createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
-    mkdirp(directory, t.end);
+    t.context.directory = directory;
+    t.end();
   });
 });
 
