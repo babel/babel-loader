@@ -1,39 +1,13 @@
-/**
-* Make a path relative to a URL or another path.
-* Borrowed from https://github.com/mozilla/source-map/blob/master/lib/util.js
-*
-* @param aRoot The root path or URL.
-* @param aPath The path or URL to be made relative to aRoot.
-*/
-module.exports = function relative(aRoot, aPath) {
-  if (aRoot === "") {
-    aRoot = ".";
+const path = require("path");
+
+module.exports = function relative(sourceRoot, filename) {
+  const rootPath = sourceRoot.replace(/\\/g, "/").split("/")[1];
+  const fileRootPath = filename.replace(/\\/g, "/").split("/")[1];
+
+  // If the file is in a completely different root folder use the absolute path of file.
+  if (rootPath && rootPath !== fileRootPath) {
+    return filename;
   }
 
-  aRoot = aRoot.replace(/\/$/, "");
-
-  // It is possible for the path to be above the root. In this case, simply
-  // checking whether the root is a prefix of the path won't work. Instead, we
-  // need to remove components from the root one by one, until either we find
-  // a prefix that fits, or we run out of components to remove.
-  let level = 0;
-  while (aPath.indexOf(aRoot + "/") !== 0) {
-    const index = aRoot.lastIndexOf("/");
-    if (index < 0) {
-      return aPath;
-    }
-
-    // If the only part of the root that is left is the scheme (i.e. http://,
-    // file:///, etc.), one or more slashes (/), or simply nothing at all, we
-    // have exhausted all components, so the path is not relative to the root.
-    aRoot = aRoot.slice(0, index);
-    if (aRoot.match(/^([^\/]+:\/)?\/*$/)) {
-      return aPath;
-    }
-
-    ++level;
-  }
-
-  // Make sure we add a '../' for each component we removed from the root.
-  return Array(level + 1).join("../") + aPath.substr(aRoot.length + 1);
+  return path.relative(sourceRoot, filename);
 };
