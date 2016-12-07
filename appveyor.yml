@@ -9,7 +9,7 @@ install:
   - npm install
 
 test_script:
-  - npm test-ci
+  - npm run test-ci
 
 after_test:
   - npm run coverage
