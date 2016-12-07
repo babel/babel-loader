@@ -1,5 +1,17 @@
 # Changelog
 
+## v6.2.9
+
+### 😢 Regression
+
+Source maps on windows did not work correctly with v6.2.8.
+Thanks @josephst
+
+### 🏠 Internal
+
+- Add AppVeyor to run tests on windows @danez
+- Fix tests on windows (#343) @danez
+
 ## v6.2.8
 
 ### 🐛 Bug Fix
