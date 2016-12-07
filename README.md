@@ -12,7 +12,13 @@
 ## Installation
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 --save-dev
+npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+```
+
+or
+
+```bash
+yarn add babel-loader babel-core babel-preset-es2015 webpack --dev
 ```
 
 __Note:__ [npm](https://npmjs.com) deprecated [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) since npm@3, so required peer dependencies like babel-core and webpack must be listed explicitly in your `package.json`.
