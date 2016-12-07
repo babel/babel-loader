@@ -6,5 +6,6 @@
     "test": {
       "plugins": ["istanbul"]
     }
-  }
+  },
+  "comments": false
 }
