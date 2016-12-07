@@ -4,4 +4,3 @@ lib
 node_modules
 npm-debug.log
 test/output
-yarn.lock
