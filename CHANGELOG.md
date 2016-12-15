@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.2.10
+
+Support for webpack 2.2-rc has been added in this release
+
+### 🐛 Bug Fix
+
+- If cache directory not writable, try to fallback to tmpdir before failing
+
 ## v6.2.9
 
 ### 😢 Regression
