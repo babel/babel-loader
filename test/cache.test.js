@@ -206,7 +206,6 @@ test.cb("should have one file per module", (t) => {
   });
 });
 
-
 test.cb("should generate a new file if the identifier changes", (t) => {
   const configs = [
     assign({}, globalConfig, {
