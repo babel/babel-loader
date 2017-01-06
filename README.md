@@ -13,29 +13,17 @@
   <h1>Babel Loader</h1>
 </div>
 
-  > Babel is a compiler for writing next generation JavaScript.
+This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
 
-  This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
+__Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
 
-  __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
-
-## Installation
+<h2 align="center">Install</h2>
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+npm install --save-dev babel-loader babel-core babel-preset-es2015
 ```
 
-or
-
-```bash
-yarn add babel-loader babel-core babel-preset-es2015 webpack --dev
-```
-
-__Note:__ [npm](https://npmjs.com) deprecated [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) since npm@3, so required peer dependencies like babel-core and webpack must be listed explicitly in your `package.json`.
-
-__Note:__ If you're upgrading from babel 5 to babel 6, please take a look [at this guide](https://medium.com/@malyw/how-to-update-babel-5-x-6-x-d828c230ec53#.yqxukuzdk).
-
-## Usage
+<h2 align="center">Usage</h2>
 
 [Documentation: Using loaders](http://webpack.github.io/docs/using-loaders.html)
 
