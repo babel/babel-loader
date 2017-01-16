@@ -1,31 +1,31 @@
-# babel-loader 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader) 
 [![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader) 
 [![Build Status](https://ci.appveyor.com/api/projects/status/vgtpr2i5bykgyuqo/branch/master?svg=true)](https://ci.appveyor.com/project/danez/babel-loader/branch/master)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
-  > Babel is a compiler for writing next generation JavaScript.
 
-  This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
+<div align="center">
+  <a href="https://github.com/babel/babel/">
+  <img width="200" height="200"
+    src="https://rawgit.com/babel/logo/master/babel.svg">
+  </a>
+  <a href="https://github.com/webpack/webpack">
+    <img width="200" height="200"
+      src="https://webpack.js.org/assets/icon-square-big.svg">
+  </a>
+  <h1>Babel Loader</h1>
+</div>
 
-  __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
+This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
 
-## Installation
+__Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
+
+<h2 align="center">Install</h2>
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+npm install --save-dev babel-loader babel-core babel-preset-es2015
 ```
 
-or
-
-```bash
-yarn add babel-loader babel-core babel-preset-es2015 webpack --dev
-```
-
-__Note:__ [npm](https://npmjs.com) deprecated [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) since npm@3, so required peer dependencies like babel-core and webpack must be listed explicitly in your `package.json`.
-
-__Note:__ If you're upgrading from babel 5 to babel 6, please take a look [at this guide](https://medium.com/@malyw/how-to-update-babel-5-x-6-x-d828c230ec53#.yqxukuzdk).
-
-## Usage
+<h2 align="center">Usage</h2>
 
 [Documentation: Using loaders](http://webpack.github.io/docs/using-loaders.html)
 
