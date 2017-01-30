@@ -1,6 +1,6 @@
-# babel-loader 
-[![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader) 
-[![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader) 
+# babel-loader
+[![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
+[![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
 [![Build Status](https://ci.appveyor.com/api/projects/status/vgtpr2i5bykgyuqo/branch/master?svg=true)](https://ci.appveyor.com/project/danez/babel-loader/branch/master)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
   > Babel is a compiler for writing next generation JavaScript.
@@ -78,6 +78,23 @@ module: {
       }
     }
   ]
+}
+  ```
+
+  or by using global options:
+
+  ```javascript
+module: {
+  loaders: [
+    {
+      test: /\.js$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel-loader'
+    }
+  ]
+},
+babel: {
+  presets: ['es2015']
 }
   ```
 
