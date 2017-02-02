@@ -88,9 +88,11 @@ module.exports = function(source, inputSourceMap) {
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
           resolveRc(path.dirname(filename)),
-      env: process.env.BABEL_ENV || process.env.NODE_ENV,
+      env: userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV,
     }),
   };
+
+  delete userOptions.forceEnv;
 
   const options = assign({}, defaultOptions, userOptions);
 

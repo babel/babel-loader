@@ -1,6 +1,6 @@
-# babel-loader 
-[![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader) 
-[![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader) 
+# babel-loader
+[![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
+[![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
 [![Build Status](https://ci.appveyor.com/api/projects/status/vgtpr2i5bykgyuqo/branch/master?svg=true)](https://ci.appveyor.com/project/danez/babel-loader/branch/master)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
   > Babel is a compiler for writing next generation JavaScript.
@@ -88,6 +88,8 @@ module: {
   * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
 
   * `babelrc`: Default `true`.  When `false`, will ignore `.babelrc` files (except those referenced by the `extends` option).
+
+  * `forceEnv`: Default will resolve BABEL_ENV then NODE_ENV. Allow you to override BABEL_ENV/NODE_ENV at the loader level. Useful for isomorphic applications with different babel configuration for client and server.
 
   __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
