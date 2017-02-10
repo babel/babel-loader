@@ -15,6 +15,8 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 
+let defaultCacheDirectory = null;  // Lazily instantiated when needed
+
 /**
  * Read the contents from the compressed file.
  *
@@ -161,8 +163,6 @@ const handleCache = function(directory, params, callback) {
  *
  *   });
  */
-
-var defaultCacheDirectory = null;  // Lazily instantiated when needed
 
 module.exports = function(params, callback) {
   let directory;
