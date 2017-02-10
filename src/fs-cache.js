@@ -161,13 +161,19 @@ const handleCache = function(directory, params, callback) {
  *
  *   });
  */
+
+var defaultCacheDirectory = null;  // Lazily instantiated when needed
+
 module.exports = function(params, callback) {
   let directory;
 
   if (typeof params.directory === "string") {
     directory = params.directory;
   } else {
-    directory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    if (defaultCacheDirectory === null) {
+      defaultCacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    }
+    directory = defaultCacheDirectory;
   }
 
   handleCache(directory, params, callback);
