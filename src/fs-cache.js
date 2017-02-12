@@ -15,6 +15,8 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 
+let defaultCacheDirectory = null;  // Lazily instantiated when needed
+
 /**
  * Read the contents from the compressed file.
  *
@@ -161,13 +163,17 @@ const handleCache = function(directory, params, callback) {
  *
  *   });
  */
+
 module.exports = function(params, callback) {
   let directory;
 
   if (typeof params.directory === "string") {
     directory = params.directory;
   } else {
-    directory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    if (defaultCacheDirectory === null) {
+      defaultCacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    }
+    directory = defaultCacheDirectory;
   }
 
   handleCache(directory, params, callback);

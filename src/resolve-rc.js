@@ -10,6 +10,8 @@ const path = require("path");
 const exists = require("./utils/exists")({});
 const read = require("./utils/read")({});
 
+const cache = {};
+
 const find = function find(start, rel) {
   const file = path.join(start, rel);
 
@@ -27,6 +29,9 @@ const find = function find(start, rel) {
 
 module.exports = function(loc, rel) {
   rel = rel || ".babelrc";
-
-  return find(loc, rel);
+  const cacheKey = `${loc}/${rel}`;
+  if (!(cacheKey in cache)) {
+    cache[cacheKey] = find(loc, rel);
+  }
+  return cache[cacheKey];
 };
