@@ -39,10 +39,10 @@
     "build": "babel src/ --out-dir lib/",
     "coverage": "nyc report --reporter=json && codecov -f coverage/coverage-final.json",
     "lint": "eslint src test",
-    "preversion": "npm test",
-    "prepublish": "npm run clean && npm run build",
-    "test": "npm run lint && cross-env BABEL_ENV=test npm run build && npm run test-only",
-    "test-ci": "cross-env BABEL_ENV=test npm run build && npm run test-only",
+    "preversion": "yarn test",
+    "prepublish": "yarn clean && yarn build",
+    "test": "yarn lint && cross-env BABEL_ENV=test yarn build && yarn test-only",
+    "test-ci": "cross-env BABEL_ENV=test yarn build && yarn test-only",
     "test-only": "nyc ava"
   },
   "repository": {
