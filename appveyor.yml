@@ -3,9 +3,9 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  - yarn
 
 test_script:
-  - npm run test-ci
+  - yarn test-ci
 
 build: off
