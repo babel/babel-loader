@@ -12,9 +12,9 @@ matrix:
     - node_js: "lts/*"
       env: LINT=true
 before_script:
-  - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@$WEBPACK_VERSION; fi'
+  - 'if [ "$WEBPACK_VERSION" ]; then yarn add webpack@$WEBPACK_VERSION; fi'
 script:
-  - 'if [ -n "${LINT-}" ]; then npm run lint ; fi'
-  - 'if [ -z "${LINT-}" ]; then npm run test-ci ; fi'
+  - 'if [ -n "${LINT-}" ]; then yarn lint ; fi'
+  - 'if [ -z "${LINT-}" ]; then yarn test-ci ; fi'
 after_success:
-  - npm run coverage
+  - yarn coverage
