@@ -13,6 +13,8 @@ matrix:
       env: LINT=true
     - node_js: "0.10"
       env: WEBPACK_VERSION="1"
+    - node_js: "0.12"
+      env: WEBPACK_VERSION="1"
 before_script:
   - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@$WEBPACK_VERSION; fi'
 script:
