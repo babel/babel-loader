@@ -77,3 +77,43 @@ test.cb("should not throw error on syntax error", (t) => {
     t.end();
   });
 });
+
+test.cb("should use correct env", (t) => {
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          query: {
+            forceEnv: "testenv",
+            env: {
+              testenv: {
+                presets: ["es2015abc"],
+              },
+              otherenv: {
+                presets: ["es2015xyz"],
+              }
+            }
+          },
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+
+    t.true(stats.compilation.errors.length === 1);
+
+    t.truthy(stats.compilation.errors[0].message.match(/es2015abc/));
+    t.falsy(stats.compilation.errors[0].message.match(/es2015xyz/));
+
+    t.end();
+  });
+});
