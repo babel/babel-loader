@@ -78,6 +78,7 @@ module.exports = function(source, inputSourceMap) {
   const globalOptions = this.options.babel || {};
   const loaderOptions = loaderUtils.parseQuery(this.query);
   const userOptions = assign({}, globalOptions, loaderOptions);
+  const env = userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV;
   const defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
@@ -88,7 +89,7 @@ module.exports = function(source, inputSourceMap) {
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
           resolveRc(path.dirname(filename)),
-      env: userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV,
+      env: env,
     }),
   };
 
@@ -129,6 +130,9 @@ module.exports = function(source, inputSourceMap) {
     });
   }
 
+  const tmpEnv = process.env.BABEL_ENV;
+  process.env.BABEL_ENV = env;
   result = transpile(source, options);
+  process.env.BABEL_ENV = tmpEnv;
   this.callback(null, result.code, result.map);
 };
