@@ -32,10 +32,21 @@ const formatMessage = function(name, message, codeFrame) {
 };
 
 const transpile = function(source, options) {
+  const forceEnv = options.forceEnv;
+  let tmpEnv;
+
+  delete options.forceEnv;
+
+  if (forceEnv) {
+    tmpEnv = process.env.BABEL_ENV;
+    process.env.BABEL_ENV = forceEnv;
+  }
+
   let result;
   try {
     result = babel.transform(source, options);
   } catch (error) {
+    if (forceEnv) process.env.BABEL_ENV = tmpEnv;
     if (error.message && error.codeFrame) {
       let message = error.message;
       let name;
@@ -61,6 +72,8 @@ const transpile = function(source, options) {
     map.sourcesContent = [source];
   }
 
+  if (forceEnv) process.env.BABEL_ENV = tmpEnv;
+
   return {
     code: code,
     map: map,
@@ -68,8 +81,6 @@ const transpile = function(source, options) {
 };
 
 module.exports = function(source, inputSourceMap) {
-  let result = {};
-
   // Handle filenames (#106)
   const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split("!");
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
@@ -78,7 +89,6 @@ module.exports = function(source, inputSourceMap) {
   const globalOptions = this.options.babel || {};
   const loaderOptions = loaderUtils.parseQuery(this.query);
   const userOptions = assign({}, globalOptions, loaderOptions);
-  const env = userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV;
   const defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
@@ -89,11 +99,9 @@ module.exports = function(source, inputSourceMap) {
       babelrc: exists(userOptions.babelrc) ?
           read(userOptions.babelrc) :
           resolveRc(path.dirname(filename)),
-      env: env,
+      env: userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV || "development",
     }),
   };
-
-  delete userOptions.forceEnv;
 
   const options = assign({}, defaultOptions, userOptions);
 
@@ -130,9 +138,6 @@ module.exports = function(source, inputSourceMap) {
     });
   }
 
-  const tmpEnv = process.env.BABEL_ENV;
-  process.env.BABEL_ENV = env;
-  result = transpile(source, options);
-  process.env.BABEL_ENV = tmpEnv;
+  const result = transpile(source, options);
   this.callback(null, result.code, result.map);
 };
