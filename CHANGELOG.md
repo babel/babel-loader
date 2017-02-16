@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.3.2
+
+### 😢 Regression
+
+- `forceEnv` was interfering with regular environment handling
+
 ## v6.3.1
 
 ### 🐛 Bug Fix
