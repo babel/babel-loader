@@ -1,5 +1,53 @@
 # Changelog
 
+## v6.3.2
+
+### 😢 Regression
+
+- `forceEnv` was interfering with regular environment handling
+
+## v6.3.1
+
+### 🐛 Bug Fix
+
+ - The new `forceEnv` options wasn't working as expected (#379) @chrisvasz
+
+## v6.3.0
+
+### 🚀 New Feature
+
+- Add new config option `forceEnv` (#368) @moimael
+
+Allow to override BABEL_ENV/NODE_ENV at loader-level. Useful for isomorphic applications which have   separate babel config for client and server.
+
+### 🐛 Bug Fix
+
+- Update loader-utils dependency to ^0.2.16 to fix compatibility with webpack 2 (#371) @leonaves
+
+### 💅 Polish
+
+- Improve FS caching to do less sync calls which improves performance slightly (#375) @akx 
+
+## v6.2.10
+
+Support for webpack 2.2-rc has been added in this release
+
+### 🐛 Bug Fix
+
+- If cache directory not writable, try to fallback to tmpdir before failing
+
+## v6.2.9
+
+### 😢 Regression
+
+Source maps on windows did not work correctly with v6.2.8.
+Thanks @josephst
+
+### 🏠 Internal
+
+- Add AppVeyor to run tests on windows @danez
+- Fix tests on windows (#343) @danez
+
 ## v6.2.8
 
 ### 🐛 Bug Fix

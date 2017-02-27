@@ -4,9 +4,8 @@
   ],
   "env": {
     "test": {
-      "plugins": [
-        "istanbul"
-      ]
+      "plugins": ["istanbul"]
     }
-  }
+  },
+  "comments": false
 }

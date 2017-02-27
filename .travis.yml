@@ -3,9 +3,7 @@ language: node_js
 node_js:
   - "7"
   - "6"
-  - "5"
   - "4"
-  - "0.12"
 matrix:
   include:
     - node_js: "lts/*"
@@ -13,6 +11,8 @@ matrix:
     - node_js: "lts/*"
       env: LINT=true
     - node_js: "0.10"
+      env: WEBPACK_VERSION="1"
+    - node_js: "0.12"
       env: WEBPACK_VERSION="1"
 before_script:
   - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@$WEBPACK_VERSION; fi'

@@ -2,9 +2,9 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import assign from "object-assign";
-import mkdirp from "mkdirp";
 import rimraf from "rimraf";
 import webpack from "webpack";
+import createTestDirectory from "./helpers/createTestDirectory";
 
 const defaultCacheDir = path.join(__dirname, "../node_modules/.cache/babel-loader");
 const cacheDir = path.join(__dirname, "output/cache/cachefiles");
@@ -28,19 +28,17 @@ const globalConfig = {
 // can run in parallel
 
 test.cb.beforeEach((t) => {
-  const directory = path.join(outputDir, t.title.replace(/ /g, "_"));
-  t.context.directory = directory;
-  rimraf(directory, (err) => {
+  createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
-    mkdirp(directory, t.end);
+    t.context.directory = directory;
+    t.end();
   });
 });
 test.cb.beforeEach((t) => {
-  const cacheDirectory = path.join(cacheDir, t.title.replace(/ /g, "_"));
-  t.context.cacheDirectory = cacheDirectory;
-  rimraf(cacheDirectory, (err) => {
+  createTestDirectory(cacheDir, t.title, (err, directory) => {
     if (err) return t.end(err);
-    mkdirp(cacheDirectory, t.end);
+    t.context.cacheDirectory = directory;
+    t.end();
   });
 });
 test.cb.beforeEach((t) => rimraf(defaultCacheDir, t.end));
@@ -78,7 +76,7 @@ test.cb("should output files to cache directory", (t) => {
   });
 });
 
-test.cb.serial("should output <hash>.json.gz files to standard cache dir by default", (t) => {
+test.cb.serial("should output json.gz files to standard cache dir by default", (t) => {
   const config = assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -174,6 +172,7 @@ test.cb.skip("should read from cache directory if cached file exists", (t) => {
       });
     });
   });
+});
 
 });
 
@@ -207,7 +206,6 @@ test.cb("should have one file per module", (t) => {
     });
   });
 });
-
 
 test.cb("should generate a new file if the identifier changes", (t) => {
   const configs = [

@@ -2,9 +2,9 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import assign from "object-assign";
-import mkdirp from "mkdirp";
 import rimraf from "rimraf";
 import webpack from "webpack";
+import createTestDirectory from "./helpers/createTestDirectory";
 
 const outputDir = path.join(__dirname, "output/loader");
 const babelLoader = path.join(__dirname, "../lib");
@@ -27,11 +27,10 @@ const globalConfig = {
 // Create a separate directory for each test so that the tests
 // can run in parallel
 test.cb.beforeEach((t) => {
-  const directory = path.join(outputDir, t.title.replace(/ /g, "_"));
-  t.context.directory = directory;
-  rimraf(directory, (err) => {
+  createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
-    mkdirp(directory, t.end);
+    t.context.directory = directory;
+    t.end();
   });
 });
 
@@ -74,6 +73,46 @@ test.cb("should not throw error on syntax error", (t) => {
   webpack(config, (err, stats) => {
     t.true(stats.compilation.errors.length === 1);
     t.true(stats.compilation.errors[0] instanceof Error);
+
+    t.end();
+  });
+});
+
+test.cb("should use correct env", (t) => {
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          query: {
+            forceEnv: "testenv",
+            env: {
+              testenv: {
+                presets: ["es2015abc"],
+              },
+              otherenv: {
+                presets: ["es2015xyz"],
+              }
+            }
+          },
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+
+    t.true(stats.compilation.errors.length === 1);
+
+    t.truthy(stats.compilation.errors[0].message.match(/es2015abc/));
+    t.falsy(stats.compilation.errors[0].message.match(/es2015xyz/));
 
     t.end();
   });

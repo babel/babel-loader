@@ -15,6 +15,8 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 
+let defaultCacheDirectory = null;  // Lazily instantiated when needed
+
 /**
  * Read the contents from the compressed file.
  *
@@ -84,6 +86,51 @@ const filename = function(source, identifier, options) {
 };
 
 /**
+ * Handle the cache
+ *
+ * @params {String} directory
+ * @params {Object} params
+ * @params {Function} callback
+ */
+const handleCache = function(directory, params, callback) {
+  const source = params.source;
+  const options = params.options || {};
+  const transform = params.transform;
+  const identifier = params.identifier;
+  const shouldFallback = typeof params.directory !== "string" && directory !== os.tmpdir();
+
+  // Make sure the directory exists.
+  mkdirp(directory, function(err) {
+    // Fallback to tmpdir if node_modules folder not writable
+    if (err) return shouldFallback ? handleCache(os.tmpdir(), params, callback) : callback(err);
+
+    const file = path.join(directory, filename(source, identifier, options));
+
+    return read(file, function(err, content) {
+      let result = {};
+      // No errors mean that the file was previously cached
+      // we just need to return it
+      if (!err) return callback(null, content);
+
+      // Otherwise just transform the file
+      // return it to the user asap and write it in cache
+      try {
+        result = transform(source, options);
+      } catch (error) {
+        return callback(error);
+      }
+
+      return write(file, result, function(err) {
+        // Fallback to tmpdir if node_modules folder not writable
+        if (err) return shouldFallback ? handleCache(os.tmpdir(), params, callback) : callback(err);
+
+        callback(null, result);
+      });
+    });
+  });
+};
+
+/**
  * Retrieve file from cache, or create a new one for future reads
  *
  * @async
@@ -116,44 +163,19 @@ const filename = function(source, identifier, options) {
  *
  *   });
  */
+
 module.exports = function(params, callback) {
-  // Spread params into named variables
-  // Forgive user whenever possible
-  const source = params.source;
-  const options = params.options || {};
-  const transform = params.transform;
-  const identifier = params.identifier;
   let directory;
 
   if (typeof params.directory === "string") {
     directory = params.directory;
   } else {
-    directory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+
+    if (defaultCacheDirectory === null) {
+      defaultCacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    }
+    directory = defaultCacheDirectory;
   }
 
-  const file = path.join(directory, filename(source, identifier, options));
-
-  // Make sure the directory exists.
-  return mkdirp(directory, function(err) {
-    if (err) { return callback(err); }
-
-    return read(file, function(err, content) {
-      let result = {};
-      // No errors mean that the file was previously cached
-      // we just need to return it
-      if (!err) { return callback(null, content); }
-
-      // Otherwise just transform the file
-      // return it to the user asap and write it in cache
-      try {
-        result = transform(source, options);
-      } catch (error) {
-        return callback(error);
-      }
-
-      return write(file, result, function(err) {
-        return callback(err, result);
-      });
-    });
-  });
+  handleCache(directory, params, callback);
 };

@@ -1,4 +1,8 @@
-# babel-loader [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader) [![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader) [![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
+# babel-loader
+[![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
+[![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
+[![Build Status](https://ci.appveyor.com/api/projects/status/vgtpr2i5bykgyuqo/branch/master?svg=true)](https://ci.appveyor.com/project/danez/babel-loader/branch/master)
+[![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
   > Babel is a compiler for writing next generation JavaScript.
 
   This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
@@ -8,7 +12,13 @@
 ## Installation
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 --save-dev
+npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+```
+
+or
+
+```bash
+yarn add babel-loader babel-core babel-preset-es2015 webpack --dev
 ```
 
 __Note:__ [npm](https://npmjs.com) deprecated [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) since npm@3, so required peer dependencies like babel-core and webpack must be listed explicitly in your `package.json`.
@@ -77,6 +87,9 @@ module: {
 
   * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
 
+  * `babelrc`: Default `true`.  When `false`, will ignore `.babelrc` files (except those referenced by the `extends` option).
+
+  * `forceEnv`: Default will resolve BABEL_ENV then NODE_ENV. Allow you to override BABEL_ENV/NODE_ENV at the loader level. Useful for isomorphic applications with different babel configuration for client and server.
 
   __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
@@ -155,70 +168,15 @@ require('babel-runtime/core-js/promise')['default'] = require('bluebird');
 var promise = new _Promise();
 ```
 
-The previous `Promise` library is referenced and used before it is overridden.
+Webpack then tries to load the `babel` package instead of the `babel-loader`.
 
-One approach is to have a "bootstrap" step in your application that would first override the default globals before your application:
-
-```javascript
-// bootstrap.js
-
-require('babel-runtime/core-js/promise').default = require('bluebird');
-
-// ...
-
-require('./app');
-```
-
-### using `cacheDirectory` fails with ENOENT Error
-
-If using cacheDirectory results in an error similar to the following:
-
-```
-ERROR in ./frontend/src/main.js
-Module build failed: Error: ENOENT, open 'true/350c59cae6b7bce3bb58c8240147581bfdc9cccc.json.gzip'
- @ multi app
-```
-(notice the `true/` in the filepath)
-
-That means that most likely, you're not setting the options correctly, and you're doing something similar to:
-
-```javascript
-loaders: [
+To fix this you should uninstall the npm package `babel` as it is deprecated in babel v6. (instead install `babel-cli` or `babel-core`)
+In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the webpack config:
+```js
   {
-    test: /\.jsx?$/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'babel?cacheDirectory=true'
+    test: /\.js$/,
+    loader: 'babel-loader',
   }
-]
-```
-
-That's not the correct way of setting boolean values. You should do instead:
-
-```javascript
-loaders: [
-  {
-    test: /\.jsx?$/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'babel?cacheDirectory'
-  }
-]
-```
-
-or use the [query](https://webpack.github.io/docs/using-loaders.html#query-parameters) property:
-
-```javascript
-loaders: [
-  // the optional 'runtime' transformer tells babel to require the runtime
-  // instead of inlining it.
-  {
-    test: /\.jsx?$/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'babel',
-    query: {
-      cacheDirectory: true
-    }
-  }
-]
 ```
 
 ### The node API for `babel` has been moved to `babel-core`.
