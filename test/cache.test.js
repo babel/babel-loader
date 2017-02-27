@@ -172,6 +172,7 @@ test.cb.skip("should read from cache directory if cached file exists", (t) => {
       });
     });
   });
+ });
 
 test.cb("should have one file per module", (t) => {
   const config = assign({}, globalConfig, {
