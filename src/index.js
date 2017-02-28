@@ -87,7 +87,13 @@ module.exports = function(source, inputSourceMap) {
 
   // Handle options
   const globalOptions = this.options.babel || {};
-  const loaderOptions = loaderUtils.getOptions ? loaderUtils.getOptions(this) || {} : loaderUtils.parseQuery(this.query);
+  const loaderOptions = {};
+  
+  if ( loaderUtils.getOptions )
+    loaderOptions = loaderUtils.getOptions(this) || {};
+  else
+    loaderUtils.parseQuery(this.query);
+  
   const userOptions = assign({}, globalOptions, loaderOptions);
   const defaultOptions = {
     inputSourceMap: inputSourceMap,
