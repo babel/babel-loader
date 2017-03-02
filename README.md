@@ -1,50 +1,51 @@
-# babel-loader
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
 [![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
 [![Build Status](https://ci.appveyor.com/api/projects/status/vgtpr2i5bykgyuqo/branch/master?svg=true)](https://ci.appveyor.com/project/danez/babel-loader/branch/master)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
-  > Babel is a compiler for writing next generation JavaScript.
 
-  This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
+<div align="center">
+  <a href="https://github.com/babel/babel/">
+    <img width="200" height="200" src="https://rawgit.com/babel/logo/master/babel.svg">
+  </a>
+  <a href="https://github.com/webpack/webpack">
+    <img width="200" height="200" src="https://webpack.js.org/assets/icon-square-big.svg">
+  </a>
+  <h1>Babel Loader</h1>
+</div>
 
-  __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
+This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
 
+__Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
+
+<h2 align="center">Install</h2>
 ## Installation
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+npm install --save-dev babel-loader babel-core babel-preset-es2015
 ```
 
-or
+<h2 align="center">Usage</h2>
 
-```bash
-yarn add babel-loader babel-core babel-preset-es2015 webpack --dev
-```
+[Documentation: Using loaders](https://webpack.js.org/loaders/)
 
-__Note:__ [npm](https://npmjs.com) deprecated [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) since npm@3, so required peer dependencies like babel-core and webpack must be listed explicitly in your `package.json`.
+Within your webpack configuration object, you'll need to add the babel-loader to the list of modules, like so:
 
-__Note:__ If you're upgrading from babel 5 to babel 6, please take a look [at this guide](https://medium.com/@malyw/how-to-update-babel-5-x-6-x-d828c230ec53#.yqxukuzdk).
-
-## Usage
-
-[Documentation: Using loaders](http://webpack.github.io/docs/using-loaders.html)
-
-  Within your webpack configuration object, you'll need to add the babel-loader to the list of modules, like so:
-
-  ```javascript
+```javascript
 module: {
-  loaders: [
+  rules: [
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015']
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['es2015']
+        }
       }
     }
   ]
 }
-  ```
+```
 
 ### Options
 
@@ -52,7 +53,7 @@ See the `babel` [options](http://babeljs.io/docs/usage/options/).
 
 You can pass options to the loader by writing them as a [query string](https://github.com/webpack/loader-utils):
 
-  ```javascript
+```javascript
 module: {
   loaders: [
     {
@@ -62,75 +63,79 @@ module: {
     }
   ]
 }
-  ```
+```
 
-  or by using the [query property](https://webpack.github.io/docs/using-loaders.html#query-parameters):
+or by using the [options property](https://webpack.js.org/configuration/module/#rule-options-rule-query):
 
-  ```javascript
+```javascript
 module: {
-  loaders: [
+  rules: [
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015']
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['es2015']
+        }
       }
     }
   ]
 }
-  ```
+```
 
-  This loader also supports the following loader-specific option:
+This loader also supports the following loader-specific option:
 
-  * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: babel-loader?cacheDirectory=true`) the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
+* `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: babel-loader?cacheDirectory=true`) the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
 
-  * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
+* `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
 
-  * `babelrc`: Default `true`.  When `false`, will ignore `.babelrc` files (except those referenced by the `extends` option).
+* `babelrc`: Default `true`.  When `false`, will ignore `.babelrc` files (except those referenced by the `extends` option).
 
-  * `forceEnv`: Default will resolve BABEL_ENV then NODE_ENV. Allow you to override BABEL_ENV/NODE_ENV at the loader level. Useful for isomorphic applications with different babel configuration for client and server.
+* `forceEnv`: Default will resolve BABEL_ENV then NODE_ENV. Allow you to override BABEL_ENV/NODE_ENV at the loader level. Useful for isomorphic applications with different babel configuration for client and server.
 
-  __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
+__Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
 ## Troubleshooting
 
 ### babel-loader is slow!
 
-  Make sure you are transforming as few files as possible. Because you are probably
-  matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted
-  source.
+Make sure you are transforming as few files as possible. Because you are probably
+matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted
+source.
 
-  To exclude `node_modules`, see the `exclude` option in the `loaders` config as documented above.
+To exclude `node_modules`, see the `exclude` option in the `loaders` config as documented above.
 
-  You can also speed up babel-loader by as much as 2x by using the `cacheDirectory` option.
-  This will cache transformations to the filesystem.
+You can also speed up babel-loader by as much as 2x by using the `cacheDirectory` option.
+This will cache transformations to the filesystem.
 
 ### babel is injecting helpers into each file and bloating my code!
 
-  babel uses very small helpers for common functions such as `_extend`. By default
-  this will be added to every file that requires it.
+babel uses very small helpers for common functions such as `_extend`. By default
+this will be added to every file that requires it.
 
-  You can instead require the babel runtime as a separate module to avoid the duplication.
+You can instead require the babel runtime as a separate module to avoid the duplication.
 
-  The following configuration disables automatic per-file runtime injection in babel, instead
-  requiring `babel-plugin-transform-runtime` and making all helper references use it.
+The following configuration disables automatic per-file runtime injection in babel, instead
+requiring `babel-plugin-transform-runtime` and making all helper references use it.
 
-  See the [docs](http://babeljs.io/docs/plugins/transform-runtime/) for more information.
+See the [docs](http://babeljs.io/docs/plugins/transform-runtime/) for more information.
 
-  **NOTE:** You must run `npm install babel-plugin-transform-runtime --save-dev` to include this in your project and `babel-runtime` itself as a dependency with `npm install babel-runtime --save`.
+**NOTE:** You must run `npm install babel-plugin-transform-runtime --save-dev` to include this in your project and `babel-runtime` itself as a dependency with `npm install babel-runtime --save`.
 
 ```javascript
-loaders: [
+rules: [
   // the 'transform-runtime' plugin tells babel to require the runtime
   // instead of inlining it.
   {
     test: /\.js$/,
     exclude: /(node_modules|bower_components)/,
-    loader: 'babel-loader',
-    query: {
-      presets: ['es2015'],
-      plugins: ['transform-runtime']
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: ['es2015'],
+        plugins: ['transform-runtime']
+      }
     }
   }
 ]
