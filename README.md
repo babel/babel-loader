@@ -12,13 +12,13 @@
 ## Installation
 
 ```bash
-npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+npm install babel-loader babel-core babel-preset-env webpack --save-dev
 ```
 
 or
 
 ```bash
-yarn add babel-loader babel-core babel-preset-es2015 webpack --dev
+yarn add babel-loader babel-core babel-preset-env webpack --dev
 ```
 
 __Note:__ [npm](https://npmjs.com) deprecated [auto-installing of peerDependencies](https://github.com/npm/npm/issues/6565) since npm@3, so required peer dependencies like babel-core and webpack must be listed explicitly in your `package.json`.
@@ -39,7 +39,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel-loader',
       query: {
-        presets: ['es2015']
+        presets: ['env']
       }
     }
   ]
@@ -58,7 +58,7 @@ module: {
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel-loader?presets[]=es2015'
+      loader: 'babel-loader?presets[]=env'
     }
   ]
 }
@@ -74,7 +74,7 @@ module: {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel-loader',
       query: {
-        presets: ['es2015']
+        presets: ['env']
       }
     }
   ]
@@ -129,7 +129,7 @@ loaders: [
     exclude: /(node_modules|bower_components)/,
     loader: 'babel-loader',
     query: {
-      presets: ['es2015'],
+      presets: ['env'],
       plugins: ['transform-runtime']
     }
   }

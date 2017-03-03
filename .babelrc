@@ -1,6 +1,6 @@
 {
   "presets": [
-    ["latest", { "es2015": { "loose": true } }]
+    ["latest", { "env": { "loose": true } }]
   ],
   "env": {
     "test": {
