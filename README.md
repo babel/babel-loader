@@ -82,6 +82,8 @@ module: {
   ```
 
   or by using global options:
+  
+  > Be aware that this only works in webpack 1 and not in version 2.
 
   ```javascript
 module: {
