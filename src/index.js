@@ -86,9 +86,8 @@ module.exports = function(source, inputSourceMap) {
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  const globalOptions = this.options.babel || {};
   const loaderOptions = loaderUtils.getOptions(this);
-  const userOptions = assign({}, globalOptions, loaderOptions);
+  const userOptions = assign({}, loaderOptions);
   const defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
@@ -121,8 +120,6 @@ module.exports = function(source, inputSourceMap) {
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
-
-  this.cacheable();
 
   if (cacheDirectory) {
     const callback = this.async();
