@@ -42,7 +42,7 @@ test.cb("should interpret options given to the loader", (t) => {
       loaders: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=es2015",
+          loader: babelLoader + "?presets[]=env",
           exclude: /node_modules/,
         },
       ],

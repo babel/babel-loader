@@ -58,7 +58,7 @@ test.cb("should output files to cache directory", (t) => {
           exclude: /node_modules/,
           query: {
             cacheDirectory: t.context.cacheDirectory,
-            presets: ["es2015"],
+            presets: ["env"],
           },
         },
       ],
@@ -89,7 +89,7 @@ test.cb.serial("should output json.gz files to standard cache dir by default", (
           exclude: /node_modules/,
           query: {
             cacheDirectory: true,
-            presets: ["es2015"],
+            presets: ["env"],
           },
         },
       ],
@@ -118,7 +118,7 @@ test.cb.serial("should output files to standard cache dir if set to true in quer
       loaders: [
         {
           test: /\.jsx?/,
-          loader: `${babelLoader}?cacheDirectory=true&presets[]=es2015`,
+          loader: `${babelLoader}?cacheDirectory=true&presets[]=env`,
           exclude: /node_modules/,
         },
       ],
@@ -151,7 +151,7 @@ test.cb.skip("should read from cache directory if cached file exists", (t) => {
           exclude: /node_modules/,
           query: {
             cacheDirectory: t.context.cacheDirectory,
-            presets: ["es2015"],
+            presets: ["env"],
           },
         },
       ],
@@ -188,7 +188,7 @@ test.cb("should have one file per module", (t) => {
           exclude: /node_modules/,
           query: {
             cacheDirectory: t.context.cacheDirectory,
-            presets: ["es2015"],
+            presets: ["env"],
           },
         },
       ],
@@ -221,7 +221,7 @@ test.cb("should generate a new file if the identifier changes", (t) => {
             query: {
               cacheDirectory: t.context.cacheDirectory,
               cacheIdentifier: "a",
-              presets: ["es2015"],
+              presets: ["env"],
             },
           },
         ],
@@ -240,7 +240,7 @@ test.cb("should generate a new file if the identifier changes", (t) => {
             query: {
               cacheDirectory: t.context.cacheDirectory,
               cacheIdentifier: "b",
-              presets: ["es2015"],
+              presets: ["env"],
             },
           },
         ],
@@ -282,7 +282,7 @@ test.cb("should allow to specify the .babelrc file", (t) => {
             query: {
               cacheDirectory: t.context.cacheDirectory,
               babelrc: path.join(__dirname, "fixtures/babelrc"),
-              presets: ["es2015"],
+              presets: ["env"],
             },
           },
         ],
@@ -301,7 +301,7 @@ test.cb("should allow to specify the .babelrc file", (t) => {
             exclude: /node_modules/,
             query: {
               cacheDirectory: t.context.cacheDirectory,
-              presets: ["es2015"],
+              presets: ["env"],
             },
           },
         ],
