@@ -1,4 +1,3 @@
-const assign = require("object-assign");
 const babel = require("babel-core");
 const loaderUtils = require("loader-utils");
 const path = require("path");
@@ -7,7 +6,7 @@ const exists = require("./utils/exists")();
 const relative = require("./utils/relative");
 const read = require("./utils/read")();
 const resolveRc = require("./resolve-rc.js");
-const pkg = require("./../package.json");
+const pkg = require("../package.json");
 
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
@@ -87,7 +86,6 @@ module.exports = function(source, inputSourceMap) {
 
   // Handle options
   const loaderOptions = loaderUtils.getOptions(this);
-  const userOptions = assign({}, loaderOptions);
   const defaultOptions = {
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
@@ -95,16 +93,16 @@ module.exports = function(source, inputSourceMap) {
     cacheIdentifier: JSON.stringify({
       "babel-loader": pkg.version,
       "babel-core": babel.version,
-      babelrc: exists(userOptions.babelrc) ?
-          read(userOptions.babelrc) :
+      babelrc: exists(loaderOptions.babelrc) ?
+          read(loaderOptions.babelrc) :
           resolveRc(path.dirname(filename)),
-      env: userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV || "development",
+      env: loaderOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV || "development",
     }),
   };
 
-  const options = assign({}, defaultOptions, userOptions);
+  const options = Object.assign({}, defaultOptions, loaderOptions);
 
-  if (userOptions.sourceMap === undefined) {
+  if (loaderOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
   }
 
