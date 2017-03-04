@@ -81,6 +81,25 @@ module: {
 }
   ```
 
+  or by using global options:
+  
+  > Be aware that this only works in webpack 1 and not in version 2.
+
+  ```javascript
+module: {
+  loaders: [
+    {
+      test: /\.js$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel-loader'
+    }
+  ]
+},
+babel: {
+  presets: ['es2015']
+}
+  ```
+
   This loader also supports the following loader-specific option:
 
   * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: babel-loader?cacheDirectory=true`) the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
