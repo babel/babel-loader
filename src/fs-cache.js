@@ -170,6 +170,7 @@ module.exports = function(params, callback) {
   if (typeof params.directory === "string") {
     directory = params.directory;
   } else {
+
     if (defaultCacheDirectory === null) {
       defaultCacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
     }

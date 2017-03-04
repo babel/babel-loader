@@ -187,18 +187,15 @@ require('babel-runtime/core-js/promise')['default'] = require('bluebird');
 var promise = new _Promise();
 ```
 
-The previous `Promise` library is referenced and used before it is overridden.
+Webpack then tries to load the `babel` package instead of the `babel-loader`.
 
-One approach is to have a "bootstrap" step in your application that would first override the default globals before your application:
-
-```javascript
-// bootstrap.js
-
-require('babel-runtime/core-js/promise').default = require('bluebird');
-
-// ...
-
-require('./app');
+To fix this you should uninstall the npm package `babel` as it is deprecated in babel v6. (instead install `babel-cli` or `babel-core`)
+In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the webpack config:
+```js
+  {
+    test: /\.js$/,
+    loader: 'babel-loader',
+  }
 ```
 
 ### The node API for `babel` has been moved to `babel-core`.
