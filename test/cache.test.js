@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import assign from "object-assign";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -46,7 +45,7 @@ test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
 test.cb.afterEach((t) => rimraf(t.context.cacheDirectory, t.end));
 
 test.cb("should output files to cache directory", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -77,7 +76,7 @@ test.cb("should output files to cache directory", (t) => {
 });
 
 test.cb.serial("should output json.gz files to standard cache dir by default", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -110,7 +109,7 @@ test.cb.serial("should output json.gz files to standard cache dir by default", (
 });
 
 test.cb.serial("should output files to standard cache dir if set to true in query", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -139,7 +138,7 @@ test.cb.serial("should output files to standard cache dir if set to true in quer
 });
 
 test.cb.skip("should read from cache directory if cached file exists", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -176,7 +175,7 @@ test.cb.skip("should read from cache directory if cached file exists", (t) => {
 });
 
 test.cb("should have one file per module", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -208,7 +207,7 @@ test.cb("should have one file per module", (t) => {
 
 test.cb("should generate a new file if the identifier changes", (t) => {
   const configs = [
-    assign({}, globalConfig, {
+    Object.assign({}, globalConfig, {
       output: {
         path: t.context.directory,
       },
@@ -227,7 +226,7 @@ test.cb("should generate a new file if the identifier changes", (t) => {
         ],
       },
     }),
-    assign({}, globalConfig, {
+    Object.assign({}, globalConfig, {
       output: {
         path: t.context.directory,
       },
@@ -268,7 +267,7 @@ test.cb("should generate a new file if the identifier changes", (t) => {
 
 test.cb("should allow to specify the .babelrc file", (t) => {
   const config = [
-    assign({}, globalConfig, {
+    Object.assign({}, globalConfig, {
       entry: path.join(__dirname, "fixtures/constant.js"),
       output: {
         path: t.context.directory,
@@ -288,7 +287,7 @@ test.cb("should allow to specify the .babelrc file", (t) => {
         ],
       },
     }),
-    assign({}, globalConfig, {
+    Object.assign({}, globalConfig, {
       entry: path.join(__dirname, "fixtures/constant.js"),
       output: {
         path: t.context.directory,

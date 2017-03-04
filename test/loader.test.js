@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import assign from "object-assign";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -37,7 +36,7 @@ test.cb.beforeEach((t) => {
 test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
 
 test.cb("should transpile the code snippet", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -63,7 +62,7 @@ test.cb("should transpile the code snippet", (t) => {
 });
 
 test.cb("should not throw error on syntax error", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     entry: path.join(__dirname, "fixtures/syntax.js"),
     output: {
       path: t.context.directory,
