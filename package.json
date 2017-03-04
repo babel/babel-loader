@@ -14,7 +14,7 @@
   },
   "peerDependencies": {
     "babel-core": "6 || 7 || ^7.0.0-alpha || ^7.0.0-beta || ^7.0.0-rc",
-    "webpack": "1 || 2 || ^2.1.0-beta || ^2.2.0-rc"
+    "webpack": "2"
   },
   "devDependencies": {
     "ava": "^0.18.0",
