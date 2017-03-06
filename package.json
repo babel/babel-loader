@@ -6,8 +6,8 @@
     "lib"
   ],
   "main": "lib/index.js",
-  "engines" : {
-    "node" : ">=4" 
+  "engines": {
+    "node": ">=4"
   },
   "dependencies": {
     "find-cache-dir": "^0.1.1",
@@ -36,6 +36,7 @@
     "react": "^15.1.0",
     "react-intl":"^2.1.2",
     "react-intl-webpack-plugin":"^0.0.3",
+    "rimraf": "^2.4.3",
     "webpack": "^2.2.0"
   },
   "scripts": {
