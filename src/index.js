@@ -66,6 +66,7 @@ const transpile = function(source, options) {
   }
   const code = result.code;
   const map = result.map;
+  const metadata = result.metadata;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
@@ -76,8 +77,15 @@ const transpile = function(source, options) {
   return {
     code: code,
     map: map,
+    metadata: metadata,
   };
 };
+
+function passMetadata(s, context, metadata) {
+  if (context[s]) {
+    context[s](metadata);
+  }
+}
 
 module.exports = function(source, inputSourceMap) {
   // Handle filenames (#106)
@@ -87,6 +95,7 @@ module.exports = function(source, inputSourceMap) {
   // Handle options
   const loaderOptions = loaderUtils.getOptions(this);
   const defaultOptions = {
+    metadataSubscribers: [],
     inputSourceMap: inputSourceMap,
     sourceRoot: process.cwd(),
     filename: filename,
@@ -115,9 +124,13 @@ module.exports = function(source, inputSourceMap) {
 
   const cacheDirectory = options.cacheDirectory;
   const cacheIdentifier = options.cacheIdentifier;
+  const metadataSubscribers = options.metadataSubscribers;
 
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
+  delete options.metadataSubscribers;
+
+  const context = this;
 
   if (cacheDirectory) {
     const callback = this.async();
@@ -129,10 +142,16 @@ module.exports = function(source, inputSourceMap) {
       transform: transpile,
     }, function(err, result) {
       if (err) { return callback(err); }
+      metadataSubscribers.forEach(function (s) {
+        passMetadata(s, context, result.metadata);
+      });
       return callback(null, result.code, result.map);
     });
   }
 
   const result = transpile(source, options);
+  metadataSubscribers.forEach(function (s) {
+    passMetadata(s, context, result.metadata);
+  });
   this.callback(null, result.code, result.map);
 };

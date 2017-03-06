@@ -18,10 +18,15 @@ This package allows transpiling JavaScript files using [Babel](https://github.co
 __Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
 
 <h2 align="center">Install</h2>
-## Installation
 
 ```bash
-npm install --save-dev babel-loader babel-core babel-preset-es2015
+yarn add babel-loader babel-core babel-preset-env webpack --dev
+```
+
+We recommend using yarn, but you can also still use npm:
+
+```bash
+npm install --save-dev babel-loader babel-core babel-preset-env webpack
 ```
 
 <h2 align="center">Usage</h2>
@@ -39,7 +44,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['es2015']
+          presets: ['env']
         }
       }
     }
@@ -62,7 +67,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['es2015'],
+          presets: ['env'],
           plugins: [require('babel-plugin-transform-object-rest-spread')]
         }
       }
@@ -118,7 +123,7 @@ rules: [
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['es2015'],
+        presets: ['env'],
         plugins: ['transform-runtime']
       }
     }
