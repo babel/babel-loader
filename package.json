@@ -1,6 +1,6 @@
 {
   "name": "babel-loader",
-  "version": "7.0.0-alpha.1",
+  "version": "7.0.0-alpha.2",
   "description": "babel module loader for webpack",
   "files": [
     "lib"
@@ -34,8 +34,8 @@
     "eslint-plugin-flowtype": "^2.25.0",
     "nyc": "^10.0.0",
     "react": "^15.1.0",
-    "react-intl":"^2.1.2",
-    "react-intl-webpack-plugin":"^0.0.3",
+    "react-intl": "^2.1.2",
+    "react-intl-webpack-plugin": "^0.0.3",
     "rimraf": "^2.4.3",
     "webpack": "^2.2.0"
   },
