@@ -31,7 +31,10 @@
     "eslint": "^3.8.1",
     "eslint-config-babel": "^6.0.0",
     "eslint-plugin-flowtype": "^2.25.0",
+    "husky": "^0.13.2",
+    "lint-staged": "^3.3.1",
     "nyc": "^10.0.0",
+    "prettier": "^1.2.2",
     "react": "^15.1.0",
     "react-intl": "^2.1.2",
     "react-intl-webpack-plugin": "^0.0.3",
@@ -41,9 +44,11 @@
   "scripts": {
     "clean": "rimraf lib/",
     "build": "babel src/ --out-dir lib/",
+    "format": "prettier --write --trailing-comma all \"src/**/*.js\" \"test/*.test.js\" && prettier --write --trailing-comma es5 \"scripts/*.js\"",
     "lint": "eslint src test",
-    "preversion": "yarn run test",
+    "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",
+    "preversion": "yarn run test",
     "test": "yarn run lint && cross-env BABEL_ENV=test yarn run build && yarn run test-only",
     "test-only": "nyc ava"
   },
@@ -90,5 +95,23 @@
       "src/**/*.js"
     ],
     "babel": "inherit"
+  },
+  "lint-staged": {
+    "scripts/*.js": [
+      "prettier --trailing-comma es5 --write",
+      "git add"
+    ],
+    "src/**/*.js": [
+      "prettier --trailing-comma all --write",
+      "git add"
+    ],
+    "test/**/*.test.js": [
+      "prettier --trailing-comma all --write",
+      "git add"
+    ],
+    "package.json": [
+      "node ./scripts/yarn-install.js",
+      "git add yarn.lock"
+    ]
   }
 }

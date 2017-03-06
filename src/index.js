@@ -59,7 +59,12 @@ const transpile = function(source, options) {
         hideStack = true;
       }
       throw new BabelLoaderError(
-        name, message, error.codeFrame, hideStack, error);
+        name,
+        message,
+        error.codeFrame,
+        hideStack,
+        error,
+      );
     } else {
       throw error;
     }
@@ -97,7 +102,9 @@ function passMetadata(s, context, metadata) {
 
 module.exports = function(source, inputSourceMap) {
   // Handle filenames (#106)
-  const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split("!");
+  const webpackRemainingChain = loaderUtils
+    .getRemainingRequest(this)
+    .split("!");
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
@@ -110,10 +117,13 @@ module.exports = function(source, inputSourceMap) {
     cacheIdentifier: JSON.stringify({
       "babel-loader": pkg.version,
       "babel-core": babel.version,
-      babelrc: exists(loaderOptions.babelrc) ?
-          read(loaderOptions.babelrc) :
-          resolveRc(path.dirname(filename)),
-      env: loaderOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV || "development",
+      babelrc: exists(loaderOptions.babelrc)
+        ? read(loaderOptions.babelrc)
+        : resolveRc(path.dirname(filename)),
+      env: loaderOptions.forceEnv ||
+        process.env.BABEL_ENV ||
+        process.env.NODE_ENV ||
+        "development",
     }),
   };
 
@@ -124,10 +134,7 @@ module.exports = function(source, inputSourceMap) {
   }
 
   if (options.sourceFileName === undefined) {
-    options.sourceFileName = relative(
-      options.sourceRoot,
-      options.filename
-    );
+    options.sourceFileName = relative(options.sourceRoot, options.filename);
   }
 
   const cacheDirectory = options.cacheDirectory;
@@ -140,24 +147,27 @@ module.exports = function(source, inputSourceMap) {
 
   if (cacheDirectory) {
     const callback = this.async();
-    return cache({
-      directory: cacheDirectory,
-      identifier: cacheIdentifier,
-      source: source,
-      options: options,
-      transform: transpile,
-    }, (err, { code, map, metadata } = {}) => {
-      if (err) return callback(err);
+    return cache(
+      {
+        directory: cacheDirectory,
+        identifier: cacheIdentifier,
+        source: source,
+        options: options,
+        transform: transpile,
+      },
+      (err, { code, map, metadata } = {}) => {
+        if (err) return callback(err);
 
-      metadataSubscribers.forEach((s) => passMetadata(s, this, metadata));
+        metadataSubscribers.forEach(s => passMetadata(s, this, metadata));
 
-      return callback(null, code, map);
-    });
+        return callback(null, code, map);
+      },
+    );
   }
 
   const { code, map, metadata } = transpile(source, options);
 
-  metadataSubscribers.forEach((s) => passMetadata(s, this, metadata));
+  metadataSubscribers.forEach(s => passMetadata(s, this, metadata));
 
   this.callback(null, code, map);
 };

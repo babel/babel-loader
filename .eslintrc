@@ -5,5 +5,8 @@
   },
   "extends": [
     "eslint-config-babel"
-  ]
+  ],
+  "rules": {
+    "arrow-parens": "off"
+  }
 }

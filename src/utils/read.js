@@ -11,7 +11,6 @@ module.exports = function(cache) {
   cache = cache || {};
 
   return function(filename) {
-
     if (!filename) {
       throw new Error("filename must be a string");
     }
