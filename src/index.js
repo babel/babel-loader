@@ -93,7 +93,7 @@ module.exports = function(source, inputSourceMap) {
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  const loaderOptions = loaderUtils.getOptions(this);
+  const loaderOptions = loaderUtils.getOptions(this) || {};
   const defaultOptions = {
     metadataSubscribers: [],
     inputSourceMap: inputSourceMap,

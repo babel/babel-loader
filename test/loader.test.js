@@ -116,3 +116,29 @@ test.cb("should use correct env", (t) => {
     t.end();
   });
 });
+
+test.cb("should not throw without config", (t) => {
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+
+    t.true(stats.compilation.errors.length === 0);
+
+    t.end();
+  });
+});
