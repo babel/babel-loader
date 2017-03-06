@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.4.0
+
+### 🚀 New Feature
+
+- added metadata passing from babel to webpack, which is currently used by react-intl (#398) @Ognian
+
 ## v6.3.2
 
 ### 😢 Regression
