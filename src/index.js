@@ -134,7 +134,6 @@ module.exports = function(source, inputSourceMap) {
   delete options.metadataSubscribers;
 
   this.cacheable();
-  const context = this;
 
   if (cacheDirectory) {
     const callback = this.async();
@@ -144,18 +143,18 @@ module.exports = function(source, inputSourceMap) {
       source: source,
       options: options,
       transform: transpile,
-    }, function(err, result) {
-      if (err) { return callback(err); }
-      metadataSubscribers.forEach(function (s) {
-        passMetadata(s, context, result.metadata);
-      });
-      return callback(null, result.code, result.map);
+    }, (err, { code, map, metadata } = {}) => {
+      if (err) return callback(err);
+
+      metadataSubscribers.forEach((s) => passMetadata(s, this, metadata));
+
+      return callback(null, code, map);
     });
   }
 
-  const result = transpile(source, options);
-  metadataSubscribers.forEach(function (s) {
-    passMetadata(s, context, result.metadata);
-  });
-  this.callback(null, result.code, result.map);
+  const { code, map, metadata } = transpile(source, options);
+
+  metadataSubscribers.forEach((s) => passMetadata(s, this, metadata));
+
+  this.callback(null, code, map);
 };
