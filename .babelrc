@@ -1,6 +1,6 @@
 {
   "presets": [
-    ["env", { "loose": true }]
+    ["env", { "loose": true, "targets": { "node": 4 } }]
   ],
   "env": {
     "test": {
