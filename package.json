@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "find-cache-dir": "^0.1.1",
-    "loader-utils": "^1.0.2",
+    "loader-utils": "^1.1.0",
     "mkdirp": "^0.5.1"
   },
   "peerDependencies": {
