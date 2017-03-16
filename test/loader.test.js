@@ -254,7 +254,9 @@ test.cb("should not throw without config", (t) => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
+
     t.true(stats.compilation.errors.length === 0);
+
     t.end();
   });
 });
