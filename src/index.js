@@ -45,7 +45,7 @@ const transpile = function(source, options) {
   try {
     result = babel.transform(source, options);
   } catch (error) {
-    if (forceEnv) process.env.BABEL_ENV = tmpEnv;
+    if (forceEnv) restoreBabelEnv(tmpEnv);
     if (error.message && error.codeFrame) {
       let message = error.message;
       let name;
@@ -72,7 +72,7 @@ const transpile = function(source, options) {
     map.sourcesContent = [source];
   }
 
-  if (forceEnv) process.env.BABEL_ENV = tmpEnv;
+  if (forceEnv) restoreBabelEnv(tmpEnv);
 
   return {
     code: code,
@@ -80,6 +80,14 @@ const transpile = function(source, options) {
     metadata: metadata,
   };
 };
+
+function restoreBabelEnv(prevValue) {
+  if (prevValue === undefined) {
+    delete process.env.BABEL_ENV;
+  } else {
+    process.env.BABEL_ENV = prevValue;
+  }
+}
 
 function passMetadata(s, context, metadata) {
   if (context[s]) {

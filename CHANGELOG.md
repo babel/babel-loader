@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.4.1
+
+### 🐛 Bug Fix
+
+- Fixed reset of BABEL_ENV when options.forceEnv is used (#420) @nikopavlica
+
 ## v6.4.0
 
 ### 🚀 New Feature
