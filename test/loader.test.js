@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import assign from "object-assign";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -16,7 +15,7 @@ const globalConfig = {
         test: /\.jsx?/,
         loader: babelLoader,
         query: {
-          presets: ["es2015"],
+          presets: ["env"],
         },
         exclude: /node_modules/,
       },
@@ -37,7 +36,7 @@ test.cb.beforeEach((t) => {
 test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
 
 test.cb("should transpile the code snippet", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -63,7 +62,7 @@ test.cb("should transpile the code snippet", (t) => {
 });
 
 test.cb("should not throw error on syntax error", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     entry: path.join(__dirname, "fixtures/syntax.js"),
     output: {
       path: t.context.directory,
@@ -113,6 +112,150 @@ test.cb("should use correct env", (t) => {
 
     t.truthy(stats.compilation.errors[0].message.match(/es2015abc/));
     t.falsy(stats.compilation.errors[0].message.match(/es2015xyz/));
+
+    t.end();
+  });
+});
+
+test.serial.cb("should not polute BABEL_ENV after using forceEnv", (t) => {
+  const initialBabelEnv = process.env.BABEL_ENV;
+
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          query: {
+            forceEnv: "testenv",
+            env: {
+              testenv: {
+                presets: ["es2015"],
+              },
+            }
+          },
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, () => {
+    t.truthy(process.env.BABEL_ENV === initialBabelEnv);
+    t.end();
+  });
+});
+
+test.serial.cb("should not polute BABEL_ENV after using forceEnv (on exception)", (t) => {
+  const initialBabelEnv = process.env.BABEL_ENV;
+
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          query: {
+            forceEnv: "testenv",
+            env: {
+              testenv: {
+                presets: ["es2015asd"],
+              },
+            }
+          },
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, () => {
+    t.truthy(process.env.BABEL_ENV === initialBabelEnv);
+    t.end();
+  });
+});
+
+test.serial.cb("should not change BABEL_ENV when using forceEnv", (t) => {
+  const initialBabelEnv = process.env.BABEL_ENV;
+
+  process.env.BABEL_ENV = "nontestenv";
+
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          query: {
+            forceEnv: "testenv",
+            env: {
+              testenv: {
+                presets: ["es2015abc"],
+              },
+              nontestenv: {
+                presets: ["es2015xzy"]
+              }
+            }
+          },
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+
+    t.true(stats.compilation.errors.length === 1);
+
+    t.truthy(stats.compilation.errors[0].message.match(/es2015abc/));
+    t.falsy(stats.compilation.errors[0].message.match(/es2015xyz/));
+
+    t.truthy("nontestenv" === process.env.BABEL_ENV);
+
+    if (initialBabelEnv !== undefined) {
+      process.env.BABEL_ENV = initialBabelEnv;
+    } else {
+      delete process.env.BABEL_ENV;
+    }
+
+    t.end();
+  });
+});
+
+test.cb("should not throw without config", (t) => {
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+
+    t.true(stats.compilation.errors.length === 0);
 
     t.end();
   });

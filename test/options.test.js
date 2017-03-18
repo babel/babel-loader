@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import assign from "object-assign";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -34,7 +33,7 @@ test.cb.beforeEach((t) => {
 test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
 
 test.cb("should interpret options given to the loader", (t) => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -42,7 +41,7 @@ test.cb("should interpret options given to the loader", (t) => {
       loaders: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=es2015",
+          loader: babelLoader + "?presets[]=env",
           exclude: /node_modules/,
         },
       ],

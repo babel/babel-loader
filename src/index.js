@@ -1,4 +1,3 @@
-const assign = require("object-assign");
 const babel = require("babel-core");
 const loaderUtils = require("loader-utils");
 const path = require("path");
@@ -7,7 +6,7 @@ const exists = require("./utils/exists")();
 const relative = require("./utils/relative");
 const read = require("./utils/read")();
 const resolveRc = require("./resolve-rc.js");
-const pkg = require("./../package.json");
+const pkg = require("../package.json");
 
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
@@ -46,7 +45,7 @@ const transpile = function(source, options) {
   try {
     result = babel.transform(source, options);
   } catch (error) {
-    if (forceEnv) process.env.BABEL_ENV = tmpEnv;
+    if (forceEnv) restoreBabelEnv(tmpEnv);
     if (error.message && error.codeFrame) {
       let message = error.message;
       let name;
@@ -73,7 +72,7 @@ const transpile = function(source, options) {
     map.sourcesContent = [source];
   }
 
-  if (forceEnv) process.env.BABEL_ENV = tmpEnv;
+  if (forceEnv) restoreBabelEnv(tmpEnv);
 
   return {
     code: code,
@@ -81,6 +80,14 @@ const transpile = function(source, options) {
     metadata: metadata,
   };
 };
+
+function restoreBabelEnv(prevValue) {
+  if (prevValue === undefined) {
+    delete process.env.BABEL_ENV;
+  } else {
+    process.env.BABEL_ENV = prevValue;
+  }
+}
 
 function passMetadata(s, context, metadata) {
   if (context[s]) {
@@ -94,9 +101,7 @@ module.exports = function(source, inputSourceMap) {
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  const globalOptions = this.options.babel || {};
-  const loaderOptions = loaderUtils.parseQuery(this.query);
-  const userOptions = assign({}, globalOptions, loaderOptions);
+  const loaderOptions = loaderUtils.getOptions(this) || {};
   const defaultOptions = {
     metadataSubscribers: [],
     inputSourceMap: inputSourceMap,
@@ -105,16 +110,16 @@ module.exports = function(source, inputSourceMap) {
     cacheIdentifier: JSON.stringify({
       "babel-loader": pkg.version,
       "babel-core": babel.version,
-      babelrc: exists(userOptions.babelrc) ?
-          read(userOptions.babelrc) :
+      babelrc: exists(loaderOptions.babelrc) ?
+          read(loaderOptions.babelrc) :
           resolveRc(path.dirname(filename)),
-      env: userOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV || "development",
+      env: loaderOptions.forceEnv || process.env.BABEL_ENV || process.env.NODE_ENV || "development",
     }),
   };
 
-  const options = assign({}, defaultOptions, userOptions);
+  const options = Object.assign({}, defaultOptions, loaderOptions);
 
-  if (userOptions.sourceMap === undefined) {
+  if (loaderOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
   }
 
@@ -132,8 +137,6 @@ module.exports = function(source, inputSourceMap) {
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
   delete options.metadataSubscribers;
-
-  this.cacheable();
 
   if (cacheDirectory) {
     const callback = this.async();
