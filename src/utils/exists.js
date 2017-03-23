@@ -14,7 +14,7 @@ module.exports = function(cache) {
 
     if (!filename) { return false; }
 
-    cache[filename] = cache[filename] || fs.existsSync(filename);
+    cache[filename] = cache[filename] || (fs.existsSync(filename) && fs.statSync(filename).isFile());
 
     return cache[filename];
   };
