@@ -28,7 +28,7 @@
     "babel-preset-env": "^1.2.0",
     "babel-register": "^6.18.0",
     "codecov": "^1.0.1",
-    "cross-env": "^3.1.4",
+    "cross-env": "^4.0.0",
     "eslint": "^3.8.1",
     "eslint-config-babel": "^6.0.0",
     "eslint-plugin-flowtype": "^2.25.0",
