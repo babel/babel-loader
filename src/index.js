@@ -101,7 +101,8 @@ module.exports = function(source, inputSourceMap) {
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  const loaderOptions = loaderUtils.getOptions(this) || {};
+  const query = loaderUtils.getOptions(this) || {};
+  const loaderOptions = Object.assign({}, this.options.babel, query);
   const defaultOptions = {
     metadataSubscribers: [],
     inputSourceMap: inputSourceMap,
