@@ -33,13 +33,15 @@ __Note:__ If you're upgrading from babel 5 to babel 6, please take a look [at th
 
   ```javascript
 module: {
-  loaders: [
+  rules: [
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['env']
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['env']
+        }
       }
     }
   ]
@@ -54,7 +56,7 @@ You can pass options to the loader by writing them as a [query string](https://g
 
   ```javascript
 module: {
-  loaders: [
+  rules: [
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
@@ -68,13 +70,15 @@ module: {
 
   ```javascript
 module: {
-  loaders: [
+  rules: [
     {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['env']
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['env']
+        }
       }
     }
   ]
