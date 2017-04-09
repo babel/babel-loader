@@ -103,7 +103,7 @@ module.exports = function(source, inputSourceMap) {
 
   // Handle options
   const globalOptions = this.options.babel || {};
-  const loaderOptions = loaderUtils.parseQuery(this.query);
+  const loaderOptions = loaderUtils.getOptions(this);
   const userOptions = assign({}, globalOptions, loaderOptions);
   const defaultOptions = {
     metadataSubscribers: [],
