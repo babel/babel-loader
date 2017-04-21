@@ -15,7 +15,7 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 
-let defaultCacheDirectory = null;  // Lazily instantiated when needed
+let defaultCacheDirectory = null; // Lazily instantiated when needed
 
 /**
  * Read the contents from the compressed file.
@@ -26,12 +26,12 @@ let defaultCacheDirectory = null;  // Lazily instantiated when needed
  */
 const read = function(filename, callback) {
   return fs.readFile(filename, function(err, data) {
-    if (err) { return callback(err); }
+    if (err) return callback(err);
 
     return zlib.gunzip(data, function(err, content) {
-      let result = {};
+      if (err) return callback(err);
 
-      if (err) { return callback(err); }
+      let result = {};
 
       try {
         result = JSON.parse(content);
@@ -43,7 +43,6 @@ const read = function(filename, callback) {
     });
   });
 };
-
 
 /**
  * Write contents into a compressed file.
@@ -57,12 +56,11 @@ const write = function(filename, result, callback) {
   const content = JSON.stringify(result);
 
   return zlib.gzip(content, function(err, data) {
-    if (err) { return callback(err); }
+    if (err) return callback(err);
 
     return fs.writeFile(filename, data, callback);
   });
 };
-
 
 /**
  * Build the filename for the cached file
@@ -97,12 +95,16 @@ const handleCache = function(directory, params, callback) {
   const options = params.options || {};
   const transform = params.transform;
   const identifier = params.identifier;
-  const shouldFallback = typeof params.directory !== "string" && directory !== os.tmpdir();
+  const shouldFallback =
+    typeof params.directory !== "string" && directory !== os.tmpdir();
 
   // Make sure the directory exists.
   mkdirp(directory, function(err) {
     // Fallback to tmpdir if node_modules folder not writable
-    if (err) return shouldFallback ? handleCache(os.tmpdir(), params, callback) : callback(err);
+    if (err)
+      return shouldFallback
+        ? handleCache(os.tmpdir(), params, callback)
+        : callback(err);
 
     const file = path.join(directory, filename(source, identifier, options));
 
@@ -122,7 +124,10 @@ const handleCache = function(directory, params, callback) {
 
       return write(file, result, function(err) {
         // Fallback to tmpdir if node_modules folder not writable
-        if (err) return shouldFallback ? handleCache(os.tmpdir(), params, callback) : callback(err);
+        if (err)
+          return shouldFallback
+            ? handleCache(os.tmpdir(), params, callback)
+            : callback(err);
 
         callback(null, result);
       });
@@ -171,7 +176,8 @@ module.exports = function(params, callback) {
     directory = params.directory;
   } else {
     if (defaultCacheDirectory === null) {
-      defaultCacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+      defaultCacheDirectory =
+        findCacheDir({ name: "babel-loader" }) || os.tmpdir();
     }
     directory = defaultCacheDirectory;
   }

@@ -22,7 +22,7 @@ const globalConfig = {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
-test.cb.beforeEach((t) => {
+test.cb.beforeEach(t => {
   createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
     t.context.directory = directory;
@@ -30,9 +30,9 @@ test.cb.beforeEach((t) => {
   });
 });
 
-test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
+test.cb.afterEach(t => rimraf(t.context.directory, t.end));
 
-test.cb("should interpret options given to the loader", (t) => {
+test.cb("should interpret options given to the loader", t => {
   const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -48,7 +48,7 @@ test.cb("should interpret options given to the loader", (t) => {
     },
   });
 
-  webpack(config, (err) => {
+  webpack(config, err => {
     t.is(err, null);
 
     fs.readdir(outputDir, (err, files) => {

@@ -17,7 +17,7 @@ const globalConfig = {
     path: outputDir,
     filename: "[id].metadata.js",
   },
-  plugins: [new ReactIntlPlugin(), ],
+  plugins: [new ReactIntlPlugin()],
   module: {
     loaders: [
       {
@@ -25,9 +25,7 @@ const globalConfig = {
         loader: babelLoader,
         query: {
           metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
-          plugins: [
-            ["react-intl", { enforceDescriptions: false, }, ],
-          ],
+          plugins: [["react-intl", { enforceDescriptions: false }]],
           presets: [],
         },
         exclude: /node_modules/,
@@ -38,7 +36,7 @@ const globalConfig = {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
-test.cb.beforeEach((t) => {
+test.cb.beforeEach(t => {
   createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
     t.context.directory = directory;
@@ -46,10 +44,9 @@ test.cb.beforeEach((t) => {
   });
 });
 
-test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
+test.cb.afterEach(t => rimraf(t.context.directory, t.end));
 
-
-test.cb("should pass metadata code snippet", (t) => {
+test.cb("should pass metadata code snippet", t => {
   const config = assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -57,13 +54,14 @@ test.cb("should pass metadata code snippet", (t) => {
     },
   });
 
-  webpack(config, (err) => {
+  webpack(config, err => {
     t.is(err, null);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
       t.true(files.length > 0);
-      fs.readFile(path.resolve(t.context.directory, "reactIntlMessages.json"),
+      fs.readFile(
+        path.resolve(t.context.directory, "reactIntlMessages.json"),
         function(err, data) {
           t.is(err, null);
           const text = data.toString();
@@ -72,12 +70,13 @@ test.cb("should pass metadata code snippet", (t) => {
           t.true(jsonText[0].id == "greetingId");
           t.true(jsonText[0].defaultMessage == "Hello World!");
           t.end();
-        });
+        },
+      );
     });
   });
 });
 
-test.cb("should not throw error", (t) => {
+test.cb("should not throw error", t => {
   const config = assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -92,7 +91,7 @@ test.cb("should not throw error", (t) => {
   });
 });
 
-test.cb("should throw error", (t) => {
+test.cb("should throw error", t => {
   const config = assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -108,7 +107,7 @@ test.cb("should throw error", (t) => {
   });
 });
 
-test.cb("should pass metadata code snippet ( cache version )", (t) => {
+test.cb("should pass metadata code snippet ( cache version )", t => {
   const config = assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -121,9 +120,7 @@ test.cb("should pass metadata code snippet ( cache version )", (t) => {
           loader: babelLoader,
           query: {
             metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
-            plugins: [
-              ["react-intl", { enforceDescriptions: false, }, ],
-            ],
+            plugins: [["react-intl", { enforceDescriptions: false }]],
             cacheDirectory: cacheDir,
             presets: [],
           },
@@ -133,13 +130,14 @@ test.cb("should pass metadata code snippet ( cache version )", (t) => {
     },
   });
 
-  webpack(config, (err) => {
+  webpack(config, err => {
     t.is(err, null);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
       t.true(files.length > 0);
-      fs.readFile(path.resolve(t.context.directory, "reactIntlMessages.json"),
+      fs.readFile(
+        path.resolve(t.context.directory, "reactIntlMessages.json"),
         function(err, data) {
           t.is(err, null);
           const text = data.toString();
@@ -148,7 +146,8 @@ test.cb("should pass metadata code snippet ( cache version )", (t) => {
           t.true(jsonText[0].id == "greetingId");
           t.true(jsonText[0].defaultMessage == "Hello World!");
           t.end();
-        });
+        },
+      );
     });
   });
 });
