@@ -1,5 +1,9 @@
 # Changelog
 
+For changes in version v7.0.0 and up please go to [release](https://github.com/babel/babel-loader/releases)
+
+# Old Changelog
+
 ## v6.4.1
 
 ### 🐛 Bug Fix
@@ -38,7 +42,7 @@ Allow to override BABEL_ENV/NODE_ENV at loader-level. Useful for isomorphic appl
 
 ### 💅 Polish
 
-- Improve FS caching to do less sync calls which improves performance slightly (#375) @akx 
+- Improve FS caching to do less sync calls which improves performance slightly (#375) @akx
 
 ## v6.2.10
 
