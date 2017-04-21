@@ -1,11 +1,15 @@
 environment:
   nodejs_version: "6"
+  BABEL_ENV: "test"
 
 install:
   - ps: Install-Product node $env:nodejs_version
   - yarn
 
+before_test:
+  - yarn run build
+
 test_script:
-  - yarn test-ci
+  - yarn run test-only
 
 build: off
