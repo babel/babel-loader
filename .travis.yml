@@ -5,20 +5,20 @@ node_js:
   - "6"
   - "4"
 
+env:
+  - JOB=test
+
 matrix:
+  fast_finish: true
   include:
     - node_js: "lts/*"
-      env: WEBPACK_VERSION="1"
-    - node_js: "lts/*"
-      env: LINT=true
-    - node_js: "0.10"
-      env: WEBPACK_VERSION="1"
-    - node_js: "0.12"
-      env: WEBPACK_VERSION="1"
+      env: JOB=lint
+
 before_script:
-  - 'if [ "$WEBPACK_VERSION" ]; then npm install webpack@$WEBPACK_VERSION; fi'
+  - 'if [ "$JOB" = "test" ]; then BABEL_ENV=test yarn run build; fi'
+
 script:
-  - 'if [ -n "${LINT-}" ]; then npm run lint ; fi'
-  - 'if [ -z "${LINT-}" ]; then npm run test-ci ; fi'
+  - 'if [ "$JOB" = "test" ]; then yarn test-only; fi'
+  - 'if [ "$JOB" = "lint" ]; then yarn run lint; fi'
 after_success:
-  - npm run coverage
+  - bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json

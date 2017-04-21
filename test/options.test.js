@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import assign from "object-assign";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -23,7 +22,7 @@ const globalConfig = {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
-test.cb.beforeEach((t) => {
+test.cb.beforeEach(t => {
   createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
     t.context.directory = directory;
@@ -31,10 +30,10 @@ test.cb.beforeEach((t) => {
   });
 });
 
-test.cb.afterEach((t) => rimraf(t.context.directory, t.end));
+test.cb.afterEach(t => rimraf(t.context.directory, t.end));
 
-test.cb("should interpret options given to the loader", (t) => {
-  const config = assign({}, globalConfig, {
+test.cb("should interpret options given to the loader", t => {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
     },
@@ -42,14 +41,14 @@ test.cb("should interpret options given to the loader", (t) => {
       loaders: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=es2015",
+          loader: babelLoader + "?presets[]=env",
           exclude: /node_modules/,
         },
       ],
     },
   });
 
-  webpack(config, (err) => {
+  webpack(config, err => {
     t.is(err, null);
 
     fs.readdir(outputDir, (err, files) => {

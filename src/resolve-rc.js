@@ -24,7 +24,6 @@ const find = function find(start, rel) {
     // Reached root
     return find(up, rel);
   }
-
 };
 
 module.exports = function(loc, rel) {
