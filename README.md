@@ -89,6 +89,9 @@ This loader also supports the following loader-specific option:
 
 * `forceEnv`: Default will resolve BABEL_ENV then NODE_ENV. Allow you to override BABEL_ENV/NODE_ENV at the loader level. Useful for isomorphic applications with different babel configuration for client and server.
 
+* `babelrc`: Default `true`. When `false`, no options from `.babelrc` files will be used; only the options passed to
+`babel-loader` will be used.
+
 __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
 ## Troubleshooting
