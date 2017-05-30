@@ -7,4 +7,13 @@ test("should find the .babelrc file", t => {
   const result = resolveRc(start);
 
   t.true(typeof result === "string");
+  t.deepEqual(JSON.parse(result), { stage: 2 });
+});
+
+test("should find the package.babel config", t => {
+  const start = path.join(__dirname, "fixtures/package-test");
+  const result = resolveRc(start);
+
+  t.true(typeof result === "string");
+  t.deepEqual(JSON.parse(result), { stage: 3 });
 });
