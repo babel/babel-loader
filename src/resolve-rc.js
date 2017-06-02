@@ -12,25 +12,34 @@ const read = require("./utils/read")({});
 
 const cache = {};
 
-const find = function find(start, rel) {
-  const file = path.join(start, rel);
+const find = function find(start) {
+  const babelRcFile = path.join(start, ".babelrc");
 
-  if (exists(file)) {
-    return read(file);
+  if (exists(babelRcFile)) {
+    return read(babelRcFile);
+  }
+
+  const packageJsonFile = path.join(start, "package.json");
+
+  if (exists(packageJsonFile)) {
+    const parsedPackageJson = require(packageJsonFile);
+
+    if (parsedPackageJson.babel) {
+      return JSON.stringify(parsedPackageJson.babel);
+    }
   }
 
   const up = path.dirname(start);
   if (up !== start) {
     // Reached root
-    return find(up, rel);
+    return find(up);
   }
 };
 
-module.exports = function(loc, rel) {
-  rel = rel || ".babelrc";
-  const cacheKey = `${loc}/${rel}`;
+module.exports = function(loc) {
+  const cacheKey = `${loc}`;
   if (!(cacheKey in cache)) {
-    cache[cacheKey] = find(loc, rel);
+    cache[cacheKey] = find(loc);
   }
   return cache[cacheKey];
 };
