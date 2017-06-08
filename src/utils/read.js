@@ -1,22 +1,16 @@
-const fs = require("fs");
 /**
  * Read the file and cache the result
  * return the result in cache
  *
  * @example
- * var read = require('./helpers/fsExists')({});
- * read('.babelrc'); // file contents...
+ * var read = require('./helpers/fsExists');
+ * read(require('fs'), '.babelrc'); // file contents...
  */
-module.exports = function(cache) {
-  cache = cache || {};
+module.exports = function(fileSystem, filename) {
+  if (!filename) {
+    throw new Error("filename must be a string");
+  }
 
-  return function(filename) {
-    if (!filename) {
-      throw new Error("filename must be a string");
-    }
-
-    cache[filename] = cache[filename] || fs.readFileSync(filename, "utf8");
-
-    return cache[filename];
-  };
+  // Webpack `fs` return Buffer
+  return fileSystem.readFileSync(filename).toString("utf8");
 };
