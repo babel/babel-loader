@@ -2,11 +2,12 @@ const babel = require("babel-core");
 const loaderUtils = require("loader-utils");
 const path = require("path");
 const cache = require("./fs-cache.js");
-const exists = require("./utils/exists")();
+const exists = require("./utils/exists");
 const relative = require("./utils/relative");
-const read = require("./utils/read")();
+const read = require("./utils/read");
 const resolveRc = require("./resolve-rc.js");
 const pkg = require("../package.json");
+const fs = require("fs");
 
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
@@ -109,6 +110,15 @@ module.exports = function(source, inputSourceMap) {
 
   // Handle options
   const loaderOptions = loaderUtils.getOptions(this) || {};
+  const fileSystem = this.fs ? this.fs : fs;
+  const babelrcPath = exists(fileSystem, loaderOptions.babelrc)
+    ? loaderOptions.babelrc
+    : resolveRc(fileSystem, path.dirname(filename));
+
+  if (babelrcPath) {
+    this.addDependency(babelrcPath);
+  }
+
   const defaultOptions = {
     metadataSubscribers: [],
     inputSourceMap: inputSourceMap,
@@ -117,13 +127,12 @@ module.exports = function(source, inputSourceMap) {
     cacheIdentifier: JSON.stringify({
       "babel-loader": pkg.version,
       "babel-core": babel.version,
-      babelrc: exists(loaderOptions.babelrc)
-        ? read(loaderOptions.babelrc)
-        : resolveRc(path.dirname(filename)),
-      env: loaderOptions.forceEnv ||
-        process.env.BABEL_ENV ||
-        process.env.NODE_ENV ||
-        "development",
+      babelrc: babelrcPath ? read(fileSystem, babelrcPath) : null,
+      env:
+        loaderOptions.forceEnv ||
+          process.env.BABEL_ENV ||
+          process.env.NODE_ENV ||
+          "development",
     }),
   };
 

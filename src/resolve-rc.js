@@ -7,30 +7,24 @@
  * @see http://git.io/vLEvu
  */
 const path = require("path");
-const exists = require("./utils/exists")({});
-const read = require("./utils/read")({});
+const exists = require("./utils/exists");
 
-const cache = {};
-
-const find = function find(start, rel) {
+const findBabelrcPath = function find(fileSystem, start, rel) {
   const file = path.join(start, rel);
 
-  if (exists(file)) {
-    return read(file);
+  if (exists(fileSystem, file)) {
+    return file;
   }
 
   const up = path.dirname(start);
   if (up !== start) {
     // Reached root
-    return find(up, rel);
+    return find(fileSystem, up, rel);
   }
 };
 
-module.exports = function(loc, rel) {
+module.exports = function(fileSystem, loc, rel) {
   rel = rel || ".babelrc";
-  const cacheKey = `${loc}/${rel}`;
-  if (!(cacheKey in cache)) {
-    cache[cacheKey] = find(loc, rel);
-  }
-  return cache[cacheKey];
+
+  return findBabelrcPath(fileSystem, loc, rel);
 };
