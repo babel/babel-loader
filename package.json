@@ -31,6 +31,7 @@
     "eslint": "^3.8.1",
     "eslint-config-babel": "^6.0.0",
     "eslint-plugin-flowtype": "^2.25.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "husky": "^0.13.2",
     "lint-staged": "^3.3.1",
     "nyc": "^11.0.1",
@@ -44,7 +45,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "build": "babel src/ --out-dir lib/",
-    "format": "prettier --write --trailing-comma all \"src/**/*.js\" \"test/*.test.js\" \"test/helpers/*.js\" && prettier --write --trailing-comma es5 \"scripts/*.js\"",
+    "format": "prettier --write --trailing-comma all \"src/**/*.js\" \"test/**/*.test.js\" \"test/helpers/*.js\" && prettier --write --trailing-comma es5 \"scripts/*.js\"",
     "lint": "eslint src test",
     "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",

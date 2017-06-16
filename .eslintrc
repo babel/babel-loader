@@ -3,10 +3,10 @@
     "es6": true,
     "node": true
   },
-  "extends": [
-    "eslint-config-babel"
-  ],
+  "extends": ["eslint-config-babel"],
+  "plugins": ["prettier"],
   "rules": {
-    "arrow-parens": "off"
+    "arrow-parens": "off",
+    "prettier/prettier": ["error", { "trailingComma": "all" }]
   }
 }
