@@ -1,30 +1,24 @@
-/**
- * The purpose of this module, is to find the project's .babelrc and
- * use its contents to bust the babel-loader's internal cache whenever an option
- * changes.
- *
- * @see https://github.com/babel/babel-loader/issues/62
- * @see http://git.io/vLEvu
- */
 const path = require("path");
 const exists = require("./utils/exists");
 
-const findBabelrcPath = function find(fileSystem, start, rel) {
-  const file = path.join(start, rel);
+module.exports = function find(fileSystem, start) {
+  for (const fileName of [".babelrc", ".babelrc.js", "package.json"]) {
+    const file = path.join(start, fileName);
 
-  if (exists(fileSystem, file)) {
-    return file;
+    if (exists(fileSystem, file)) {
+      if (
+        fileName !== "package.json" ||
+        typeof require(file).babel === "object"
+      ) {
+        return file;
+      }
+    }
   }
 
   const up = path.dirname(start);
+
+  // Reached root
   if (up !== start) {
-    // Reached root
-    return find(fileSystem, up, rel);
+    return find(fileSystem, up);
   }
-};
-
-module.exports = function(fileSystem, loc, rel) {
-  rel = rel || ".babelrc";
-
-  return findBabelrcPath(fileSystem, loc, rel);
 };
