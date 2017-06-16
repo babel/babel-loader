@@ -45,7 +45,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "build": "babel src/ --out-dir lib/",
-    "format": "prettier --write --trailing-comma all \"src/**/*.js\" \"test/*.test.js\" \"test/helpers/*.js\" && prettier --write --trailing-comma es5 \"scripts/*.js\"",
+    "format": "prettier --write --trailing-comma all \"src/**/*.js\" \"test/**/*.test.js\" \"test/helpers/*.js\" && prettier --write --trailing-comma es5 \"scripts/*.js\"",
     "lint": "eslint src test",
     "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",

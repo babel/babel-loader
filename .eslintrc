@@ -7,6 +7,6 @@
   "plugins": ["prettier"],
   "rules": {
     "arrow-parens": "off",
-    "prettier/prettier": "error"
+    "prettier/prettier": ["error", { "trailingComma": "all" }]
   }
 }
