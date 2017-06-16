@@ -128,11 +128,10 @@ module.exports = function(source, inputSourceMap) {
       "babel-loader": pkg.version,
       "babel-core": babel.version,
       babelrc: babelrcPath ? read(fileSystem, babelrcPath) : null,
-      env:
-        loaderOptions.forceEnv ||
-          process.env.BABEL_ENV ||
-          process.env.NODE_ENV ||
-          "development",
+      env: loaderOptions.forceEnv ||
+        process.env.BABEL_ENV ||
+        process.env.NODE_ENV ||
+        "development",
     }),
   };
 
