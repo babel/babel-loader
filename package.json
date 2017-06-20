@@ -29,7 +29,7 @@
     "babel-register": "^6.18.0",
     "cross-env": "^5.0.0",
     "eslint": "^3.8.1",
-    "eslint-config-babel": "^6.0.0",
+    "eslint-config-babel": "^7.0.0",
     "eslint-plugin-flowtype": "^2.25.0",
     "eslint-plugin-prettier": "^2.1.2",
     "husky": "^0.13.2",
