@@ -1,6 +1,6 @@
 {
   "name": "babel-loader",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "babel module loader for webpack",
   "files": [
     "lib"
