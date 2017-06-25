@@ -111,9 +111,12 @@ module.exports = function(source, inputSourceMap) {
   // Handle options
   const loaderOptions = loaderUtils.getOptions(this) || {};
   const fileSystem = this.fs ? this.fs : fs;
-  const babelrcPath = exists(fileSystem, loaderOptions.babelrc)
-    ? loaderOptions.babelrc
-    : resolveRc(fileSystem, path.dirname(filename));
+  let babelrcPath = null;
+  if (loaderOptions.babelrc !== false) {
+    babelrcPath = exists(fileSystem, loaderOptions.babelrc)
+      ? loaderOptions.babelrc
+      : resolveRc(fileSystem, path.dirname(filename));
+  }
 
   if (babelrcPath) {
     this.addDependency(babelrcPath);
