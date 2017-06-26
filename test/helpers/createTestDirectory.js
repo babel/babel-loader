@@ -12,5 +12,5 @@ export default function createTestDirectory(baseDirectory, testTitle, cb) {
 }
 
 function escapeDirectory(directory) {
-  return directory.replace(/[\/?<>\\:*|"\s]/g, "_");
+  return directory.replace(/[/?<>\\:*|"\s]/g, "_");
 }
