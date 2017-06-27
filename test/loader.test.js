@@ -263,3 +263,39 @@ test.cb("should not throw without config", t => {
     t.end();
   });
 });
+
+test.cb("should throw a warning when modules is set to false", t => {
+  const config = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          query: {
+            presets: [["env", { modules: "umd" }]],
+          },
+        },
+      ],
+    },
+  };
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+
+    const warnings = stats.compilation.warnings;
+    t.true(warnings.length > 0);
+    if (warnings.length) {
+      t.is(
+        warnings[0].message,
+        "We've noticted the option modules isn't set to false,\nwhich disables treeshaking.",
+      );
+    }
+
+    t.end();
+  });
+});

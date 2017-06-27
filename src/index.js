@@ -9,6 +9,10 @@ const resolveRc = require("./resolve-rc.js");
 const pkg = require("../package.json");
 const fs = require("fs");
 
+const presetsToCheckForModules = ["es2015", "env"];
+const modulesWarningMsg = `We've noticted the option modules isn't set to false,
+which disables treeshaking.`;
+
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
  */
@@ -147,6 +151,28 @@ module.exports = function(source, inputSourceMap) {
 
   if (options.sourceFileName === undefined) {
     options.sourceFileName = relative(options.sourceRoot, options.filename);
+  }
+
+  if (this.version > 1 && options.presets) {
+    options.presets.forEach(preset => {
+      let name = preset;
+      let opts = {};
+
+      // if we have extra options put it in opts
+      if (Array.isArray(preset)) {
+        name = preset[0];
+        opts = preset[1];
+      }
+
+      if (
+        presetsToCheckForModules.indexOf(name) > -1 &&
+        (!opts ||
+          (opts && !opts.hasOwnProperty("modules")) ||
+          (opts && opts.modules))
+      ) {
+        this.emitWarning(new Error(modulesWarningMsg));
+      }
+    });
   }
 
   const cacheDirectory = options.cacheDirectory;
