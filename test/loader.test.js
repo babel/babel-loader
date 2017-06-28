@@ -7,20 +7,32 @@ import createTestDirectory from "./helpers/createTestDirectory";
 
 const outputDir = path.join(__dirname, "output/loader");
 const babelLoader = path.join(__dirname, "../lib");
-const globalConfig = {
-  entry: path.join(__dirname, "fixtures/basic.js"),
-  module: {
-    loaders: [
-      {
-        test: /\.jsx?/,
-        loader: babelLoader,
-        query: {
-          presets: ["env"],
+const generateConfigWithPresets = (presets, context = false) => {
+  const globalConfig = {
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          query: {
+            presets,
+          },
         },
-        exclude: /node_modules/,
-      },
-    ],
-  },
+      ],
+    },
+  };
+
+  if (!context) {
+    return globalConfig;
+  }
+
+  return Object.assign({}, globalConfig, {
+    output: {
+      path: context.directory,
+    },
+  });
 };
 
 // Create a separate directory for each test so that the tests
@@ -36,11 +48,7 @@ test.cb.beforeEach(t => {
 test.cb.afterEach(t => rimraf(t.context.directory, t.end));
 
 test.cb("should transpile the code snippet", t => {
-  const config = Object.assign({}, globalConfig, {
-    output: {
-      path: t.context.directory,
-    },
-  });
+  const config = generateConfigWithPresets(["env"], t.context);
 
   webpack(config, err => {
     t.is(err, null);
@@ -62,11 +70,9 @@ test.cb("should transpile the code snippet", t => {
 });
 
 test.cb("should not throw error on syntax error", t => {
+  const globalConfig = generateConfigWithPresets(["env"], t.context);
   const config = Object.assign({}, globalConfig, {
     entry: path.join(__dirname, "fixtures/syntax.js"),
-    output: {
-      path: t.context.directory,
-    },
   });
 
   webpack(config, (err, stats) => {
@@ -264,37 +270,62 @@ test.cb("should not throw without config", t => {
   });
 });
 
-test.cb("should throw a warning when modules is set to false", t => {
-  const config = {
-    entry: path.join(__dirname, "fixtures/basic.js"),
-    output: {
-      path: t.context.directory,
-    },
-    module: {
-      loaders: [
-        {
-          test: /\.jsx?/,
-          loader: babelLoader,
-          exclude: /node_modules/,
-          query: {
-            presets: [["env", { modules: "umd" }]],
-          },
-        },
-      ],
-    },
-  };
+test.cb("should not throw a warning when modules is set to false", t => {
+  const configs = [
+    generateConfigWithPresets([["env", { modules: false }]], t.context),
+    generateConfigWithPresets([["es2015", { modules: false }]], t.context),
+    generateConfigWithPresets([["latest", { modules: false }]], t.context),
+    generateConfigWithPresets([["es2015abc"]], t.context),
+  ];
 
-  webpack(config, (err, stats) => {
+  webpack(configs, (err, stats) => {
     t.is(err, null);
 
-    const warnings = stats.compilation.warnings;
-    t.true(warnings.length > 0);
-    if (warnings.length) {
-      t.is(
-        warnings[0].message,
-        "We've noticted the option modules isn't set to false,\nwhich disables treeshaking.",
-      );
-    }
+    stats.stats.forEach(stat => {
+      const warnings = stat.compilation.warnings;
+      t.true(warnings.length === 0);
+    });
+
+    t.end();
+  });
+});
+
+test.cb("should throw a warning when modules is not set to false", t => {
+  const configs = [
+    generateConfigWithPresets(["env"], t.context),
+    generateConfigWithPresets([["env", { modules: "umd" }]], t.context),
+    generateConfigWithPresets([["env", { modules: "amd" }]], t.context),
+    generateConfigWithPresets([["env", { modules: "commonjs" }]], t.context),
+    generateConfigWithPresets(["es2015"], t.context),
+    generateConfigWithPresets([["es2015", { modules: "umd" }]], t.context),
+    generateConfigWithPresets([["es2015", { modules: "amd" }]], t.context),
+    generateConfigWithPresets([["es2015", { modules: "commonjs" }]], t.context),
+    generateConfigWithPresets(["latest"], t.context),
+    generateConfigWithPresets([["latest", { modules: "umd" }]], t.context),
+    generateConfigWithPresets([["latest", { modules: "amd" }]], t.context),
+    generateConfigWithPresets([["latest", { modules: "commonjs" }]], t.context),
+  ];
+
+  webpack(configs, (err, stats) => {
+    t.is(err, null);
+
+    stats.stats.forEach((stat, index) => {
+      let presetName = configs[index].module.loaders[0].query.presets[0];
+      if (typeof presetName !== "string") {
+        presetName = presetName[0];
+      }
+
+      const warnings = stat.compilation.warnings;
+      t.true(warnings.length === 1);
+      if (warnings.length) {
+        t.is(
+          warnings[0].message,
+          `\n\n⚠️  Babel Loader\n
+It looks like your Babel configuration specifies a module transformer. Please disable it.
+See https://babeljs.io/docs/plugins/preset-${presetName}/#optionsmodules for more information.`,
+        );
+      }
+    });
 
     t.end();
   });

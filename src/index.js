@@ -9,9 +9,8 @@ const resolveRc = require("./resolve-rc.js");
 const pkg = require("../package.json");
 const fs = require("fs");
 
-const presetsToCheckForModules = ["es2015", "env"];
-const modulesWarningMsg = `We've noticted the option modules isn't set to false,
-which disables treeshaking.`;
+// we keep track of each preset config
+const emitCache = new Map();
 
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
@@ -165,12 +164,20 @@ module.exports = function(source, inputSourceMap) {
       }
 
       if (
-        presetsToCheckForModules.indexOf(name) > -1 &&
-        (!opts ||
-          (opts && !opts.hasOwnProperty("modules")) ||
-          (opts && opts.modules))
+        ["es2015", "env", "latest"].indexOf(name) > -1 &&
+        (!emitCache.has(options.presets) &&
+          (!opts ||
+            (opts && !opts.hasOwnProperty("modules")) ||
+            (opts && opts.modules)))
       ) {
-        this.emitWarning(new Error(modulesWarningMsg));
+        emitCache.set(options.presets, true);
+        this.emitWarning(
+          new Error(
+            `\n\n⚠️  Babel Loader\n
+It looks like your Babel configuration specifies a module transformer. Please disable it.
+See https://babeljs.io/docs/plugins/preset-${name}/#optionsmodules for more information.`,
+          ),
+        );
       }
     });
   }
