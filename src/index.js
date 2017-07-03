@@ -174,7 +174,8 @@ module.exports = function(source, inputSourceMap) {
         this.emitWarning(
           new Error(
             `\n\n⚠️  Babel Loader\n
-It looks like your Babel configuration specifies a module transformer. Please disable it.
+It looks like your Babel configuration specifies a module transformer.
+This disables tree shaking in webpack and will produce larger bundles. Please disable it.
 See https://babeljs.io/docs/plugins/preset-${name}/#optionsmodules for more information.`,
           ),
         );

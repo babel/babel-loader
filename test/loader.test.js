@@ -321,7 +321,8 @@ test.cb("should throw a warning when modules is not set to false", t => {
         t.is(
           warnings[0].message,
           `\n\n⚠️  Babel Loader\n
-It looks like your Babel configuration specifies a module transformer. Please disable it.
+It looks like your Babel configuration specifies a module transformer.
+This disables tree shaking in webpack and will produce larger bundles. Please disable it.
 See https://babeljs.io/docs/plugins/preset-${presetName}/#optionsmodules for more information.`,
         );
       }
