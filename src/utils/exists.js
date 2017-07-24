@@ -1,9 +1,9 @@
-module.exports = function(fileSystem, filename) {
-  let exists = false;
-
+module.exports = function exists (fileSystem, filename) {
   try {
-    exists = fileSystem.statSync(filename).isFile();
-  } catch (e) {}
-
-  return exists;
-};
+    return fileSystem.statSync(filename).isFile()
+  }
+  catch (err) {
+    if (err.code === 'ENOENT') return false
+    throw err
+  }
+}
