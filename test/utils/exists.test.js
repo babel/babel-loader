@@ -15,3 +15,8 @@ test("should return boolean if file exists", t => {
   t.true(realFile);
   t.false(fakeFile);
 });
+
+test("should rethrow errors besides ENOENT", t => {
+  t.throws(() => exists(fs, false), /path must be a string/);
+  t.throws(() => exists(fs, undefined), /path must be a string/);
+});
