@@ -3,7 +3,9 @@ module.exports = function(fileSystem, filename) {
 
   try {
     exists = fileSystem.statSync(filename).isFile();
-  } catch (e) {}
+  } catch (err) {
+    if (err.code !== "ENOENT") throw err;
+  }
 
   return exists;
 };
