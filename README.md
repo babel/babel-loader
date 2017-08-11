@@ -15,7 +15,7 @@
 
 This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
 
-__Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues);
+__Notes:__ Issues with the output should be reported on the babel [issue tracker](https://github.com/babel/babel/issues).
 
 <h2 align="center">Install</h2>
 
