@@ -9,6 +9,9 @@ const resolveRc = require("./resolve-rc.js");
 const pkg = require("../package.json");
 const fs = require("fs");
 
+// we keep track of each preset config
+const emitCache = new Map();
+
 /**
  * Error thrown by Babel formatted to conform to Webpack reporting.
  */
@@ -148,6 +151,37 @@ module.exports = function(source, inputSourceMap) {
 
   if (options.sourceFileName === undefined) {
     options.sourceFileName = relative(options.sourceRoot, options.filename);
+  }
+
+  if (this.version > 1 && options.presets) {
+    options.presets.forEach(preset => {
+      let name = preset;
+      let opts = {};
+
+      // if we have extra options put it in opts
+      if (Array.isArray(preset)) {
+        name = preset[0];
+        opts = preset[1];
+      }
+
+      if (
+        ["es2015", "env", "latest"].indexOf(name) > -1 &&
+        (!emitCache.has(options.presets) &&
+          (!opts ||
+            (opts && !opts.hasOwnProperty("modules")) ||
+            (opts && opts.modules)))
+      ) {
+        emitCache.set(options.presets, true);
+        this.emitWarning(
+          new Error(
+            `\n\n⚠️  Babel Loader\n
+It looks like your Babel configuration specifies a module transformer.
+This disables tree shaking in webpack and will produce larger bundles. Please disable it.
+See https://babeljs.io/docs/plugins/preset-${name}/#optionsmodules for more information.`,
+          ),
+        );
+      }
+    });
   }
 
   const cacheDirectory = options.cacheDirectory;
