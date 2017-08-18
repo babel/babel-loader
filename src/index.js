@@ -14,12 +14,13 @@ const fs = require("fs");
  */
 function BabelLoaderError(name, message, codeFrame, hideStack, error) {
   Error.call(this);
-  Error.captureStackTrace(this, BabelLoaderError);
 
   this.name = "BabelLoaderError";
   this.message = formatMessage(name, message, codeFrame);
   this.hideStack = hideStack;
   this.error = error;
+
+  Error.captureStackTrace(this, BabelLoaderError);
 }
 
 BabelLoaderError.prototype = Object.create(Error.prototype);

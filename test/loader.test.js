@@ -263,3 +263,21 @@ test.cb("should not throw without config", t => {
     t.end();
   });
 });
+
+test.cb(
+  "should return compilation errors with the message included in the stack trace",
+  t => {
+    const config = Object.assign({}, globalConfig, {
+      entry: path.join(__dirname, "fixtures/syntax.js"),
+      output: {
+        path: t.context.directory,
+      },
+    });
+    webpack(config, (err, stats) => {
+      const moduleBuildError = stats.compilation.errors[0];
+      const babelLoaderError = moduleBuildError.error;
+      t.regex(babelLoaderError.stack, /Unexpected character/);
+      t.end();
+    });
+  },
+);
