@@ -114,10 +114,11 @@ module.exports = function(source, inputSourceMap) {
   const fileSystem = this.fs ? this.fs : fs;
   let babelrcPath = null;
   if (loaderOptions.babelrc !== false) {
-    babelrcPath = typeof loaderOptions.babelrc === "string" &&
+    babelrcPath =
+      typeof loaderOptions.babelrc === "string" &&
       exists(fileSystem, loaderOptions.babelrc)
-      ? loaderOptions.babelrc
-      : resolveRc(fileSystem, path.dirname(filename));
+        ? loaderOptions.babelrc
+        : resolveRc(fileSystem, path.dirname(filename));
   }
 
   if (babelrcPath) {
@@ -135,9 +136,9 @@ module.exports = function(source, inputSourceMap) {
       babelrc: babelrcPath ? read(fileSystem, babelrcPath) : null,
       env:
         loaderOptions.forceEnv ||
-          process.env.BABEL_ENV ||
-          process.env.NODE_ENV ||
-          "development",
+        process.env.BABEL_ENV ||
+        process.env.NODE_ENV ||
+        "development",
     }),
   };
 
