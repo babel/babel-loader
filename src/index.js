@@ -115,10 +115,7 @@ module.exports = function(source, inputSourceMap) {
   let babelrcPath = null;
   if (loaderOptions.babelrc !== false) {
     babelrcPath =
-      typeof loaderOptions.babelrc === "string" &&
-      exists(fileSystem, loaderOptions.babelrc)
-        ? loaderOptions.babelrc
-        : resolveRc(fileSystem, path.dirname(filename));
+      typeof loaderOptions.babelrc === "string"
   }
 
   if (babelrcPath) {
