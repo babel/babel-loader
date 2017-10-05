@@ -36,7 +36,7 @@
     "lint-staged": "^4.0.0",
     "nyc": "^11.0.1",
     "prettier": "^1.2.2",
-    "react": "^15.1.0",
+    "react": "^16.0.0",
     "react-intl": "^2.1.2",
     "react-intl-webpack-plugin": "^0.0.3",
     "rimraf": "^2.4.3",
