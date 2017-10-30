@@ -1,4 +1,4 @@
-const babel = require("babel-core");
+const babel = require("@babel/core");
 const loaderUtils = require("loader-utils");
 const path = require("path");
 const cache = require("./fs-cache.js");
@@ -131,8 +131,8 @@ module.exports = function(source, inputSourceMap) {
     sourceRoot: process.cwd(),
     filename: filename,
     cacheIdentifier: JSON.stringify({
-      "babel-loader": pkg.version,
-      "babel-core": babel.version,
+      "@babel/loader": pkg.version,
+      "@babel/core": babel.version,
       babelrc: babelrcPath ? read(fileSystem, babelrcPath) : null,
       env:
         loaderOptions.forceEnv ||

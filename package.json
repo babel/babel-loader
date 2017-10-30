@@ -15,18 +15,17 @@
     "mkdirp": "^0.5.1"
   },
   "peerDependencies": {
-    "babel-core": "6 || 7 || ^7.0.0-alpha || ^7.0.0-beta || ^7.0.0-rc",
+    "@babel/core": "7 || ^7.0.0-beta || ^7.0.0-rc",
     "webpack": "2 || 3"
   },
   "devDependencies": {
-    "ava": "^0.23.0",
-    "babel-cli": "^6.18.0",
-    "babel-core": "^6.0.0",
+    "@babel/cli": "7.0.0-beta.5",
+    "@babel/core": "7.0.0-beta.5",
+    "@babel/preset-env": "7.0.0-beta.5",
+    "ava": "0.23.0",
     "babel-eslint": "^8.0.0",
     "babel-plugin-istanbul": "^4.0.0",
     "babel-plugin-react-intl": "^2.1.3",
-    "babel-preset-env": "^1.2.0",
-    "babel-register": "^6.18.0",
     "cross-env": "^5.0.0",
     "eslint": "^4.1.0",
     "eslint-config-babel": "^7.0.0",
@@ -80,9 +79,6 @@
       "text",
       "json"
     ],
-    "require": [
-      "babel-register"
-    ],
     "sourceMap": false,
     "instrument": false
   },
@@ -94,8 +90,7 @@
     ],
     "source": [
       "src/**/*.js"
-    ],
-    "babel": "inherit"
+    ]
   },
   "lint-staged": {
     "scripts/*.js": [
