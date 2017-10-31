@@ -1,3 +1,6 @@
+> This readme is for babel-loader v8 + Babel v7
+> Check the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) for docs with Babel v6
+
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
 [![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
 [![Build Status](https://ci.appveyor.com/api/projects/status/vgtpr2i5bykgyuqo/branch/master?svg=true)](https://ci.appveyor.com/project/danez/babel-loader/branch/master)
@@ -19,20 +22,16 @@ __Notes:__ Issues with the output should be reported on the babel [issue tracker
 
 <h2 align="center">Install</h2>
 
-> webpack 1.x | babel-loader <= 6.x
->
-> webpack 2.x | babel-loader >= 7.x (recommended) (^6.2.10 will also work, but with deprecation warnings)
->
 > webpack 3.x | babel-loader >= 7.1
 
 ```bash
-yarn add babel-loader babel-core babel-preset-env webpack --dev
+yarn add babel-loader @babel/core @babel/preset-env webpack --dev
 ```
 
 We recommend using yarn, but you can also still use npm:
 
 ```bash
-npm install --save-dev babel-loader babel-core babel-preset-env webpack
+npm install --save-dev babel-loader @babel/core @babel/preset-env webpack
 ```
 
 <h2 align="center">Usage</h2>
@@ -50,7 +49,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['env']
+          presets: ['@babel/env']
         }
       }
     }
@@ -74,8 +73,8 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['env'],
-          plugins: [require('babel-plugin-transform-object-rest-spread')]
+          presets: ['@babel/env'],
+          plugins: [require('@babel/plugin-transform-object-rest-spread')]
         }
       }
     }
@@ -130,8 +129,8 @@ rules: [
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['env'],
-        plugins: ['transform-runtime']
+        presets: ['@babel/env'],
+        plugins: ['@babel/transform-runtime']
       }
     }
   }
@@ -153,7 +152,7 @@ Since [babel-plugin-transform-runtime](https://github.com/babel/babel/tree/maste
 The following approach will not work either:
 
 ```javascript
-require('babel-runtime/core-js/promise').default = require('bluebird');
+require('@babel/runtime/core-js/promise').default = require('bluebird');
 
 var promise = new Promise;
 ```
@@ -163,9 +162,9 @@ which outputs to (using `runtime`):
 ```javascript
 'use strict';
 
-var _Promise = require('babel-runtime/core-js/promise')['default'];
+var _Promise = require('@babel/runtime/core-js/promise')['default'];
 
-require('babel-runtime/core-js/promise')['default'] = require('bluebird');
+require('@babel/runtime/core-js/promise')['default'] = require('bluebird');
 
 var promise = new _Promise();
 ```
@@ -177,7 +176,7 @@ One approach is to have a "bootstrap" step in your application that would first 
 ```javascript
 // bootstrap.js
 
-require('babel-runtime/core-js/promise').default = require('bluebird');
+require('@babel/runtime/core-js/promise').default = require('bluebird');
 
 // ...
 
