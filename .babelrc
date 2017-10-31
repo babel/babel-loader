@@ -1,6 +1,11 @@
 {
   "presets": [
-    ["env", { "loose": true, "targets": { "node": "4.2" } }]
+    ["@babel/env", {
+      "loose": true,
+      "targets": {
+        "node": "4.2"
+      }
+    }]
   ],
   "env": {
     "test": {
