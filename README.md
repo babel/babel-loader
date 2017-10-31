@@ -1,4 +1,4 @@
-> This readme is for babel-loader v8 + Babel v7
+> This readme is for babel-loader v8 + Babel v7  
 > Check the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) for docs with Babel v6
 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
