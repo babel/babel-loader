@@ -49,7 +49,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/env']
+          presets: ['@babel/preset-env']
         }
       }
     }
@@ -73,7 +73,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/env'],
+          presets: ['@babel/preset-env'],
           plugins: [require('@babel/plugin-transform-object-rest-spread')]
         }
       }
@@ -129,7 +129,7 @@ rules: [
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['@babel/env'],
+        presets: ['@babel/preset-env'],
         plugins: ['@babel/transform-runtime']
       }
     }
