@@ -8,32 +8,13 @@ const read = require("./utils/read");
 const resolveRc = require("./resolve-rc.js");
 const pkg = require("../package.json");
 const fs = require("fs");
-
-/**
- * Error thrown by Babel formatted to conform to Webpack reporting.
- */
-function BabelLoaderError(name, message, codeFrame, hideStack, error) {
-  Error.call(this);
-
-  this.name = "BabelLoaderError";
-  this.message = formatMessage(name, message, codeFrame);
-  this.hideStack = hideStack;
-  this.error = error;
-
-  Error.captureStackTrace(this, BabelLoaderError);
-}
-
-BabelLoaderError.prototype = Object.create(Error.prototype);
-BabelLoaderError.prototype.constructor = BabelLoaderError;
+const LoaderError = require("./Error");
 
 const STRIP_FILENAME_RE = /^[^:]+: /;
 
-const formatMessage = function(name, message, codeFrame) {
-  return (name ? name + ": " : "") + message + "\n\n" + codeFrame + "\n";
-};
-
-const transpile = function(source, options) {
+function transpile(source, options) {
   const forceEnv = options.forceEnv;
+
   let tmpEnv;
 
   delete options.forceEnv;
@@ -44,36 +25,33 @@ const transpile = function(source, options) {
   }
 
   let result;
+
   try {
     result = babel.transform(source, options);
-  } catch (error) {
+  } catch (err) {
     if (forceEnv) restoreBabelEnv(tmpEnv);
-    if (error.message && error.codeFrame) {
-      let message = error.message;
-      let name;
+
+    if (err.message && err.codeFrame) {
       let hideStack;
-      if (error instanceof SyntaxError) {
-        message = message.replace(STRIP_FILENAME_RE, "");
-        name = "SyntaxError";
+
+      if (err instanceof SyntaxError) {
+        err.name = "SyntaxError";
+        err.message = err.message.replace(STRIP_FILENAME_RE, "");
+
         hideStack = true;
-      } else if (error instanceof TypeError) {
-        message = message.replace(STRIP_FILENAME_RE, "");
+      } else if (err instanceof TypeError) {
+        err.message = err.message.replace(STRIP_FILENAME_RE, "");
+
         hideStack = true;
       }
-      throw new BabelLoaderError(
-        name,
-        message,
-        error.codeFrame,
-        hideStack,
-        error,
-      );
+
+      throw new LoaderError(err, hideStack);
     } else {
-      throw error;
+      throw err;
     }
   }
-  const code = result.code;
-  const map = result.map;
-  const metadata = result.metadata;
+
+  const { code, map, metadata } = result;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
@@ -81,12 +59,8 @@ const transpile = function(source, options) {
 
   if (forceEnv) restoreBabelEnv(tmpEnv);
 
-  return {
-    code: code,
-    map: map,
-    metadata: metadata,
-  };
-};
+  return { code, map, metadata };
+}
 
 function restoreBabelEnv(prevValue) {
   if (prevValue === undefined) {
@@ -103,16 +77,16 @@ function passMetadata(s, context, metadata) {
 }
 
 module.exports = function(source, inputSourceMap) {
-  // Handle filenames (#106)
-  const webpackRemainingChain = loaderUtils
-    .getRemainingRequest(this)
-    .split("!");
-  const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+  const callback = this.async();
+  const filename = this.resourcePath;
 
   // Handle options
   const loaderOptions = loaderUtils.getOptions(this) || {};
+
   const fileSystem = this.fs ? this.fs : fs;
+
   let babelrcPath = null;
+
   if (loaderOptions.babelrc !== false) {
     babelrcPath =
       typeof loaderOptions.babelrc === "string" &&
@@ -161,7 +135,6 @@ module.exports = function(source, inputSourceMap) {
   delete options.metadataSubscribers;
 
   if (cacheDirectory) {
-    const callback = this.async();
     return cache(
       {
         directory: cacheDirectory,
