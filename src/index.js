@@ -1,121 +1,35 @@
-const babel = require("@babel/core");
-const loaderUtils = require("loader-utils");
+let fs = require("fs");
 const path = require("path");
-const cache = require("./fs-cache.js");
-const exists = require("./utils/exists");
-const relative = require("./utils/relative");
-const read = require("./utils/read");
-const resolveRc = require("./resolve-rc.js");
+
+const rc = require("./config.js");
 const pkg = require("../package.json");
-const fs = require("fs");
+const cache = require("./cache.js");
+const transform = require("./transform.js");
 
-/**
- * Error thrown by Babel formatted to conform to Webpack reporting.
- */
-function BabelLoaderError(name, message, codeFrame, hideStack, error) {
-  Error.call(this);
+const read = require("./utils/read.js");
+const exists = require("./utils/exists.js");
+const relative = require("./utils/relative.js");
 
-  this.name = "BabelLoaderError";
-  this.message = formatMessage(name, message, codeFrame);
-  this.hideStack = hideStack;
-  this.error = error;
+const loaderUtils = require("loader-utils");
 
-  Error.captureStackTrace(this, BabelLoaderError);
-}
-
-BabelLoaderError.prototype = Object.create(Error.prototype);
-BabelLoaderError.prototype.constructor = BabelLoaderError;
-
-const STRIP_FILENAME_RE = /^[^:]+: /;
-
-const formatMessage = function(name, message, codeFrame) {
-  return (name ? name + ": " : "") + message + "\n\n" + codeFrame + "\n";
-};
-
-const transpile = function(source, options) {
-  const forceEnv = options.forceEnv;
-  let tmpEnv;
-
-  delete options.forceEnv;
-
-  if (forceEnv) {
-    tmpEnv = process.env.BABEL_ENV;
-    process.env.BABEL_ENV = forceEnv;
-  }
-
-  let result;
-  try {
-    result = babel.transform(source, options);
-  } catch (error) {
-    if (forceEnv) restoreBabelEnv(tmpEnv);
-    if (error.message && error.codeFrame) {
-      let message = error.message;
-      let name;
-      let hideStack;
-      if (error instanceof SyntaxError) {
-        message = message.replace(STRIP_FILENAME_RE, "");
-        name = "SyntaxError";
-        hideStack = true;
-      } else if (error instanceof TypeError) {
-        message = message.replace(STRIP_FILENAME_RE, "");
-        hideStack = true;
-      }
-      throw new BabelLoaderError(
-        name,
-        message,
-        error.codeFrame,
-        hideStack,
-        error,
-      );
-    } else {
-      throw error;
-    }
-  }
-  const code = result.code;
-  const map = result.map;
-  const metadata = result.metadata;
-
-  if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
-    map.sourcesContent = [source];
-  }
-
-  if (forceEnv) restoreBabelEnv(tmpEnv);
-
-  return {
-    code: code,
-    map: map,
-    metadata: metadata,
-  };
-};
-
-function restoreBabelEnv(prevValue) {
-  if (prevValue === undefined) {
-    delete process.env.BABEL_ENV;
-  } else {
-    process.env.BABEL_ENV = prevValue;
+function subscribe(subscriber, metadata, context) {
+  if (context[subscriber]) {
+    context[subscriber](metadata);
   }
 }
 
-function passMetadata(s, context, metadata) {
-  if (context[s]) {
-    context[s](metadata);
-  }
-}
+module.exports = function loader(source, inputSourceMap) {
+  const filename = this.resourcePath;
 
-module.exports = function(source, inputSourceMap) {
-  // Handle filenames (#106)
-  const webpackRemainingChain = loaderUtils
-    .getRemainingRequest(this)
-    .split("!");
-  const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+  let options = loaderUtils.getOptions(this) || {};
 
-  // Handle options
-  const loaderOptions = loaderUtils.getOptions(this) || {};
-  const fileSystem = this.fs ? this.fs : fs;
-  let babelrcPath = null;
+  // Use memoryFS (webpack) if available
+  fs = this.fs ? this.fs : fs;
+
+  let babelrc = null;
 
   // Deprecation handling
-  if (typeof loaderOptions.babelrc === "string") {
+  if (typeof options.babelrc === "string") {
     console.warn(
       "The option `babelrc` should not be set to a string anymore in the babel-loader config. " +
         "Please update your configuration and set `babelrc` to true or false.\n" +
@@ -124,37 +38,37 @@ module.exports = function(source, inputSourceMap) {
         "https://babeljs.io/docs/core-packages/#options",
     );
   }
-  if (loaderOptions.babelrc !== false && loaderOptions.extends) {
-    babelrcPath = exists(fileSystem, loaderOptions.extends)
-      ? loaderOptions.extends
-      : resolveRc(fileSystem, path.dirname(filename));
+  if (options.babelrc !== false && options.extends) {
+    babelrc = exists(fs, options.extends)
+      ? options.extends
+      : rc(fs, path.dirname(filename));
   }
 
-  if (babelrcPath) {
-    this.addDependency(babelrcPath);
+  if (babelrc) {
+    this.addDependency(babelrc);
   }
 
-  const defaultOptions = {
-    metadataSubscribers: [],
-    inputSourceMap: inputSourceMap || undefined,
+  const defaults = {
+    filename,
+    inputSourceMap || undefined,
     sourceRoot: process.cwd(),
-    filename: filename,
     cacheIdentifier: JSON.stringify({
-      "@babel/loader": pkg.version,
-      "@babel/core": babel.version,
-      babelrc: babelrcPath ? read(fileSystem, babelrcPath) : null,
-      options: loaderOptions,
       env:
-        loaderOptions.forceEnv ||
+        options.forceEnv ||
         process.env.BABEL_ENV ||
         process.env.NODE_ENV ||
         "development",
+      options,
+      babelrc: babelrc ? read(fs, babelrc) : null,
+      "@babel/core": transform.version,
+      "@babel/loader": pkg.version,
     }),
+    metadataSubscribers: [],
   };
 
-  const options = Object.assign({}, defaultOptions, loaderOptions);
+  options = Object.assign({}, defaults, options);
 
-  if (loaderOptions.sourceMap === undefined) {
+  if (options.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
   }
 
@@ -165,34 +79,35 @@ module.exports = function(source, inputSourceMap) {
   const cacheDirectory = options.cacheDirectory;
   const cacheIdentifier = options.cacheIdentifier;
   const metadataSubscribers = options.metadataSubscribers;
-
+  // Remove loader related options
   delete options.cacheDirectory;
   delete options.cacheIdentifier;
   delete options.metadataSubscribers;
+  // Make the loader async
+  const callback = this.async();
 
   if (cacheDirectory) {
-    const callback = this.async();
     return cache(
-      {
-        directory: cacheDirectory,
-        identifier: cacheIdentifier,
-        source: source,
-        options: options,
-        transform: transpile,
-      },
+      { source, options, transform, cacheDirectory, cacheIdentifier },
       (err, { code, map, metadata } = {}) => {
         if (err) return callback(err);
 
-        metadataSubscribers.forEach(s => passMetadata(s, this, metadata));
+        metadataSubscribers.forEach(subscriber => {
+          subscribe(subscriber, metadata, this);
+        });
 
         return callback(null, code, map);
       },
     );
   }
 
-  const { code, map, metadata } = transpile(source, options);
+  return transform(source, options, (err, { code, map, metadata } = {}) => {
+    if (err) return callback(err);
 
-  metadataSubscribers.forEach(s => passMetadata(s, this, metadata));
+    metadataSubscribers.forEach(subscriber => {
+      subscribe(subscriber, metadata, this);
+    });
 
-  this.callback(null, code, map);
+    return callback(null, code, map);
+  });
 };
