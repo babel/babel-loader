@@ -127,7 +127,7 @@ module.exports = function(source, inputSourceMap) {
 
   const defaultOptions = {
     metadataSubscribers: [],
-    inputSourceMap: inputSourceMap,
+    inputSourceMap: inputSourceMap || undefined,
     sourceRoot: process.cwd(),
     filename: filename,
     cacheIdentifier: JSON.stringify({
