@@ -50,7 +50,7 @@ module.exports = function loader(source, inputSourceMap) {
 
   const defaults = {
     filename,
-    inputSourceMap || undefined,
+    inputSourceMap: inputSourceMap || undefined,
     sourceRoot: process.cwd(),
     cacheIdentifier: JSON.stringify({
       env:
