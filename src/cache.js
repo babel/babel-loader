@@ -1,5 +1,5 @@
 /**
- * Filesystem cache
+ * Filesystem Cache
  *
  * Given a file and a transform function, cache the result into files
  * or retrieve the previously cached files if the given file is already known.
@@ -7,15 +7,17 @@
  * @see https://github.com/babel/babel-loader/issues/34
  * @see https://github.com/babel/babel-loader/pull/41
  */
-const crypto = require("crypto");
-const mkdirp = require("mkdirp");
-const findCacheDir = require("find-cache-dir");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
+const crypto = require("crypto");
+const mkdirp = require("mkdirp");
+const findCacheDir = require("find-cache-dir");
 
-let defaultCacheDirectory = null; // Lazily instantiated when needed
+const transform = require("./transform");
+// Lazily instantiated when needed
+let cacheDirectory = null;
 
 /**
  * Read the contents from the compressed file.
@@ -25,13 +27,13 @@ let defaultCacheDirectory = null; // Lazily instantiated when needed
  * @params {Function} callback
  */
 const read = function(filename, callback) {
-  return fs.readFile(filename, function(err, data) {
+  return fs.readFile(filename, (err, data) => {
     if (err) return callback(err);
 
-    return zlib.gunzip(data, function(err, content) {
+    return zlib.gunzip(data, (err, content) => {
       if (err) return callback(err);
 
-      let result = {};
+      let result = Object.create(null);
 
       try {
         result = JSON.parse(content);
@@ -55,7 +57,7 @@ const read = function(filename, callback) {
 const write = function(filename, result, callback) {
   const content = JSON.stringify(result);
 
-  return zlib.gzip(content, function(err, data) {
+  return zlib.gzip(content, (err, data) => {
     if (err) return callback(err);
 
     return fs.writeFile(filename, data, callback);
@@ -72,11 +74,8 @@ const write = function(filename, result, callback) {
  */
 const filename = function(source, identifier, options) {
   const hash = crypto.createHash("SHA1");
-  const contents = JSON.stringify({
-    source: source,
-    options: options,
-    identifier: identifier,
-  });
+
+  const contents = JSON.stringify({ source, options, identifier });
 
   hash.end(contents);
 
@@ -91,45 +90,45 @@ const filename = function(source, identifier, options) {
  * @params {Function} callback
  */
 const handleCache = function(directory, params, callback) {
-  const source = params.source;
-  const options = params.options || {};
-  const transform = params.transform;
-  const identifier = params.identifier;
-  const shouldFallback =
+  const { source, options = {}, cacheIdentifier } = params;
+
+  const fallback =
     typeof params.directory !== "string" && directory !== os.tmpdir();
 
   // Make sure the directory exists.
-  mkdirp(directory, function(err) {
+  mkdirp(directory, err => {
     // Fallback to tmpdir if node_modules folder not writable
-    if (err)
-      return shouldFallback
+    if (err) {
+      return fallback
         ? handleCache(os.tmpdir(), params, callback)
         : callback(err);
+    }
 
-    const file = path.join(directory, filename(source, identifier, options));
+    const file = path.join(
+      directory,
+      filename(source, cacheIdentifier, options),
+    );
 
-    return read(file, function(err, content) {
-      let result = {};
+    return read(file, (err, content) => {
       // No errors mean that the file was previously cached
       // we just need to return it
       if (!err) return callback(null, content);
 
       // Otherwise just transform the file
       // return it to the user asap and write it in cache
-      try {
-        result = transform(source, options);
-      } catch (error) {
-        return callback(error);
-      }
+      return transform(source, options, (err, result) => {
+        if (err) return callback(err);
 
-      return write(file, result, function(err) {
-        // Fallback to tmpdir if node_modules folder not writable
-        if (err)
-          return shouldFallback
-            ? handleCache(os.tmpdir(), params, callback)
-            : callback(err);
+        return write(file, result, err => {
+          // Fallback to tmpdir if node_modules folder not writable
+          if (err) {
+            return fallback
+              ? handleCache(os.tmpdir(), params, callback)
+              : callback(err);
+          }
 
-        callback(null, result);
+          return callback(null, result);
+        });
       });
     });
   });
@@ -172,14 +171,14 @@ const handleCache = function(directory, params, callback) {
 module.exports = function(params, callback) {
   let directory;
 
-  if (typeof params.directory === "string") {
-    directory = params.directory;
+  if (typeof params.cacheDirectory === "string") {
+    directory = params.cacheDirectory;
   } else {
-    if (defaultCacheDirectory === null) {
-      defaultCacheDirectory =
-        findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    if (cacheDirectory === null) {
+      cacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
     }
-    directory = defaultCacheDirectory;
+
+    directory = cacheDirectory;
   }
 
   handleCache(directory, params, callback);
