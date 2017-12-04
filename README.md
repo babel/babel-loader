@@ -74,7 +74,7 @@ module: {
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-env'],
-          plugins: [require('@babel/plugin-transform-object-rest-spread')]
+          plugins: [require('@babel/plugin-syntax-object-rest-spread')]
         }
       }
     }
