@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "@babel/core": "7 || ^7.0.0-beta || ^7.0.0-rc",
-    "webpack": "2 || 3"
+    "webpack": "*"
   },
   "devDependencies": {
     "@babel/cli": "7.0.0-beta.5",
