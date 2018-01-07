@@ -15,7 +15,7 @@ const globalConfig = {
         test: /\.jsx?/,
         loader: babelLoader,
         query: {
-          presets: ["@babel/env"],
+          presets: ["@babel/preset-env"],
         },
         exclude: /node_modules/,
       },
