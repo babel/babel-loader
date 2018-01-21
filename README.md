@@ -117,7 +117,7 @@ requiring `babel-plugin-transform-runtime` and making all helper references use 
 
 See the [docs](http://babeljs.io/docs/plugins/transform-runtime/) for more information.
 
-**NOTE:** You must run `npm install babel-plugin-transform-runtime --save-dev` to include this in your project and `babel-runtime` itself as a dependency with `npm install babel-runtime --save`.
+**NOTE:** You must run `npm install @babel/plugin-transform-runtime --save-dev` to include this in your project and `babel-runtime` itself as a dependency with `npm install @babel/runtime --save`.
 
 ```javascript
 rules: [
