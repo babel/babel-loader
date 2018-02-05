@@ -120,6 +120,43 @@ test.cb.serial(
 );
 
 test.cb.serial(
+  "should output non-compressed files to standard cache dir when cacheCompression is set to false",
+  t => {
+    const config = Object.assign({}, globalConfig, {
+      output: {
+        path: t.context.directory,
+      },
+      module: {
+        rules: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader,
+            exclude: /node_modules/,
+            options: {
+              cacheDirectory: true,
+              cacheCompression: false,
+              presets: ["@babel/preset-env"],
+            },
+          },
+        ],
+      },
+    });
+
+    webpack(config, err => {
+      t.is(err, null);
+
+      fs.readdir(defaultCacheDir, (err, files) => {
+        files = files.filter(file => /\b[0-9a-f]{5,40}\b/.test(file));
+
+        t.is(err, null);
+        t.true(files.length > 0);
+        t.end();
+      });
+    });
+  },
+);
+
+test.cb.serial(
   "should output files to standard cache dir if set to true in query",
   t => {
     const config = Object.assign({}, globalConfig, {

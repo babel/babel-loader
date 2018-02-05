@@ -94,6 +94,7 @@ async function loader(source, inputSourceMap, overrides) {
   // Remove loader related options
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
+  delete programmaticOptions.cacheCompression;
   delete programmaticOptions.metadataSubscribers;
 
   if (!babel.loadPartialConfig) {
@@ -121,6 +122,7 @@ async function loader(source, inputSourceMap, overrides) {
         "@babel/core": transform.version,
         "@babel/loader": pkg.version,
       }),
+      cacheCompression = true,
       metadataSubscribers = [],
     } = loaderOptions;
 
@@ -132,6 +134,7 @@ async function loader(source, inputSourceMap, overrides) {
         transform,
         cacheDirectory,
         cacheIdentifier,
+        cacheCompression,
       });
     } else {
       result = await transform(source, options);

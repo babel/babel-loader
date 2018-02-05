@@ -32,11 +32,11 @@ const mkdirp = promisify(mkdirpOrig);
  * @async
  * @params {String} filename
  */
-const read = async function(filename) {
-  const data = await readFile(filename);
-  const content = await gunzip(data);
+const read = async function(filename, compress) {
+  const data = await readFile(filename + (compress ? ".gz" : ""));
+  const content = compress ? await gunzip(data) : data;
 
-  return JSON.parse(content);
+  return JSON.parse(content.toString());
 };
 
 /**
@@ -46,11 +46,11 @@ const read = async function(filename) {
  * @params {String} filename
  * @params {String} result
  */
-const write = async function(filename, result) {
+const write = async function(filename, compress, result) {
   const content = JSON.stringify(result);
 
-  const data = await gzip(content);
-  return await writeFile(filename, data);
+  const data = compress ? await gzip(content) : content;
+  return await writeFile(filename + (compress ? ".gz" : ""), data);
 };
 
 /**
@@ -68,7 +68,7 @@ const filename = function(source, identifier, options) {
 
   hash.update(contents);
 
-  return hash.digest("hex") + ".json.gz";
+  return hash.digest("hex") + ".json";
 };
 
 /**
@@ -78,14 +78,20 @@ const filename = function(source, identifier, options) {
  * @params {Object} params
  */
 const handleCache = async function(directory, params) {
-  const { source, options = {}, cacheIdentifier, cacheDirectory } = params;
+  const {
+    source,
+    options = {},
+    cacheIdentifier,
+    cacheDirectory,
+    cacheCompression,
+  } = params;
 
   const file = path.join(directory, filename(source, cacheIdentifier, options));
 
   try {
     // No errors mean that the file was previously cached
     // we just need to return it
-    return await read(file);
+    return await read(file, cacheCompression);
   } catch (err) {}
 
   const fallback =
@@ -107,7 +113,7 @@ const handleCache = async function(directory, params) {
   const result = await transform(source, options);
 
   try {
-    await write(file, result);
+    await write(file, cacheCompression, result);
   } catch (err) {
     if (fallback) {
       // Fallback to tmpdir if node_modules folder not writable
@@ -138,6 +144,7 @@ const handleCache = async function(directory, params) {
  *   cache({
  *     directory: '.tmp/cache',
  *     identifier: 'babel-loader-cachefile',
+ *     cacheCompression: false,
  *     source: *source code from file*,
  *     options: {
  *       experimental: true,
