@@ -130,8 +130,14 @@ module.exports = function(source, inputSourceMap) {
       : resolveRc(fileSystem, path.dirname(filename));
   }
 
+  let babelRcOptions = null;
   if (babelrcPath) {
     this.addDependency(babelrcPath);
+    try {
+      babelRcOptions = JSON.parse(read(fileSystem, babelrcPath));
+    } catch (e) {
+      babelRcOptions = {};
+    }
   }
 
   const defaultOptions = {
@@ -152,7 +158,12 @@ module.exports = function(source, inputSourceMap) {
     }),
   };
 
-  const options = Object.assign({}, defaultOptions, loaderOptions);
+  const options = Object.assign(
+    {},
+    defaultOptions,
+    babelRcOptions,
+    loaderOptions,
+  );
 
   if (loaderOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap;
