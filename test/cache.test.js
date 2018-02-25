@@ -14,9 +14,10 @@ const outputDir = path.join(__dirname, "output/cache");
 const babelLoader = path.join(__dirname, "../lib");
 
 const globalConfig = {
+  mode: "development",
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: babelLoader,
@@ -53,12 +54,12 @@ test.cb("should output files to cache directory", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.js$/,
           loader: babelLoader,
           exclude: /node_modules/,
-          query: {
+          options: {
             cacheDirectory: t.context.cacheDirectory,
             presets: ["env"],
           },
@@ -67,8 +68,10 @@ test.cb("should output files to cache directory", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);
@@ -86,12 +89,12 @@ test.cb.serial(
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             exclude: /node_modules/,
-            query: {
+            options: {
               cacheDirectory: true,
               presets: ["env"],
             },
@@ -100,8 +103,10 @@ test.cb.serial(
       },
     });
 
-    webpack(config, err => {
+    webpack(config, (err, stats) => {
       t.is(err, null);
+      t.is(stats.compilation.errors.length, 0);
+      t.is(stats.compilation.warnings.length, 0);
 
       fs.readdir(defaultCacheDir, (err, files) => {
         files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
@@ -122,7 +127,7 @@ test.cb.serial(
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: `${babelLoader}?cacheDirectory=true&presets[]=env`,
@@ -132,8 +137,10 @@ test.cb.serial(
       },
     });
 
-    webpack(config, err => {
+    webpack(config, (err, stats) => {
       t.is(err, null);
+      t.is(stats.compilation.errors.length, 0);
+      t.is(stats.compilation.warnings.length, 0);
 
       fs.readdir(defaultCacheDir, (err, files) => {
         files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
@@ -152,12 +159,12 @@ test.cb.skip("should read from cache directory if cached file exists", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
           exclude: /node_modules/,
-          query: {
+          options: {
             cacheDirectory: t.context.cacheDirectory,
             presets: ["env"],
           },
@@ -168,8 +175,10 @@ test.cb.skip("should read from cache directory if cached file exists", t => {
 
   // @TODO Find a way to know if the file as correctly read without relying on
   // Istanbul for coverage.
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     webpack(config, err => {
       t.is(err, null);
@@ -188,12 +197,12 @@ test.cb("should have one file per module", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
           exclude: /node_modules/,
-          query: {
+          options: {
             cacheDirectory: t.context.cacheDirectory,
             presets: ["env"],
           },
@@ -202,8 +211,10 @@ test.cb("should have one file per module", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);
@@ -220,12 +231,12 @@ test.cb("should generate a new file if the identifier changes", t => {
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             exclude: /node_modules/,
-            query: {
+            options: {
               cacheDirectory: t.context.cacheDirectory,
               cacheIdentifier: "a",
               presets: ["env"],
@@ -239,12 +250,12 @@ test.cb("should generate a new file if the identifier changes", t => {
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             exclude: /node_modules/,
-            query: {
+            options: {
               cacheDirectory: t.context.cacheDirectory,
               cacheIdentifier: "b",
               presets: ["env"],
@@ -257,8 +268,10 @@ test.cb("should generate a new file if the identifier changes", t => {
   let counter = configs.length;
 
   configs.forEach(config => {
-    webpack(config, err => {
+    webpack(config, (err, stats) => {
       t.is(err, null);
+      t.is(stats.compilation.errors.length, 0);
+      t.is(stats.compilation.warnings.length, 0);
       counter -= 1;
 
       if (!counter) {
@@ -280,12 +293,12 @@ test.cb("should allow to specify the .babelrc file", t => {
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             exclude: /node_modules/,
-            query: {
+            options: {
               cacheDirectory: t.context.cacheDirectory,
               babelrc: path.join(__dirname, "fixtures/babelrc"),
               presets: ["env"],
@@ -300,12 +313,12 @@ test.cb("should allow to specify the .babelrc file", t => {
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
             exclude: /node_modules/,
-            query: {
+            options: {
               cacheDirectory: t.context.cacheDirectory,
               presets: ["env"],
             },
@@ -315,8 +328,12 @@ test.cb("should allow to specify the .babelrc file", t => {
     }),
   ];
 
-  webpack(config, err => {
+  webpack(config, (err, multiStats) => {
     t.is(err, null);
+    t.is(multiStats.stats[0].compilation.errors.length, 0);
+    t.is(multiStats.stats[0].compilation.warnings.length, 0);
+    t.is(multiStats.stats[1].compilation.errors.length, 0);
+    t.is(multiStats.stats[1].compilation.warnings.length, 0);
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);

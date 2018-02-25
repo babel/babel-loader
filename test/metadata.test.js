@@ -12,6 +12,7 @@ const cacheDir = path.join(__dirname, "output/cache/cachefiles");
 const outputDir = path.join(__dirname, "output/metadata");
 const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
+  mode: "development",
   entry: "./test/fixtures/metadata.js",
   output: {
     path: outputDir,
@@ -19,11 +20,11 @@ const globalConfig = {
   },
   plugins: [new ReactIntlPlugin()],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?/,
         loader: babelLoader,
-        query: {
+        options: {
           metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
           plugins: [["react-intl", { enforceDescriptions: false }]],
           presets: [],
@@ -54,8 +55,10 @@ test.cb("should pass metadata code snippet", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -87,6 +90,7 @@ test.cb("should not throw error", t => {
   webpack(config, (err, stats) => {
     t.is(err, null);
     t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
     t.end();
   });
 });
@@ -103,6 +107,7 @@ test.cb("should throw error", t => {
   webpack(config, (err, stats) => {
     t.is(err, null);
     t.true(stats.compilation.errors.length > 0);
+    t.is(stats.compilation.warnings.length, 0);
     t.end();
   });
 });
@@ -114,11 +119,11 @@ test.cb("should pass metadata code snippet ( cache version )", t => {
       filename: "[id].metadata.js",
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
             plugins: [["react-intl", { enforceDescriptions: false }]],
             cacheDirectory: cacheDir,
@@ -130,8 +135,10 @@ test.cb("should pass metadata code snippet ( cache version )", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);

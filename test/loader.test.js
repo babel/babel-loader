@@ -8,13 +8,14 @@ import createTestDirectory from "./helpers/createTestDirectory";
 const outputDir = path.join(__dirname, "output/loader");
 const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
+  mode: "development",
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?/,
         loader: babelLoader,
-        query: {
+        options: {
           presets: ["env"],
         },
         exclude: /node_modules/,
@@ -42,8 +43,10 @@ test.cb("should transpile the code snippet", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -72,6 +75,7 @@ test.cb("should not throw error on syntax error", t => {
   webpack(config, (err, stats) => {
     t.true(stats.compilation.errors.length === 1);
     t.true(stats.compilation.errors[0] instanceof Error);
+    t.is(stats.compilation.warnings.length, 0);
 
     t.end();
   });
@@ -79,16 +83,17 @@ test.cb("should not throw error on syntax error", t => {
 
 test.cb("should use correct env", t => {
   const config = {
+    mode: "development",
     entry: path.join(__dirname, "fixtures/basic.js"),
     output: {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             forceEnv: "testenv",
             env: {
               testenv: {
@@ -108,7 +113,8 @@ test.cb("should use correct env", t => {
   webpack(config, (err, stats) => {
     t.is(err, null);
 
-    t.true(stats.compilation.errors.length === 1);
+    t.is(stats.compilation.errors.length, 1);
+    t.is(stats.compilation.warnings.length, 0);
 
     t.truthy(stats.compilation.errors[0].message.match(/es2015abc/));
     t.falsy(stats.compilation.errors[0].message.match(/es2015xyz/));
@@ -121,20 +127,21 @@ test.serial.cb("should not polute BABEL_ENV after using forceEnv", t => {
   const initialBabelEnv = process.env.BABEL_ENV;
 
   const config = {
+    mode: "development",
     entry: path.join(__dirname, "fixtures/basic.js"),
     output: {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             forceEnv: "testenv",
             env: {
               testenv: {
-                presets: ["es2015"],
+                presets: ["env"],
               },
             },
           },
@@ -144,7 +151,9 @@ test.serial.cb("should not polute BABEL_ENV after using forceEnv", t => {
     },
   };
 
-  webpack(config, () => {
+  webpack(config, (err, stats) => {
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
     t.truthy(process.env.BABEL_ENV === initialBabelEnv);
     t.end();
   });
@@ -156,16 +165,17 @@ test.serial.cb(
     const initialBabelEnv = process.env.BABEL_ENV;
 
     const config = {
+      mode: "development",
       entry: path.join(__dirname, "fixtures/basic.js"),
       output: {
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
-            query: {
+            options: {
               forceEnv: "testenv",
               env: {
                 testenv: {
@@ -179,7 +189,11 @@ test.serial.cb(
       },
     };
 
-    webpack(config, () => {
+    webpack(config, (err, stats) => {
+      t.is(err, null);
+      t.is(stats.compilation.errors.length, 1);
+      t.is(stats.compilation.warnings.length, 0);
+
       t.truthy(process.env.BABEL_ENV === initialBabelEnv);
       t.end();
     });
@@ -192,16 +206,17 @@ test.serial.cb("should not change BABEL_ENV when using forceEnv", t => {
   process.env.BABEL_ENV = "nontestenv";
 
   const config = {
+    mode: "development",
     entry: path.join(__dirname, "fixtures/basic.js"),
     output: {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             forceEnv: "testenv",
             env: {
               testenv: {
@@ -221,7 +236,8 @@ test.serial.cb("should not change BABEL_ENV when using forceEnv", t => {
   webpack(config, (err, stats) => {
     t.is(err, null);
 
-    t.true(stats.compilation.errors.length === 1);
+    t.is(stats.compilation.errors.length, 1);
+    t.is(stats.compilation.warnings.length, 0);
 
     t.truthy(stats.compilation.errors[0].message.match(/es2015abc/));
     t.falsy(stats.compilation.errors[0].message.match(/es2015xyz/));
@@ -240,12 +256,13 @@ test.serial.cb("should not change BABEL_ENV when using forceEnv", t => {
 
 test.cb("should not throw without config", t => {
   const config = {
+    mode: "development",
     entry: path.join(__dirname, "fixtures/basic.js"),
     output: {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
@@ -257,8 +274,8 @@ test.cb("should not throw without config", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-
-    t.true(stats.compilation.errors.length === 0);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     t.end();
   });
@@ -274,6 +291,8 @@ test.cb(
       },
     });
     webpack(config, (err, stats) => {
+      t.is(err, null);
+      t.is(stats.compilation.warnings.length, 0);
       const moduleBuildError = stats.compilation.errors[0];
       const babelLoaderError = moduleBuildError.error;
       t.regex(babelLoaderError.stack, /Unexpected character/);

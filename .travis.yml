@@ -1,9 +1,9 @@
 sudo: false
 language: node_js
 node_js:
+  - "9"
   - "8"
   - "6"
-  - "4"
 
 env:
   - JOB=test
@@ -22,7 +22,7 @@ before_script:
   - 'if [ "$JOB" = "test" ]; then BABEL_ENV=test yarn run build; fi'
 
 script:
-  - 'if [ "$JOB" = "test" ]; then yarn test-only; fi'
+  - 'if [ "$JOB" = "test" ]; then yarn run test-only; fi'
   - 'if [ "$JOB" = "lint" ]; then yarn run lint; fi'
 
 after_script:

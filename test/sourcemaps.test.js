@@ -8,9 +8,10 @@ import createTestDirectory from "./helpers/createTestDirectory";
 const outputDir = path.join(__dirname, "output/sourcemaps");
 const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
+  mode: "development",
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?/,
         loader: babelLoader,
@@ -39,7 +40,7 @@ test.cb("should output webpack's sourcemap", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader + "?presets[]=env",
@@ -49,8 +50,10 @@ test.cb("should output webpack's sourcemap", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -59,11 +62,13 @@ test.cb("should output webpack's sourcemap", t => {
 
       t.true(map.length > 0);
 
-      fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
-        t.is(err, null);
-        t.not(data.toString().indexOf("webpack:///"), -1);
-        t.end();
-      });
+      if (map.length > 0) {
+        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
+          t.is(err, null);
+          t.not(data.toString().indexOf("webpack:///"), -1);
+          t.end();
+        });
+      }
     });
   });
 });
