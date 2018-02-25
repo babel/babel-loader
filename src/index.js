@@ -29,6 +29,11 @@ module.exports = function loader(source, inputSourceMap) {
   let babelrc = null;
 
   // Deprecation handling
+  if ("forceEnv" in options) {
+    console.warn(
+      "The option `forceEnv` has been removed in favor of `envName` in Babel 7.",
+    );
+  }
   if (typeof options.babelrc === "string") {
     console.warn(
       "The option `babelrc` should not be set to a string anymore in the babel-loader config. " +
@@ -54,7 +59,7 @@ module.exports = function loader(source, inputSourceMap) {
     sourceRoot: process.cwd(),
     cacheIdentifier: JSON.stringify({
       env:
-        options.forceEnv ||
+        options.envName ||
         process.env.BABEL_ENV ||
         process.env.NODE_ENV ||
         "development",
