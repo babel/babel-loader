@@ -67,8 +67,10 @@ test.cb("should output files to cache directory", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);
@@ -100,8 +102,10 @@ test.cb.serial(
       },
     });
 
-    webpack(config, err => {
+    webpack(config, (err, stats) => {
       t.is(err, null);
+      t.deepEqual(stats.compilation.errors, []);
+      t.deepEqual(stats.compilation.warnings, []);
 
       fs.readdir(defaultCacheDir, (err, files) => {
         files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
@@ -132,8 +136,10 @@ test.cb.serial(
       },
     });
 
-    webpack(config, err => {
+    webpack(config, (err, stats) => {
       t.is(err, null);
+      t.deepEqual(stats.compilation.errors, []);
+      t.deepEqual(stats.compilation.warnings, []);
 
       fs.readdir(defaultCacheDir, (err, files) => {
         files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
@@ -169,8 +175,10 @@ test.cb.skip("should read from cache directory if cached file exists", t => {
 
   // @TODO Find a way to know if the file as correctly read without relying on
   // Istanbul for coverage.
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     webpack(config, err => {
       t.is(err, null);
@@ -203,8 +211,10 @@ test.cb("should have one file per module", t => {
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);
@@ -258,8 +268,10 @@ test.cb("should generate a new file if the identifier changes", t => {
   let counter = configs.length;
 
   configs.forEach(config => {
-    webpack(config, err => {
+    webpack(config, (err, stats) => {
       t.is(err, null);
+      t.deepEqual(stats.compilation.errors, []);
+      t.deepEqual(stats.compilation.warnings, []);
       counter -= 1;
 
       if (!counter) {
@@ -288,7 +300,8 @@ test.cb("should allow to specify the .babelrc file", t => {
             exclude: /node_modules/,
             query: {
               cacheDirectory: t.context.cacheDirectory,
-              babelrc: path.join(__dirname, "fixtures/babelrc"),
+              extends: path.join(__dirname, "fixtures/babelrc"),
+              babelrc: false,
               presets: ["@babel/preset-env"],
             },
           },
@@ -316,8 +329,12 @@ test.cb("should allow to specify the .babelrc file", t => {
     }),
   ];
 
-  webpack(config, err => {
+  webpack(config, (err, multiStats) => {
     t.is(err, null);
+    t.deepEqual(multiStats.stats[0].compilation.errors, []);
+    t.deepEqual(multiStats.stats[0].compilation.warnings, []);
+    t.deepEqual(multiStats.stats[1].compilation.errors, []);
+    t.deepEqual(multiStats.stats[1].compilation.warnings, []);
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);

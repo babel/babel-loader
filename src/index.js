@@ -113,12 +113,21 @@ module.exports = function(source, inputSourceMap) {
   const loaderOptions = loaderUtils.getOptions(this) || {};
   const fileSystem = this.fs ? this.fs : fs;
   let babelrcPath = null;
-  if (loaderOptions.babelrc !== false) {
-    babelrcPath =
-      typeof loaderOptions.babelrc === "string" &&
-      exists(fileSystem, loaderOptions.babelrc)
-        ? loaderOptions.babelrc
-        : resolveRc(fileSystem, path.dirname(filename));
+
+  // Deprecation handling
+  if (typeof loaderOptions.babelrc === "string") {
+    console.warn(
+      "The option `babelrc` should not be set to a string anymore in the babel-loader config. " +
+        "Please update your configuration and set `babelrc` to true or false.\n" +
+        "If you want to specify a specific babel config file to inherit config from " +
+        "please use the `extends` option.\nFor more information about this options see " +
+        "https://babeljs.io/docs/core-packages/#options",
+    );
+  }
+  if (loaderOptions.babelrc !== false && loaderOptions.extends) {
+    babelrcPath = exists(fileSystem, loaderOptions.extends)
+      ? loaderOptions.extends
+      : resolveRc(fileSystem, path.dirname(filename));
   }
 
   if (babelrcPath) {
@@ -134,6 +143,7 @@ module.exports = function(source, inputSourceMap) {
       "@babel/loader": pkg.version,
       "@babel/core": babel.version,
       babelrc: babelrcPath ? read(fileSystem, babelrcPath) : null,
+      options: loaderOptions,
       env:
         loaderOptions.forceEnv ||
         process.env.BABEL_ENV ||
