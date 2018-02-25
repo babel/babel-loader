@@ -8,6 +8,7 @@ import createTestDirectory from "./helpers/createTestDirectory";
 const outputDir = path.join(__dirname, "output/options");
 const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
+  mode: "development",
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
     rules: [
@@ -41,15 +42,17 @@ test.cb("should interpret options given to the loader", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=env",
+          loader: babelLoader + "?presets[]=@babel/env",
           exclude: /node_modules/,
         },
       ],
     },
   });
 
-  webpack(config, err => {
+  webpack(config, (err, stats) => {
     t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
 
     fs.readdir(outputDir, (err, files) => {
       t.is(err, null);
