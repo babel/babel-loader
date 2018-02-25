@@ -7,7 +7,7 @@
   ],
   "main": "lib/index.js",
   "engines": {
-    "node": ">=4"
+    "node": ">= 4"
   },
   "dependencies": {
     "find-cache-dir": "^1.0.0",
@@ -15,7 +15,7 @@
     "mkdirp": "^0.5.1"
   },
   "peerDependencies": {
-    "@babel/core": "7 || ^7.0.0-beta || ^7.0.0-rc",
+    "@babel/core": "^7.0.0 || ^7.0.0-rc || ^7.0.0-beta.32",
     "webpack": ">=2"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "build": "babel src/ --out-dir lib/",
-    "format": "prettier --write --trailing-comma all \"src/**/*.js\" \"test/**/*.test.js\" \"test/helpers/*.js\" && prettier --write --trailing-comma es5 \"scripts/*.js\"",
+    "format": "prettier --write --trailing-comma all 'src/**/*.js' 'test/**/*.test.js' 'test/helpers/*.js' && prettier --write --trailing-comma es5 'scripts/*.js'",
     "lint": "eslint src test",
     "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",

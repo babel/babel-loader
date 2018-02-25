@@ -1,8 +1,8 @@
-module.exports = function(fileSystem, filename) {
+module.exports = function(fs, config) {
   let exists = false;
 
   try {
-    exists = fileSystem.statSync(filename).isFile();
+    exists = fs.statSync(config).isFile();
   } catch (err) {
     if (err.code !== "ENOENT") throw err;
   }
