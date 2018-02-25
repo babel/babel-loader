@@ -32,7 +32,7 @@
     "eslint-plugin-flowtype": "^2.25.0",
     "eslint-plugin-prettier": "^2.1.2",
     "husky": "^0.14.0",
-    "lint-staged": "^6.0.0",
+    "lint-staged": "^7.0.0",
     "nyc": "^11.0.1",
     "prettier": "^1.2.2",
     "react": "^16.0.0",
