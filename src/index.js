@@ -110,7 +110,10 @@ module.exports = function(source, inputSourceMap) {
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
 
   // Handle options
-  const loaderOptions = loaderUtils.getOptions(this) || {};
+  const loaderOptions = Object.assign({ }, {
+    babelrc: true
+  }, loaderUtils.getOptions(this) || { });
+  
   const fileSystem = this.fs ? this.fs : fs;
   let babelrcPath = null;
   if (loaderOptions.babelrc !== false) {
