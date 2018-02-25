@@ -117,11 +117,11 @@ module.exports = function(source, inputSourceMap) {
   const fileSystem = this.fs ? this.fs : fs;
   let babelrcPath = null;
   if (loaderOptions.babelrc !== false) {
-    babelrcPath =
-      typeof loaderOptions.babelrc === "string" &&
-      exists(fileSystem, loaderOptions.babelrc)
-        ? loaderOptions.babelrc
-        : resolveRc(fileSystem, path.dirname(filename));
+    if (typeof loaderOptions.babelrc === "string" && exists(fileSystem, loaderOptions.babelrc)) {
+      babelrcPath = loaderOptions.babelrc;
+    } else {
+      babelrcPath = resolveRc(fileSystem, path.dirname(filename));
+    }
   }
 
   if (babelrcPath) {
