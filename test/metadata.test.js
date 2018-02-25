@@ -19,11 +19,11 @@ const globalConfig = {
   },
   plugins: [new ReactIntlPlugin()],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?/,
         loader: babelLoader,
-        query: {
+        options: {
           metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
           plugins: [["react-intl", { enforceDescriptions: false }]],
           presets: [],
@@ -114,11 +114,11 @@ test.cb("should pass metadata code snippet ( cache version )", t => {
       filename: "[id].metadata.js",
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
             plugins: [["react-intl", { enforceDescriptions: false }]],
             cacheDirectory: cacheDir,

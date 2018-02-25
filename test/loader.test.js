@@ -10,11 +10,11 @@ const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?/,
         loader: babelLoader,
-        query: {
+        options: {
           presets: ["@babel/preset-env"],
         },
         exclude: /node_modules/,
@@ -84,11 +84,11 @@ test.cb("should use correct env", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             forceEnv: "testenv",
             env: {
               testenv: {
@@ -126,11 +126,11 @@ test.serial.cb("should not polute BABEL_ENV after using forceEnv", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             forceEnv: "testenv",
             env: {
               testenv: {
@@ -161,11 +161,11 @@ test.serial.cb(
         path: t.context.directory,
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.jsx?/,
             loader: babelLoader,
-            query: {
+            options: {
               forceEnv: "testenv",
               env: {
                 testenv: {
@@ -197,11 +197,11 @@ test.serial.cb("should not change BABEL_ENV when using forceEnv", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,
-          query: {
+          options: {
             forceEnv: "testenv",
             env: {
               testenv: {
@@ -245,7 +245,7 @@ test.cb("should not throw without config", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader,

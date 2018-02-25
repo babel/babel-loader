@@ -10,7 +10,7 @@ const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
   entry: path.join(__dirname, "fixtures/basic.js"),
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?/,
         loader: babelLoader,
@@ -39,7 +39,7 @@ test.cb("should output webpack's sourcemap", t => {
       path: t.context.directory,
     },
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?/,
           loader: babelLoader + "?presets[]=env",
