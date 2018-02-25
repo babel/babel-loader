@@ -38,10 +38,11 @@ module.exports = function loader(source, inputSourceMap) {
         "https://babeljs.io/docs/core-packages/#options",
     );
   }
-  if (options.babelrc !== false && options.extends) {
-    babelrc = exists(fs, options.extends)
-      ? options.extends
-      : rc(fs, path.dirname(filename));
+  if (options.babelrc !== false) {
+    babelrc =
+      options.extends && exists(fs, options.extends)
+        ? options.extends
+        : rc(fs, path.dirname(filename));
   }
 
   if (babelrc) {
