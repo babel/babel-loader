@@ -1,14 +1,14 @@
 let fs = require("fs");
 const path = require("path");
 
-const rc = require("./config.js");
+const rc = require("./config");
 const pkg = require("../package.json");
-const cache = require("./cache.js");
-const transform = require("./transform.js");
+const cache = require("./cache");
+const transform = require("./transform");
 
-const read = require("./utils/read.js");
-const exists = require("./utils/exists.js");
-const relative = require("./utils/relative.js");
+const read = require("./utils/read");
+const exists = require("./utils/exists");
+const relative = require("./utils/relative");
 
 const loaderUtils = require("loader-utils");
 
