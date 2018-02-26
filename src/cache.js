@@ -17,7 +17,7 @@ const findCacheDir = require("find-cache-dir");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
-let cacheDirectory = null;
+let defaultCacheDirectory = null;
 
 /**
  * Read the contents from the compressed file.
@@ -90,10 +90,10 @@ const filename = function(source, identifier, options) {
  * @params {Function} callback
  */
 const handleCache = function(directory, params, callback) {
-  const { source, options = {}, cacheIdentifier } = params;
+  const { source, options = {}, cacheIdentifier, cacheDirectory } = params;
 
   const fallback =
-    typeof params.directory !== "string" && directory !== os.tmpdir();
+    typeof cacheDirectory !== "string" && directory !== os.tmpdir();
 
   // Make sure the directory exists.
   mkdirp(directory, err => {
@@ -174,11 +174,12 @@ module.exports = function(params, callback) {
   if (typeof params.cacheDirectory === "string") {
     directory = params.cacheDirectory;
   } else {
-    if (cacheDirectory === null) {
-      cacheDirectory = findCacheDir({ name: "babel-loader" }) || os.tmpdir();
+    if (defaultCacheDirectory === null) {
+      defaultCacheDirectory =
+        findCacheDir({ name: "babel-loader" }) || os.tmpdir();
     }
 
-    directory = cacheDirectory;
+    directory = defaultCacheDirectory;
   }
 
   handleCache(directory, params, callback);
