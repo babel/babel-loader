@@ -103,11 +103,7 @@ function passMetadata(s, context, metadata) {
 }
 
 module.exports = function(source, inputSourceMap) {
-  // Handle filenames (#106)
-  const webpackRemainingChain = loaderUtils
-    .getRemainingRequest(this)
-    .split("!");
-  const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+  const filename = this.resourcePath;
 
   // Handle options
   const loaderOptions = loaderUtils.getOptions(this) || {};

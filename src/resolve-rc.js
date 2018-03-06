@@ -2,7 +2,7 @@ const path = require("path");
 const exists = require("./utils/exists");
 
 module.exports = function find(fileSystem, start) {
-  for (const fileName of [".babelrc", ".babelrc.js", "package.json"]) {
+  for (const fileName of [".babelrc", "package.json"]) {
     const file = path.join(start, fileName);
 
     if (exists(fileSystem, file)) {
