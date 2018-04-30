@@ -37,7 +37,7 @@
     "prettier": "^1.2.2",
     "react": "^16.0.0",
     "react-intl": "^2.1.2",
-    "react-intl-webpack-plugin": "^0.0.3",
+    "react-intl-webpack-plugin": "^0.1.0",
     "rimraf": "^2.4.3",
     "webpack": "^4.0.0"
   },
