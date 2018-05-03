@@ -49,7 +49,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env']
+          presets: [['@babel/preset-env', { modules: false }]]
         }
       }
     }
@@ -73,7 +73,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env'],
+          presets: [['@babel/preset-env', { modules: false }]],
           plugins: [require('@babel/plugin-proposal-object-rest-spread')]
         }
       }
