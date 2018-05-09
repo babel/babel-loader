@@ -12,38 +12,31 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 const crypto = require("crypto");
-const mkdirp = require("mkdirp");
+const mkdirpOrig = require("mkdirp");
 const findCacheDir = require("find-cache-dir");
+const promisify = require("util.promisify");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
 let defaultCacheDirectory = null;
+
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
+const gunzip = promisify(zlib.gunzip);
+const gzip = promisify(zlib.gzip);
+const mkdirp = promisify(mkdirpOrig);
 
 /**
  * Read the contents from the compressed file.
  *
  * @async
  * @params {String} filename
- * @params {Function} callback
  */
-const read = function(filename, callback) {
-  return fs.readFile(filename, (err, data) => {
-    if (err) return callback(err);
+const read = async function(filename) {
+  const data = await readFile(filename);
+  const content = await gunzip(data);
 
-    return zlib.gunzip(data, (err, content) => {
-      if (err) return callback(err);
-
-      let result = Object.create(null);
-
-      try {
-        result = JSON.parse(content);
-      } catch (e) {
-        return callback(e);
-      }
-
-      return callback(null, result);
-    });
-  });
+  return JSON.parse(content);
 };
 
 /**
@@ -52,16 +45,12 @@ const read = function(filename, callback) {
  * @async
  * @params {String} filename
  * @params {String} result
- * @params {Function} callback
  */
-const write = function(filename, result, callback) {
+const write = async function(filename, result) {
   const content = JSON.stringify(result);
 
-  return zlib.gzip(content, (err, data) => {
-    if (err) return callback(err);
-
-    return fs.writeFile(filename, data, callback);
-  });
+  const data = await gzip(content);
+  return await writeFile(filename, data);
 };
 
 /**
@@ -87,51 +76,48 @@ const filename = function(source, identifier, options) {
  *
  * @params {String} directory
  * @params {Object} params
- * @params {Function} callback
  */
-const handleCache = function(directory, params, callback) {
+const handleCache = async function(directory, params) {
   const { source, options = {}, cacheIdentifier, cacheDirectory } = params;
 
   const fallback =
     typeof cacheDirectory !== "string" && directory !== os.tmpdir();
 
   // Make sure the directory exists.
-  mkdirp(directory, err => {
-    // Fallback to tmpdir if node_modules folder not writable
-    if (err) {
-      return fallback
-        ? handleCache(os.tmpdir(), params, callback)
-        : callback(err);
+  try {
+    await mkdirp(directory);
+  } catch (err) {
+    if (fallback) {
+      return handleCache(os.tmpdir(), params);
     }
 
-    const file = path.join(
-      directory,
-      filename(source, cacheIdentifier, options),
-    );
+    throw err;
+  }
 
-    return read(file, (err, content) => {
-      // No errors mean that the file was previously cached
-      // we just need to return it
-      if (!err) return callback(null, content);
+  const file = path.join(directory, filename(source, cacheIdentifier, options));
 
-      // Otherwise just transform the file
-      // return it to the user asap and write it in cache
-      return transform(source, options, (err, result) => {
-        if (err) return callback(err);
+  try {
+    // No errors mean that the file was previously cached
+    // we just need to return it
+    return await read(file);
+  } catch (err) {}
 
-        return write(file, result, err => {
-          // Fallback to tmpdir if node_modules folder not writable
-          if (err) {
-            return fallback
-              ? handleCache(os.tmpdir(), params, callback)
-              : callback(err);
-          }
+  // Otherwise just transform the file
+  // return it to the user asap and write it in cache
+  const result = await transform(source, options);
 
-          return callback(null, result);
-        });
-      });
-    });
-  });
+  try {
+    await write(file, result);
+  } catch (err) {
+    if (fallback) {
+      // Fallback to tmpdir if node_modules folder not writable
+      return handleCache(os.tmpdir(), params);
+    }
+
+    throw err;
+  }
+
+  return result;
 };
 
 /**
@@ -146,8 +132,6 @@ const handleCache = function(directory, params, callback) {
  * @param  {Function} params.transform  Function that will transform the
  *                                      original file and whose result will be
  *                                      cached
- *
- * @param  {Function<err, result>} callback
  *
  * @example
  *
@@ -168,7 +152,7 @@ const handleCache = function(directory, params, callback) {
  *   });
  */
 
-module.exports = function(params, callback) {
+module.exports = async function(params) {
   let directory;
 
   if (typeof params.cacheDirectory === "string") {
@@ -182,5 +166,5 @@ module.exports = function(params, callback) {
     directory = defaultCacheDirectory;
   }
 
-  handleCache(directory, params, callback);
+  return await handleCache(directory, params);
 };

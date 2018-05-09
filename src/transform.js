@@ -1,20 +1,26 @@
 const babel = require("@babel/core");
+const promisify = require("util.promisify");
 const LoaderError = require("./Error");
 
-module.exports = function(source, options, cb) {
-  babel.transform(source, options, (err, result) => {
-    if (err) {
-      return err.message && err.codeFrame ? cb(new LoaderError(err)) : cb(err);
-    }
+const transform = promisify(babel.transform);
 
-    const { code, map, metadata } = result;
+module.exports = async function(source, options) {
+  let result;
+  try {
+    result = await transform(source, options);
+  } catch (err) {
+    throw err.message && err.codeFrame ? new LoaderError(err) : err;
+  }
 
-    if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
-      map.sourcesContent = [source];
-    }
+  if (!result) return null;
 
-    return cb(null, { code, map, metadata });
-  });
+  const { code, map, metadata } = result;
+
+  if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
+    map.sourcesContent = [source];
+  }
+
+  return { code, map, metadata };
 };
 
 module.exports.version = babel.version;

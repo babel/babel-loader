@@ -7,12 +7,13 @@
   ],
   "main": "lib/index.js",
   "engines": {
-    "node": ">= 4"
+    "node": ">= 6.9"
   },
   "dependencies": {
     "find-cache-dir": "^1.0.0",
     "loader-utils": "^1.0.2",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "util.promisify": "^1.0.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0 || ^7.0.0-rc || ^7.0.0-beta.41",
