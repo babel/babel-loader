@@ -98,17 +98,22 @@ async function loader(source, inputSourceMap) {
     result = await transform(source, options);
   }
 
-  const { code, map, metadata } = result || {};
-
   // TODO: Babel should really provide the full list of config files that
   // were used so that this can also handle files loaded with 'extends'.
   if (typeof config.babelrc === "string") {
     this.addDependency(config.babelrc);
   }
 
-  metadataSubscribers.forEach(subscriber => {
-    subscribe(subscriber, metadata, this);
-  });
+  if (result) {
+    const { code, map, metadata } = result;
 
-  return [code, map];
+    metadataSubscribers.forEach(subscriber => {
+      subscribe(subscriber, metadata, this);
+    });
+
+    return [code, map];
+  }
+
+  // If the file was ignored, pass through the original content.
+  return [source, inputSourceMap];
 }
