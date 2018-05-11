@@ -14,10 +14,16 @@ function subscribe(subscriber, metadata, context) {
   }
 }
 
-module.exports = function loader(source, inputSourceMap) {
+module.exports = function(source, inputSourceMap) {
   // Make the loader async
   const callback = this.async();
 
+  loader
+    .call(this, source, inputSourceMap)
+    .then(args => callback(null, ...args), err => callback(err));
+};
+
+async function loader(source, inputSourceMap) {
   const filename = this.resourcePath;
 
   const loaderOptions = loaderUtils.getOptions(this) || {};
@@ -79,28 +85,35 @@ module.exports = function loader(source, inputSourceMap) {
     metadataSubscribers = [],
   } = loaderOptions;
 
-  const done = (err, { code, map, metadata } = {}) => {
-    if (err) return callback(err);
+  let result;
+  if (cacheDirectory) {
+    result = await cache({
+      source,
+      options,
+      transform,
+      cacheDirectory,
+      cacheIdentifier,
+    });
+  } else {
+    result = await transform(source, options);
+  }
 
-    // TODO: Babel should really provide the full list of config files that
-    // were used so that this can also handle files loaded with 'extends'.
-    if (typeof config.babelrc === "string") {
-      this.addDependency(config.babelrc);
-    }
+  // TODO: Babel should really provide the full list of config files that
+  // were used so that this can also handle files loaded with 'extends'.
+  if (typeof config.babelrc === "string") {
+    this.addDependency(config.babelrc);
+  }
+
+  if (result) {
+    const { code, map, metadata } = result;
 
     metadataSubscribers.forEach(subscriber => {
       subscribe(subscriber, metadata, this);
     });
 
-    return callback(null, code, map);
-  };
-
-  if (cacheDirectory) {
-    return cache(
-      { source, options, transform, cacheDirectory, cacheIdentifier },
-      done,
-    );
+    return [code, map];
   }
 
-  return transform(source, options, done);
-};
+  // If the file was ignored, pass through the original content.
+  return [source, inputSourceMap];
+}
