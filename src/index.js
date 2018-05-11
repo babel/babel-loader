@@ -72,46 +72,47 @@ async function loader(source, inputSourceMap) {
   }
 
   const config = babel.loadPartialConfig(programmaticOptions);
+  if (config) {
+    const options = config.options;
 
-  const options = config.options;
+    const {
+      cacheDirectory = null,
+      cacheIdentifier = JSON.stringify({
+        options,
+        "@babel/core": transform.version,
+        "@babel/loader": pkg.version,
+      }),
+      metadataSubscribers = [],
+    } = loaderOptions;
 
-  const {
-    cacheDirectory = null,
-    cacheIdentifier = JSON.stringify({
-      options,
-      "@babel/core": transform.version,
-      "@babel/loader": pkg.version,
-    }),
-    metadataSubscribers = [],
-  } = loaderOptions;
+    let result;
+    if (cacheDirectory) {
+      result = await cache({
+        source,
+        options,
+        transform,
+        cacheDirectory,
+        cacheIdentifier,
+      });
+    } else {
+      result = await transform(source, options);
+    }
 
-  let result;
-  if (cacheDirectory) {
-    result = await cache({
-      source,
-      options,
-      transform,
-      cacheDirectory,
-      cacheIdentifier,
-    });
-  } else {
-    result = await transform(source, options);
-  }
+    // TODO: Babel should really provide the full list of config files that
+    // were used so that this can also handle files loaded with 'extends'.
+    if (typeof config.babelrc === "string") {
+      this.addDependency(config.babelrc);
+    }
 
-  // TODO: Babel should really provide the full list of config files that
-  // were used so that this can also handle files loaded with 'extends'.
-  if (typeof config.babelrc === "string") {
-    this.addDependency(config.babelrc);
-  }
+    if (result) {
+      const { code, map, metadata } = result;
 
-  if (result) {
-    const { code, map, metadata } = result;
+      metadataSubscribers.forEach(subscriber => {
+        subscribe(subscriber, metadata, this);
+      });
 
-    metadataSubscribers.forEach(subscriber => {
-      subscribe(subscriber, metadata, this);
-    });
-
-    return [code, map];
+      return [code, map];
+    }
   }
 
   // If the file was ignored, pass through the original content.
