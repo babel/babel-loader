@@ -14,19 +14,33 @@ function subscribe(subscriber, metadata, context) {
   }
 }
 
-module.exports = function(source, inputSourceMap) {
-  // Make the loader async
-  const callback = this.async();
+module.exports = makeLoader();
+module.exports.custom = makeLoader;
 
-  loader
-    .call(this, source, inputSourceMap)
-    .then(args => callback(null, ...args), err => callback(err));
-};
+function makeLoader(callback) {
+  const overrides = callback ? callback(babel) : undefined;
 
-async function loader(source, inputSourceMap) {
+  return function(source, inputSourceMap) {
+    // Make the loader async
+    const callback = this.async();
+
+    loader
+      .call(this, source, inputSourceMap, overrides)
+      .then(args => callback(null, ...args), err => callback(err));
+  };
+}
+
+async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
 
-  const loaderOptions = loaderUtils.getOptions(this) || {};
+  let loaderOptions = loaderUtils.getOptions(this) || {};
+
+  let customOptions;
+  if (overrides && overrides.customOptions) {
+    const result = await overrides.customOptions.call(this, loaderOptions);
+    customOptions = result.custom;
+    loaderOptions = result.loader;
+  }
 
   // Deprecation handling
   if ("forceEnv" in loaderOptions) {
@@ -73,7 +87,13 @@ async function loader(source, inputSourceMap) {
 
   const config = babel.loadPartialConfig(programmaticOptions);
   if (config) {
-    const options = config.options;
+    let options = config.options;
+    if (overrides && overrides.config) {
+      options = await overrides.config.call(this, config, {
+        source,
+        customOptions,
+      });
+    }
 
     const {
       cacheDirectory = null,
@@ -105,6 +125,15 @@ async function loader(source, inputSourceMap) {
     }
 
     if (result) {
+      if (overrides && overrides.result) {
+        result = await overrides.result.call(this, result, {
+          source,
+          customOptions,
+          config,
+          options,
+        });
+      }
+
       const { code, map, metadata } = result;
 
       metadataSubscribers.forEach(subscriber => {
