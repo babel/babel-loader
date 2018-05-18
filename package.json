@@ -53,6 +53,9 @@
     "test": "yarn run lint && cross-env BABEL_ENV=test yarn run build && yarn run test-only",
     "test-only": "nyc ava"
   },
+  "publishConfig": {
+    "tag": "next"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/babel/babel-loader.git"
