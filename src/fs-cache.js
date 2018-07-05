@@ -71,16 +71,16 @@ const write = function(filename, result, callback) {
  * @return {String}
  */
 const filename = function(source, identifier, options) {
-  const hash = crypto.createHash("SHA1");
+  const hash = crypto.createHash("md4");
   const contents = JSON.stringify({
     source: source,
     options: options,
     identifier: identifier,
   });
 
-  hash.end(contents);
+  hash.update(contents);
 
-  return hash.read().toString("hex") + ".json.gz";
+  return hash.digest("hex") + ".json.gz";
 };
 
 /**
