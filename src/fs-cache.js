@@ -72,9 +72,31 @@ const write = function(filename, result, callback) {
  */
 const filename = function(source, identifier, options) {
   const hash = crypto.createHash("md4");
+
+  // By default, options will look something like:
+  //
+  // {
+  //   inputSourceMap: undefined,
+  //   sourceRoot: '/abs/path/to/project',
+  //   filename: '/abs/path/to/project/src/index.js',
+  //   sourceMap: false,
+  //   sourceFileName: 'src/index.js',
+  // }
+  //
+  // The absolute paths here are problematic when running this on production
+  // build machines that persist this cache but also have different absolute
+  // paths. Since the source filename has enough unique information here about
+  // the cached file, and it is a relative version of the filename, we can
+  // improve this by removing the absolute paths from the options before
+  // hashing.
+  const processedOptions = Object.assign({}, options, {
+    sourceRoot: null,
+    filename: null,
+  });
+
   const contents = JSON.stringify({
     source: source,
-    options: options,
+    options: processedOptions,
     identifier: identifier,
   });
 
