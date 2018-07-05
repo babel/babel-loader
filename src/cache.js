@@ -62,13 +62,13 @@ const write = async function(filename, result) {
  * @return {String}
  */
 const filename = function(source, identifier, options) {
-  const hash = crypto.createHash("SHA1");
+  const hash = crypto.createHash("md4");
 
   const contents = JSON.stringify({ source, options, identifier });
 
-  hash.end(contents);
+  hash.update(contents);
 
-  return hash.read().toString("hex") + ".json.gz";
+  return hash.digest("hex") + ".json.gz";
 };
 
 /**
