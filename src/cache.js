@@ -80,6 +80,14 @@ const filename = function(source, identifier, options) {
 const handleCache = async function(directory, params) {
   const { source, options = {}, cacheIdentifier, cacheDirectory } = params;
 
+  const file = path.join(directory, filename(source, cacheIdentifier, options));
+
+  try {
+    // No errors mean that the file was previously cached
+    // we just need to return it
+    return await read(file);
+  } catch (err) {}
+
   const fallback =
     typeof cacheDirectory !== "string" && directory !== os.tmpdir();
 
@@ -93,14 +101,6 @@ const handleCache = async function(directory, params) {
 
     throw err;
   }
-
-  const file = path.join(directory, filename(source, cacheIdentifier, options));
-
-  try {
-    // No errors mean that the file was previously cached
-    // we just need to return it
-    return await read(file);
-  } catch (err) {}
 
   // Otherwise just transform the file
   // return it to the user asap and write it in cache
