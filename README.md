@@ -116,7 +116,7 @@ You can instead require the babel runtime as a separate module to avoid the dupl
 The following configuration disables automatic per-file runtime injection in babel, instead
 requiring `babel-plugin-transform-runtime` and making all helper references use it.
 
-See the [docs](http://babeljs.io/docs/plugins/transform-runtime/) for more information.
+See the [docs](https://babeljs.io/docs/plugins/transform-runtime/) for more information.
 
 **NOTE:** You must run `npm install @babel/plugin-transform-runtime --save-dev` to include this in your project and `babel-runtime` itself as a dependency with `npm install @babel/runtime --save`.
 
@@ -281,4 +281,4 @@ be passed to `babel.transform`.
 Given Babel's result object, allow loaders to make additional tweaks to it.
 
 
-## [License](http://couto.mit-license.org/)
+## [License](https://couto.mit-license.org/)
