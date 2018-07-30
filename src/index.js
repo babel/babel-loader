@@ -148,6 +148,14 @@ module.exports = function(source, inputSourceMap) {
     options.sourceFileName = relative(options.sourceRoot, options.filename);
   }
 
+  if (options.presets !== undefined) {
+    options.presets = loaderOptions.presets.map(function(preset) {
+      return typeof preset === "string"
+        ? require.resolve(`babel-preset-${preset}`)
+        : [require.resolve(`babel-preset-${preset[0]}`), preset[1]];
+    });
+  }
+
   const cacheDirectory = options.cacheDirectory;
   const cacheIdentifier = options.cacheIdentifier;
   const metadataSubscribers = options.metadataSubscribers;
