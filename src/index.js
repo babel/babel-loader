@@ -85,6 +85,28 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
+  if (this.version > 1 && programmaticOptions.presets) {
+    programmaticOptions.presets.forEach((preset, i) => {
+      let name = preset;
+      let opts = {};
+      if (Array.isArray(preset)) {
+        name = preset[0];
+        opts = preset[1];
+      }
+      if (
+        ["env", "babel-preset-env", "@babel/preset-env"].includes(name) &&
+        (!opts || (opts && !opts.hasOwnProperty("modules")))
+      ) {
+        const newOpts = { modules: false };
+        if (Array.isArray(preset)) {
+          preset[1] = Object.assign({}, opts, newOpts);
+        } else {
+          programmaticOptions.presets[i] = [name, newOpts];
+        }
+      }
+    });
+  }
+
   const config = babel.loadPartialConfig(programmaticOptions);
   if (config) {
     let options = config.options;
