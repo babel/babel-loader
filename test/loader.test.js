@@ -7,21 +7,34 @@ import createTestDirectory from "./helpers/createTestDirectory";
 
 const outputDir = path.join(__dirname, "output/loader");
 const babelLoader = path.join(__dirname, "../lib");
-const globalConfig = {
-  mode: "development",
-  entry: path.join(__dirname, "fixtures/basic.js"),
-  module: {
-    rules: [
-      {
-        test: /\.jsx?/,
-        loader: babelLoader,
-        options: {
-          presets: ["@babel/preset-env"],
+
+const generateConfigWithPresets = (presets, context = false) => {
+  const globalConfig = {
+    mode: "development",
+    entry: path.join(__dirname, "fixtures/basic.js"),
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          options: {
+            presets,
+          },
+          exclude: /node_modules/,
         },
-        exclude: /node_modules/,
-      },
-    ],
-  },
+      ],
+    },
+  };
+
+  if (!context) {
+    return globalConfig;
+  }
+
+  return Object.assign(globalConfig, {
+    output: {
+      path: context.directory,
+    },
+  });
 };
 
 // Create a separate directory for each test so that the tests
@@ -37,11 +50,7 @@ test.cb.beforeEach(t => {
 test.cb.afterEach(t => rimraf(t.context.directory, t.end));
 
 test.cb("should transpile the code snippet", t => {
-  const config = Object.assign({}, globalConfig, {
-    output: {
-      path: t.context.directory,
-    },
-  });
+  const config = generateConfigWithPresets(["@babel/env"], t.context);
 
   webpack(config, (err, stats) => {
     t.is(err, null);
@@ -65,6 +74,7 @@ test.cb("should transpile the code snippet", t => {
 });
 
 test.cb("should not throw error on syntax error", t => {
+  const globalConfig = generateConfigWithPresets(["@babel/env"], t.context);
   const config = Object.assign({}, globalConfig, {
     entry: path.join(__dirname, "fixtures/syntax.js"),
     output: {
@@ -111,6 +121,7 @@ test.cb("should not throw without config", t => {
 test.cb(
   "should return compilation errors with the message included in the stack trace",
   t => {
+    const globalConfig = generateConfigWithPresets(["@babel/env"], t.context);
     const config = Object.assign({}, globalConfig, {
       entry: path.join(__dirname, "fixtures/syntax.js"),
       output: {
@@ -127,3 +138,38 @@ test.cb(
     });
   },
 );
+
+test.cb("should not disable modules option when it is explicitly set", t => {
+  const configs = [
+    generateConfigWithPresets([["env", { modules: true }]], t.context),
+    generateConfigWithPresets([["env", { modules: "amd" }]], t.context),
+  ];
+
+  const callback = err => {
+    t.is(err, null);
+    multiCompiler.compilers.forEach(compiler => {
+      t.truthy(compiler.options.module.rules[0].options.presets[0][1].modules);
+    });
+    t.end();
+  };
+  const multiCompiler = webpack(configs, callback);
+});
+
+test.cb("should disable modules option when it is not set", t => {
+  const configs = [
+    generateConfigWithPresets([["env"]], t.context),
+    generateConfigWithPresets(["env"], t.context),
+    generateConfigWithPresets([["env", { modules: false }]], t.context),
+    generateConfigWithPresets([["@babel/preset-env"]], t.context),
+    generateConfigWithPresets([["babel-preset-env"]], t.context),
+  ];
+
+  const callback = err => {
+    t.is(err, null);
+    multiCompiler.compilers.forEach(compiler => {
+      t.false(compiler.options.module.rules[0].options.presets[0][1].modules);
+    });
+    t.end();
+  };
+  const multiCompiler = webpack(configs, callback);
+});
