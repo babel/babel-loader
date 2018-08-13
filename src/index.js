@@ -74,6 +74,7 @@ async function loader(source, inputSourceMap, overrides) {
   });
   // Remove loader related options
   delete programmaticOptions.cacheDirectory;
+  delete programmaticOptions.modifyCacheHash;
   delete programmaticOptions.cacheIdentifier;
   delete programmaticOptions.metadataSubscribers;
 
@@ -97,6 +98,7 @@ async function loader(source, inputSourceMap, overrides) {
 
     const {
       cacheDirectory = null,
+      modifyCacheHash = null,
       cacheIdentifier = JSON.stringify({
         options,
         "@babel/core": transform.version,
@@ -111,6 +113,7 @@ async function loader(source, inputSourceMap, overrides) {
         source,
         options,
         transform,
+        modifyCacheHash,
         cacheDirectory,
         cacheIdentifier,
       });

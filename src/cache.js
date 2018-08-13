@@ -56,15 +56,21 @@ const write = async function(filename, result) {
 /**
  * Build the filename for the cached file
  *
- * @params {String} source  File source code
- * @params {Object} options Options used
+ * @params {String} source            File source code
+ * @params {String} cacheIdentifier   Unique identifier to bust cache
+ * @params {Object} options           Options used
+ * @params {Function} modifyCacheHash Modify contents, that will be included
+ *                                    to filename hash.
  *
  * @return {String}
  */
-const filename = function(source, identifier, options) {
+const filename = function(source, cacheIdentifier, options, modifyCacheHash) {
   const hash = crypto.createHash("md4");
-
-  const contents = JSON.stringify({ source, options, identifier });
+  const contents = JSON.stringify(
+    modifyCacheHash
+      ? modifyCacheHash(source, options, cacheIdentifier)
+      : { source, options, cacheIdentifier },
+  );
 
   hash.update(contents);
 
@@ -78,9 +84,18 @@ const filename = function(source, identifier, options) {
  * @params {Object} params
  */
 const handleCache = async function(directory, params) {
-  const { source, options = {}, cacheIdentifier, cacheDirectory } = params;
+  const {
+    source,
+    options = {},
+    cacheIdentifier,
+    cacheDirectory,
+    modifyCacheHash,
+  } = params;
 
-  const file = path.join(directory, filename(source, cacheIdentifier, options));
+  const file = path.join(
+    directory,
+    filename(source, cacheIdentifier, options, modifyCacheHash),
+  );
 
   try {
     // No errors mean that the file was previously cached
@@ -125,19 +140,24 @@ const handleCache = async function(directory, params) {
  *
  * @async
  * @param  {Object}   params
- * @param  {String}   params.directory  Directory to store cached files
- * @param  {String}   params.identifier Unique identifier to bust cache
- * @param  {String}   params.source   Original contents of the file to be cached
- * @param  {Object}   params.options  Options to be given to the transform fn
- * @param  {Function} params.transform  Function that will transform the
- *                                      original file and whose result will be
- *                                      cached
+ * @param  {String}   params.cacheDirectory  Directory to store cached files
+ * @param  {String}   params.cacheIdentifier Unique identifier to bust cache
+ * @param  {Function} params.modifyCacheHash Modify contents, that will be included
+ *                                           to filename hash.
+ * @param  {String}   params.source          Original contents of the file to be cached
+ * @param  {Object}   params.options         Options to be given to the transform fn
+ * @param  {Function} params.transform       Function that will transform the
+ *                                           original file and whose result will be
+ *                                           cached
  *
  * @example
  *
  *   cache({
- *     directory: '.tmp/cache',
- *     identifier: 'babel-loader-cachefile',
+ *     cacheDirectory: '.tmp/cache',
+ *     cacheIdentifier: 'babel-loader-cachefile',
+ *     modifyCacheHash: ({ source, options, identifier }) => {
+ *       return { source, identifier };
+ *     },
  *     source: *source code from file*,
  *     options: {
  *       experimental: true,
@@ -154,7 +174,6 @@ const handleCache = async function(directory, params) {
 
 module.exports = async function(params) {
   let directory;
-
   if (typeof params.cacheDirectory === "string") {
     directory = params.cacheDirectory;
   } else {

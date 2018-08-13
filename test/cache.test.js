@@ -286,6 +286,65 @@ test.cb("should generate a new file if the identifier changes", t => {
   });
 });
 
+test.cb("should modify hash if setted modifyCacheHash option", t => {
+  const config = Object.assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          options: {
+            cacheDirectory: t.context.directory,
+            presets: ["@babel/preset-env"],
+          },
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
+
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
+
+      const gzRegex = /\b[0-9a-f]{5,40}\.json\.gz\b/;
+      const savedFilesList = files.filter(file => gzRegex.test(file));
+
+      t.true(savedFilesList.length > 0);
+
+      // Now we add hash modifyer
+      config.module.rules[0].options.modifyCacheHash = (a, b, c) => ({ a, c });
+      const modifyedCacheDir = t.context.directory + "/modifyed";
+      config.module.rules[0].options.cacheDirectory = modifyedCacheDir;
+
+      webpack(config, (err, stats) => {
+        t.is(err, null);
+        t.is(stats.compilation.errors.length, 0);
+        t.is(stats.compilation.warnings.length, 0);
+
+        fs.readdir(modifyedCacheDir, (err, files) => {
+          files = files.filter(file => gzRegex.test(file));
+
+          t.is(err, null);
+
+          t.true(savedFilesList.length === files.length);
+
+          t.notDeepEqual(savedFilesList, files);
+
+          t.end();
+        });
+      });
+    });
+  });
+});
+
 test.cb("should allow to specify the .babelrc file", t => {
   const config = [
     Object.assign({}, globalConfig, {

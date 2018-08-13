@@ -88,6 +88,13 @@ This loader also supports the following loader-specific option:
 
 * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
 
+* `modifyCacheHash`: Default `undefined`. When setted, will invokes as  
+`function(source, options, cacheIdentifier) -> Object|String` where  
+`String source` - module's code;  
+`Object options` - united options of loader;  
+`String cacheIdentifier` - see above.  
+Allows to modify contents, that will use for creating a hash for cached resources. Returned value then will be stringified.   It can be useful if your builds are deploying on Heroku and a build directory is dynamic (for example `/tmp/build<random-hash>/`). In this case, we should exclude the absolute build path from the hash string to hit cache stored by Heroku.
+
 * `babelrc`: Default `true`. When `false`, no options from `.babelrc` files will be used; only the options passed to
 `babel-loader` will be used.
 
