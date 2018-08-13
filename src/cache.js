@@ -174,6 +174,7 @@ const handleCache = async function(directory, params) {
 
 module.exports = async function(params) {
   let directory;
+
   if (typeof params.cacheDirectory === "string") {
     directory = params.cacheDirectory;
   } else {
