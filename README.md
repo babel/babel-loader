@@ -22,10 +22,10 @@ __Notes:__ Issues with the output should be reported on the babel [issue tracker
 
 <h2 align="center">Install</h2>
 
-> webpack 3.x | babel-loader 8.x | babel 7.x
+> webpack 3.x - 4.x | babel-loader 8.x | babel 7.x
 
 ```bash
-npm install "babel-loader@^8.0.0-beta" @babel/core @babel/preset-env webpack
+npm install "babel-loader@^8.0.0-beta.3" @babel/core @babel/preset-env webpack
 ```
 
 > webpack 3.x babel-loader 7.x | babel 6.x
