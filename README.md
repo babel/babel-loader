@@ -25,13 +25,13 @@ __Notes:__ Issues with the output should be reported on the babel [issue tracker
 > webpack 3.x | babel-loader 8.x | babel 7.x
 
 ```bash
-npm install "babel-loader@^8.0.0-beta" @babel/core @babel/preset-env webpack
+npm install -D "babel-loader@^8.0.0-beta" @babel/core @babel/preset-env webpack
 ```
 
 > webpack 3.x babel-loader 7.x | babel 6.x
 
 ```bash
-npm install babel-loader babel-core babel-preset-env webpack
+npm install -D babel-loader babel-core babel-preset-env webpack
 ```
 
 <h2 align="center">Usage</h2>
