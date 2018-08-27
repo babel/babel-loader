@@ -16,7 +16,7 @@
     "util.promisify": "^1.0.0"
   },
   "peerDependencies": {
-    "@babel/core": "^7.0.0 || ^7.0.0-rc || ^7.0.0-beta.41",
+    "@babel/core": "^7.0.0",
     "webpack": ">=2"
   },
   "devDependencies": {
@@ -52,9 +52,6 @@
     "preversion": "yarn run test",
     "test": "yarn run lint && cross-env BABEL_ENV=test yarn run build && yarn run test-only",
     "test-only": "nyc ava"
-  },
-  "publishConfig": {
-    "tag": "next"
   },
   "repository": {
     "type": "git",
