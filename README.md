@@ -49,7 +49,10 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env']
+          presets: [['@babel/preset-env', { modules: false }]]
+          // you need set modules: false in order to get tree shaking working
+          // by default preset-env transpiles modules to commonjs but webpack supports ES6 modules
+          // see https://new.babeljs.io/docs/en/next/babel-preset-env.html#modules
         }
       }
     }
@@ -73,7 +76,7 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env'],
+          presets: [['@babel/preset-env', { modules: false }]],
           plugins: [require('@babel/plugin-proposal-object-rest-spread')]
         }
       }
@@ -127,7 +130,7 @@ rules: [
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['@babel/preset-env'],
+        presets: [['@babel/preset-env', { modules: false }]],
         plugins: ['@babel/plugin-transform-runtime']
       }
     }
