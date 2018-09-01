@@ -22,16 +22,16 @@ __Notes:__ Issues with the output should be reported on the babel [issue tracker
 
 <h2 align="center">Install</h2>
 
-> webpack 3.x | babel-loader 8.x | babel 7.x
+> webpack 4.x | babel-loader 8.x | babel 7.x
 
 ```bash
-npm install -D "babel-loader@^8.0.0-beta" @babel/core @babel/preset-env webpack
+npm install -D babel-loader @babel/core @babel/preset-env webpack
 ```
 
-> webpack 3.x babel-loader 7.x | babel 6.x
+> webpack 4.x | babel-loader 7.x | babel 6.x
 
 ```bash
-npm install -D babel-loader babel-core babel-preset-env webpack
+npm install -D babel-loader@7 babel-core babel-preset-env webpack
 ```
 
 <h2 align="center">Usage</h2>
@@ -87,9 +87,6 @@ This loader also supports the following loader-specific option:
 * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: babel-loader?cacheDirectory=true`) the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
 
 * `cacheIdentifier`: Default is a string composed by the babel-core's version, the babel-loader's version, the contents of .babelrc file if it exists and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
-
-* `babelrc`: Default `true`. When `false`, no options from `.babelrc` files will be used; only the options passed to
-`babel-loader` will be used.
 
 __Note:__ The `sourceMap` option is ignored, instead sourceMaps are automatically enabled when webpack is configured to use them (via the `devtool` config option).
 
