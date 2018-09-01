@@ -23,8 +23,6 @@ const pkg = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 
-const relative = require("./utils/relative");
-
 const loaderUtils = require("loader-utils");
 
 function subscribe(subscriber, metadata, context) {
@@ -77,19 +75,21 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
-  // Set babel-loader's default options.
-  const {
-    sourceRoot = process.cwd(),
-    sourceMap = this.sourceMap,
-    sourceFileName = relative(sourceRoot, filename),
-  } = loaderOptions;
-
   const programmaticOptions = Object.assign({}, loaderOptions, {
     filename,
     inputSourceMap: inputSourceMap || undefined,
-    sourceRoot,
-    sourceMap,
-    sourceFileName,
+
+    // Set the default sourcemap behavior based on Webpack's mapping flag,
+    // but allow users to override if they want.
+    sourceMap:
+      loaderOptions.sourceMap === undefined
+        ? this.sourceMap
+        : loaderOptions.sourceMap,
+
+    // Ensure that Webpack will get a full absolute path in the sourcemap
+    // so that it can properly map the module back to its internal cached
+    // modules.
+    sourceFileName: filename,
   });
   // Remove loader related options
   delete programmaticOptions.cacheDirectory;
