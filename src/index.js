@@ -75,16 +75,29 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
+  // Standardize on 'sourceMaps' as the key passed through to Webpack, so that
+  // users may safely use either one alongside our default use of
+  // 'this.sourceMap' below without getting error about conflicting aliases.
+  if (
+    Object.prototype.hasOwnProperty.call(loaderOptions, "sourceMap") &&
+    !Object.prototype.hasOwnProperty.call(loaderOptions, "sourceMaps")
+  ) {
+    loaderOptions = Object.assign({}, loaderOptions, {
+      sourceMaps: loaderOptions.sourceMap,
+    });
+    delete loaderOptions.sourceMap;
+  }
+
   const programmaticOptions = Object.assign({}, loaderOptions, {
     filename,
     inputSourceMap: inputSourceMap || undefined,
 
     // Set the default sourcemap behavior based on Webpack's mapping flag,
     // but allow users to override if they want.
-    sourceMap:
-      loaderOptions.sourceMap === undefined
+    sourceMaps:
+      loaderOptions.sourceMaps === undefined
         ? this.sourceMap
-        : loaderOptions.sourceMap,
+        : loaderOptions.sourceMaps,
 
     // Ensure that Webpack will get a full absolute path in the sourcemap
     // so that it can properly map the module back to its internal cached
