@@ -128,6 +128,16 @@ async function loader(source, inputSourceMap, overrides) {
       });
     }
 
+    if (options.sourceMaps === "inline") {
+      // Babel has this weird behavior where if you set "inline", we
+      // inline the sourcemap, and set 'result.map = null'. This results
+      // in bad behavior from Babel since the maps get put into the code,
+      // which Webpack does not expect, and because the map we return to
+      // Webpack is null, which is also bad. To avoid that, we override the
+      // behavior here so "inline" just behaves like 'true'.
+      options.sourceMaps = true;
+    }
+
     const {
       cacheDirectory = null,
       cacheIdentifier = JSON.stringify({
