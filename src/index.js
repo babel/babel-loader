@@ -43,7 +43,8 @@ function makeLoader(callback) {
 
     loader
       .call(this, source, inputSourceMap, overrides)
-      .then(args => callback(null, ...args), err => callback(err));
+      .then(args => callback(null, ...args))
+      .catch(err => callback(err));
   };
 }
 
