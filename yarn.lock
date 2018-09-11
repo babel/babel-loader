@@ -2371,9 +2371,9 @@ escodegen@^1.9.0:
   optionalDependencies:
     source-map "~0.5.6"
 
-eslint-config-babel@^7.0.0:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/eslint-config-babel/-/eslint-config-babel-7.0.2.tgz#cbde74f61cee087d8cd6e607fcfa087869a02d99"
+eslint-config-babel@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-babel/-/eslint-config-babel-8.0.0.tgz#4f7398ed2772a24a36467d05f25262ab8121e714"
 
 eslint-plugin-flowtype@^2.25.0:
   version "2.46.1"
