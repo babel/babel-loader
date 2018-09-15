@@ -83,8 +83,12 @@ test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=@babel/env&sourceMap=inline",
+          loader: babelLoader,
           exclude: /node_modules/,
+          options: {
+            sourceMap: "inline",
+            presets: [["@babel/env", { modules: "commonjs" }]],
+          },
         },
       ],
     },
@@ -169,7 +173,7 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
   });
 });
 
-test.only.cb("should disable sourcemap output with 'sourceMaps:true'", t => {
+test.only.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -179,8 +183,12 @@ test.only.cb("should disable sourcemap output with 'sourceMaps:true'", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=@babel/env&sourceMaps=false",
+          loader: babelLoader,
           exclude: /node_modules/,
+          options: {
+            sourceMaps: false,
+            presets: [["@babel/env", { modules: "commonjs" }]],
+          },
         },
       ],
     },
@@ -216,7 +224,7 @@ test.only.cb("should disable sourcemap output with 'sourceMaps:true'", t => {
   });
 });
 
-test.only.cb("should disable sourcemap output with 'sourceMap:true'", t => {
+test.only.cb("should disable sourcemap output with 'sourceMap:false'", t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -226,8 +234,12 @@ test.only.cb("should disable sourcemap output with 'sourceMap:true'", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=@babel/env&sourceMap=false",
+          loader: babelLoader,
           exclude: /node_modules/,
+          options: {
+            sourceMap: false,
+            presets: [["@babel/env", { modules: "commonjs" }]],
+          },
         },
       ],
     },
