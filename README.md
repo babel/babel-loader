@@ -17,19 +17,19 @@
 
 <h1 align="center">Babel Loader</h1>
 
-This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
+This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [Webpack](https://github.com/webpack/webpack).
 
 **Note**: Issues with the output should be reported on the Babel [Issues](https://github.com/babel/babel/issues) tracker.
 
 <h2 align="center">Install</h2>
 
-> webpack 4.x | babel-loader 8.x | babel 7.x
+> Webpack 4.x | babel-loader 8.x | babel 7.x
 
 ```bash
 npm install -D babel-loader @babel/core @babel/preset-env webpack
 ```
 
-> webpack 4.x | babel-loader 7.x | babel 6.x
+> Webpack 4.x | babel-loader 7.x | babel 6.x
 
 ```bash
 npm install -D babel-loader@7 babel-core babel-preset-env webpack
@@ -37,9 +37,9 @@ npm install -D babel-loader@7 babel-core babel-preset-env webpack
 
 <h2 align="center">Usage</h2>
 
-webpack documentation: [Loaders](https://webpack.js.org/loaders/)
+Webpack documentation: [Loaders](https://webpack.js.org/loaders/)
 
-Within your webpack configuration object, you'll need to add the babel-loader to the list of modules, like so:
+Within your Webpack configuration object, you'll need to add the babel-loader to the list of modules, like so:
 
 ```javascript
 module: {
@@ -84,13 +84,13 @@ module: {
 
 This loader also supports the following loader-specific option:
 
-* `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: 'babel-loader?cacheDirectory=true'`), the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
+* `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future Webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is blank (`loader: 'babel-loader?cacheDirectory'`) or `true` (`loader: 'babel-loader?cacheDirectory=true'`), the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
 
 * `cacheIdentifier`: Default is a string composed by the `babel-core`'s version, the `babel-loader`'s version, the contents of `.babelrc` file if it exists, and the value of the environment variable `BABEL_ENV` with a fallback to the `NODE_ENV` environment variable. This can be set to a custom value to force cache busting if the identifier changes.
 
 * `cacheCompression`: Default `true`. When set, each Babel transform output will be compressed with Gzip. If you want to opt-out of cache compression, set it to `false` -- your project may benefit from this if it transpiles thousands of files.
 
-**Note**: The `sourceMap` option is ignored. Instead, source maps are automatically enabled when webpack is configured to use them (via the [`devtool`](https://webpack.js.org/configuration/devtool/#devtool) config option).
+**Note**: The `sourceMap` option is ignored. Instead, source maps are automatically enabled when Webpack is configured to use them (via the [`devtool`](https://webpack.js.org/configuration/devtool/#devtool) config option).
 
 ## Troubleshooting
 
@@ -180,7 +180,7 @@ require('./app');
 
 ### The Node.js API for `babel` has been moved to `babel-core`.
 
-If you receive this message, it means that you have the npm package `babel` installed and are using the short notation of the loader in the webpack config (which is not valid anymore as of webpack 2.x):
+If you receive this message, it means that you have the npm package `babel` installed and are using the short notation of the loader in the Webpack config (which is not valid anymore as of Webpack 2.x):
 ```javascript
   {
     test: /\.js$/,
@@ -188,10 +188,10 @@ If you receive this message, it means that you have the npm package `babel` inst
   }
 ```
 
-webpack then tries to load the `babel` package instead of the `babel-loader`.
+Webpack then tries to load the `babel` package instead of the `babel-loader`.
 
 To fix this, you should uninstall the npm package `babel`, as it is deprecated in Babel v6. (Instead, install `babel-cli` or `babel-core`.)
-In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the webpack config:
+In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the Webpack config:
 ```javascript
   {
     test: /\.js$/,
