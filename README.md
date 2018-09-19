@@ -60,7 +60,7 @@ module: {
 
 ### Options
 
-See the `babel` [options](https://babeljs.io/docs/usage/api/#options).
+See the `babel` [options](https://babeljs.io/docs/en/options).
 
 You can pass options to the loader by using the [`options`](https://webpack.js.org/configuration/module/#rule-options-rule-query) property:
 
