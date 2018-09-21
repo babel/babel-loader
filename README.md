@@ -45,7 +45,7 @@ Within your webpack configuration object, you'll need to add the babel-loader to
 module: {
   rules: [
     {
-      test: /\.js$/,
+      test: /\.m?js$/,
       exclude: /(node_modules|bower_components)/,
       use: {
         loader: 'babel-loader',
@@ -68,7 +68,7 @@ You can pass options to the loader by using the [`options`](https://webpack.js.o
 module: {
   rules: [
     {
-      test: /\.js$/,
+      test: /\.m?js$/,
       exclude: /(node_modules|bower_components)/,
       use: {
         loader: 'babel-loader',
@@ -96,7 +96,7 @@ This loader also supports the following loader-specific option:
 
 ### babel-loader is slow!
 
-Make sure you are transforming as few files as possible. Because you are probably matching `/\.js$/`, you might be transforming the `node_modules` folder or other unwanted source.
+Make sure you are transforming as few files as possible. Because you are probably matching `/\.m?js$/`, you might be transforming the `node_modules` folder or other unwanted source.
 
 To exclude `node_modules`, see the `exclude` option in the `loaders` config as documented above.
 
@@ -119,7 +119,7 @@ rules: [
   // the 'transform-runtime' plugin tells Babel to
   // require the runtime instead of inlining it.
   {
-    test: /\.js$/,
+    test: /\.m?js$/,
     exclude: /(node_modules|bower_components)/,
     use: {
       loader: 'babel-loader',
@@ -183,7 +183,7 @@ require('./app');
 If you receive this message, it means that you have the npm package `babel` installed and are using the short notation of the loader in the webpack config (which is not valid anymore as of webpack 2.x):
 ```javascript
   {
-    test: /\.js$/,
+    test: /\.m?js$/,
     loader: 'babel',
   }
 ```
@@ -194,7 +194,7 @@ To fix this, you should uninstall the npm package `babel`, as it is deprecated i
 In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the webpack config:
 ```javascript
   {
-    test: /\.js$/,
+    test: /\.m?js$/,
     loader: 'babel-loader',
   }
 ```
