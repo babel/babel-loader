@@ -52,7 +52,7 @@ async function loader(source, inputSourceMap, overrides) {
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
 
-  overrides = overrides || loaderOptions.overrides;
+  overrides = overrides || loaderOptions.customize;
   if (typeof overrides === "string") {
     overrides = require(overrides);
   }
