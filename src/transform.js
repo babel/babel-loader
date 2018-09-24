@@ -1,14 +1,13 @@
 const babel = require("@babel/core");
 const promisify = require("util.promisify");
 const LoaderError = require("./Error");
-const injectCaller = require("./injectCaller");
 
 const transform = promisify(babel.transform);
 
 module.exports = async function(source, options) {
   let result;
   try {
-    result = await transform(source, injectCaller(options));
+    result = await transform(source, options);
   } catch (err) {
     throw err.message && err.codeFrame ? new LoaderError(err) : err;
   }
