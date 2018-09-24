@@ -52,6 +52,17 @@ async function loader(source, inputSourceMap, overrides) {
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
 
+  overrides = overrides || loaderOptions.customize;
+  // customize may have been passed as a file, so we should load it
+  if (typeof overrides === "string") {
+    overrides = require(overrides);
+  }
+  // customize may have been passed as a function and not an object (to access
+  // the `babel` variable), so let's build the overrides
+  if (typeof overrides === "function") {
+    overrides = overrides(babel);
+  }
+
   let customOptions;
   if (overrides && overrides.customOptions) {
     const result = await overrides.customOptions.call(this, loaderOptions);
@@ -105,6 +116,7 @@ async function loader(source, inputSourceMap, overrides) {
     sourceFileName: filename,
   });
   // Remove loader related options
+  delete programmaticOptions.customize;
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
   delete programmaticOptions.cacheCompression;
