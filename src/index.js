@@ -53,9 +53,12 @@ async function loader(source, inputSourceMap, overrides) {
   let loaderOptions = loaderUtils.getOptions(this) || {};
 
   overrides = overrides || loaderOptions.customize;
+  // customize may have been passed as a file, so we should load it
   if (typeof overrides === "string") {
     overrides = require(overrides);
   }
+  // customize may have been passed as a function and not an object (to access
+  // the `babel` variable), so let's build the overrides
   if (typeof overrides === "function") {
     overrides = overrides(babel);
   }
