@@ -52,6 +52,14 @@ async function loader(source, inputSourceMap, overrides) {
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
 
+  overrides = overrides || loaderOptions.overrides;
+  if (typeof overrides === "string") {
+    overrides = require(overrides);
+  }
+  if (typeof overrides === "function") {
+    overrides = overrides(babel);
+  }
+
   let customOptions;
   if (overrides && overrides.customOptions) {
     const result = await overrides.customOptions.call(this, loaderOptions);
@@ -105,6 +113,7 @@ async function loader(source, inputSourceMap, overrides) {
     sourceFileName: filename,
   });
   // Remove loader related options
+  delete programmaticOptions.overrides;
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
   delete programmaticOptions.cacheCompression;

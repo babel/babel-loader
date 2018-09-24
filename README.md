@@ -90,6 +90,8 @@ This loader also supports the following loader-specific option:
 
 * `cacheCompression`: Default `true`. When set, each Babel transform output will be compressed with Gzip. If you want to opt-out of cache compression, set it to `false` -- your project may benefit from this if it transpiles thousands of files.
 
+* `overrides`: Default `null`. See [Customized Loader](#customized-loader).
+
 **Note**: The `sourceMap` option is ignored. Instead, source maps are automatically enabled when webpack is configured to use them (via the [`devtool`](https://webpack.js.org/configuration/devtool/#devtool) config option).
 
 ## Troubleshooting
@@ -208,6 +210,9 @@ of Babel's configuration for each file that it processes.
 `babel` so that tooling can ensure that it using exactly the same `@babel/core`
 instance as the loader itself.
 
+This same callback can be provided under the `overrides` key in the loader options.
+You may also pass `overrides` a file name which exports this callback.
+
 ### Example
 
 ```js
@@ -230,7 +235,7 @@ module.exports = require("babel-loader").custom(babel => {
       };
     },
 
-    // Passed Babel's 'PartialConfig' object. 
+    // Passed Babel's 'PartialConfig' object.
     config(cfg) {
       if (cfg.hasFilesystemConfig()) {
         // Use the normal config
