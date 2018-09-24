@@ -113,7 +113,7 @@ async function loader(source, inputSourceMap, overrides) {
     sourceFileName: filename,
   });
   // Remove loader related options
-  delete programmaticOptions.overrides;
+  delete programmaticOptions.customize;
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
   delete programmaticOptions.cacheCompression;
