@@ -76,7 +76,7 @@ async function loader(source, inputSourceMap, overrides) {
     let override = require(loaderOptions.customize);
     if (override.__esModule) override = override.default;
 
-    if (typeof override === "function") {
+    if (typeof override !== "function") {
       throw new Error("Custom overrides must be functions.");
     }
     overrides = override(babel);
