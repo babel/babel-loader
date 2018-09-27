@@ -23,6 +23,7 @@ const pkg = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 
+const path = require("path");
 const loaderUtils = require("loader-utils");
 
 function subscribe(subscriber, metadata, context) {
@@ -52,15 +53,32 @@ async function loader(source, inputSourceMap, overrides) {
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
 
-  overrides = overrides || loaderOptions.customize;
-  // customize may have been passed as a file, so we should load it
-  if (typeof overrides === "string") {
-    overrides = require(overrides);
-  }
-  // customize may have been passed as a function and not an object (to access
-  // the `babel` variable), so let's build the overrides
-  if (typeof overrides === "function") {
-    overrides = overrides(babel);
+  if (loaderOptions.customize != null) {
+    if (typeof loaderOptions.customize !== "string") {
+      throw new Error(
+        "Customized loaders must be implemented as standalone modules.",
+      );
+    }
+    if (!path.isAbsolute(loaderOptions.customize)) {
+      throw new Error(
+        "Customized loaders must be passed as absolute paths, since " +
+          "babel-loader has no way to know what they would be relative to.",
+      );
+    }
+    if (overrides) {
+      throw new Error(
+        "babel-loader's 'customize' option is not available when already " +
+          "using a customized babel-loader wrapper.",
+      );
+    }
+
+    let override = require(loaderOptions.customize);
+    if (override.__esModule) override = override.default;
+
+    if (typeof override === "function") {
+      throw new Error("Custom overrides must be functions.");
+    }
+    overrides = override(babel);
   }
 
   let customOptions;

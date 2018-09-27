@@ -90,7 +90,7 @@ This loader also supports the following loader-specific option:
 
 * `cacheCompression`: Default `true`. When set, each Babel transform output will be compressed with Gzip. If you want to opt-out of cache compression, set it to `false` -- your project may benefit from this if it transpiles thousands of files.
 
-* `customize`: Default `null`. See [Customized Loader](#customized-loader).
+* `customize`: Default `null`. The path of a module that exports a `custom` callback [like the one that you'd pass to `.custom()`](#customized-loader). Since you already have to make a new file to use this, it is recommended that you instead use `.custom` to create a wrapper loader. Only use this is you _must_ continue using `babel-loader` directly, but still want to customize.
 
 **Note**: The `sourceMap` option is ignored. Instead, source maps are automatically enabled when webpack is configured to use them (via the [`devtool`](https://webpack.js.org/configuration/devtool/#devtool) config option).
 
@@ -210,12 +210,14 @@ of Babel's configuration for each file that it processes.
 `babel` so that tooling can ensure that it using exactly the same `@babel/core`
 instance as the loader itself.
 
-This same callback can be provided under the `customize` key in the loader options.
-You may also pass `customize` a file name which exports this callback.
+In cases where you want to customize without actually having a file to call `.custom`, you
+may also pass the `customize` option with a string pointing at a file that exports
+your `custom` callback function.
 
 ### Example
 
 ```js
+// Export from "./my-custom-loader.js" or whatever you want.
 module.exports = require("babel-loader").custom(babel => {
   function myPlugin() {
     return {
@@ -261,6 +263,20 @@ module.exports = require("babel-loader").custom(babel => {
     },
   };
 });
+```
+
+```js
+// And in your Webpack config
+module.exports = {
+  // ..
+  module: {
+    rules: [{
+      // ...
+      loader: path.join(__dirname, 'my-custom-loader.js'),
+      // ...
+    }]
+  }
+};
 ```
 
 ### `customOptions(options: Object): { custom: Object, loader: Object }`
