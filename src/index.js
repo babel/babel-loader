@@ -83,7 +83,10 @@ async function loader(source, inputSourceMap, overrides) {
 
   let customOptions;
   if (overrides && overrides.customOptions) {
-    const result = await overrides.customOptions.call(this, loaderOptions);
+    const result = await overrides.customOptions.call(this, loaderOptions, {
+      source,
+      map: inputSourceMap,
+    });
     customOptions = result.custom;
     loaderOptions = result.loader;
   }
@@ -154,6 +157,7 @@ async function loader(source, inputSourceMap, overrides) {
     if (overrides && overrides.config) {
       options = await overrides.config.call(this, config, {
         source,
+        map: inputSourceMap,
         customOptions,
       });
     }
@@ -203,6 +207,7 @@ async function loader(source, inputSourceMap, overrides) {
       if (overrides && overrides.result) {
         result = await overrides.result.call(this, result, {
           source,
+          map: inputSourceMap,
           customOptions,
           config,
           options,
