@@ -22,6 +22,7 @@ if (/^6\./.test(babel.version)) {
 const pkg = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
+const injectCaller = require("./injectCaller");
 
 const path = require("path");
 const loaderUtils = require("loader-utils");
@@ -151,7 +152,7 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
-  const config = babel.loadPartialConfig(programmaticOptions);
+  const config = babel.loadPartialConfig(injectCaller(programmaticOptions));
   if (config) {
     let options = config.options;
     if (overrides && overrides.config) {
