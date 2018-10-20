@@ -40,7 +40,9 @@
     "react-intl": "^2.1.2",
     "react-intl-webpack-plugin": "^0.0.3",
     "rimraf": "^2.4.3",
-    "webpack": "^4.0.0"
+    "webpack": "^4.0.0",
+    "webpack2": "npm:webpack@^2.0.0",
+    "webpack3": "npm:webpack@^3.0.0"
   },
   "scripts": {
     "clean": "rimraf lib/",
