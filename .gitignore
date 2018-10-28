@@ -4,3 +4,5 @@ lib
 node_modules
 npm-debug.log
 test/output
+test/**/package-lock.json
+test/**/yarn.lock

@@ -1,0 +1,7 @@
+{
+  "name": "webpack3-tests",
+  "private": true,
+  "devDependencies": {
+    "webpack": "^3.0.0"
+  }
+}

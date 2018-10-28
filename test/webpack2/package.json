@@ -1,0 +1,7 @@
+{
+  "name": "webpack2-tests",
+  "private": true,
+  "devDependencies": {
+    "webpack": "^2.0.0"
+  }
+}

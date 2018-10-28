@@ -1,0 +1,5 @@
+{
+  "packages": ["test/*"],
+  "version": "independent",
+  "npmClient": "yarn"
+}
