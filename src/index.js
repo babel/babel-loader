@@ -121,7 +121,8 @@ async function loader(source, inputSourceMap, overrides) {
     delete loaderOptions.sourceMap;
   }
 
-  const programmaticOptions = Object.assign({}, loaderOptions, {
+  const defaultOptions = { parserOpts: { plugins: ["dynamicImport"] } };
+  const programmaticOptions = Object.assign({}, defaultOptions, loaderOptions, {
     filename,
     inputSourceMap: inputSourceMap || undefined,
 
