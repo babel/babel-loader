@@ -5302,9 +5302,9 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-intl-webpack-plugin@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/react-intl-webpack-plugin/-/react-intl-webpack-plugin-0.0.3.tgz#a38181155e0414f7bcb858dfba86ccf5a788bdd4"
+react-intl-webpack-plugin@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/react-intl-webpack-plugin/-/react-intl-webpack-plugin-0.3.0.tgz#b8013da5f693e366d612ce12074b83bf357cd86a"
 
 react-intl@^2.1.2:
   version "2.4.0"
