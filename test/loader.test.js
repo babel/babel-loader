@@ -127,3 +127,80 @@ test.cb(
     });
   },
 );
+
+test.cb(
+  "should perform all *.js, *.ts and *.vue files compilation successfully",
+  t => {
+    const config = {
+      mode: "development",
+      entry: {
+        firstEntry: path.join(__dirname, "fixtures/basic.js"),
+        secondEntry: path.join(__dirname, "fixtures/TestTS.ts"),
+        thirdEntry: path.join(__dirname, "fixtures/TestTsVUE.vue"),
+      },
+      output: {
+        path: t.context.directory,
+      },
+      module: {
+        rules: [
+          {
+            test: /\.((jsx?)|ts|vue)$/,
+            loader: babelLoader,
+            options: {
+              presets: ["@babel/preset-env", "@babel/preset-typescript"],
+              transformFileName: {
+                pattern: /(\.vue)$/,
+                replace: "$1.ts",
+              },
+            },
+            exclude: /node_modules/,
+          },
+        ],
+      },
+    };
+    webpack(config, (err, stats) => {
+      t.is(err, null);
+      t.is(stats.compilation.warnings.length, 0);
+      t.is(stats.compilation.errors.length, 0);
+      t.end();
+    });
+  },
+);
+
+test.cb("should return compilation error about a *.vue file", t => {
+  const config = {
+    mode: "development",
+    entry: {
+      firstEntry: path.join(__dirname, "fixtures/basic.js"),
+      secondEntry: path.join(__dirname, "fixtures/TestTS.ts"),
+      thirdEntry: path.join(__dirname, "fixtures/TestTsVUE.vue"),
+    },
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.((jsx?)|ts|vue)$/,
+          loader: babelLoader,
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-typescript"],
+          },
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  };
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    t.is(stats.compilation.warnings.length, 0);
+    t.is(stats.compilation.errors.length, 1);
+    const moduleBuildError = stats.compilation.errors[0];
+    const babelLoaderError = moduleBuildError.error;
+    t.regex(
+      babelLoaderError.stack,
+      /SyntaxError.+TestTsVUE.vue.+Unexpected token/,
+    );
+    t.end();
+  });
+});

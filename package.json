@@ -23,6 +23,7 @@
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/preset-typescript": "^7.1.0",
     "ava": "0.25.0",
     "babel-eslint": "^8.0.0",
     "babel-plugin-istanbul": "^4.0.0",

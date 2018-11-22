@@ -121,8 +121,18 @@ async function loader(source, inputSourceMap, overrides) {
     delete loaderOptions.sourceMap;
   }
 
+  let transformedFileName = filename;
+  if (loaderOptions.transformFileName) {
+    const pattern = loaderOptions.transformFileName.pattern;
+    const replace = loaderOptions.transformFileName.replace;
+
+    if (pattern && replace) {
+      transformedFileName = filename.replace(pattern, replace);
+    }
+  }
+
   const programmaticOptions = Object.assign({}, loaderOptions, {
-    filename,
+    filename: transformedFileName,
     inputSourceMap: inputSourceMap || undefined,
 
     // Set the default sourcemap behavior based on Webpack's mapping flag,
@@ -137,7 +147,9 @@ async function loader(source, inputSourceMap, overrides) {
     // modules.
     sourceFileName: filename,
   });
+
   // Remove loader related options
+  delete programmaticOptions.transformFileName;
   delete programmaticOptions.customize;
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
