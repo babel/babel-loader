@@ -173,7 +173,7 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
   });
 });
 
-test.only.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
+test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -224,7 +224,7 @@ test.only.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
   });
 });
 
-test.only.cb("should disable sourcemap output with 'sourceMap:false'", t => {
+test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
