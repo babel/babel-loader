@@ -92,8 +92,6 @@ This loader also supports the following loader-specific option:
 
 * `customize`: Default `null`. The path of a module that exports a `custom` callback [like the one that you'd pass to `.custom()`](#customized-loader). Since you already have to make a new file to use this, it is recommended that you instead use `.custom` to create a wrapper loader. Only use this is you _must_ continue using `babel-loader` directly, but still want to customize.
 
-**Note**: The `sourceMap` option is ignored. Instead, source maps are automatically enabled when webpack is configured to use them (via the [`devtool`](https://webpack.js.org/configuration/devtool/#devtool) config option).
-
 ## Troubleshooting
 
 ### babel-loader is slow!
