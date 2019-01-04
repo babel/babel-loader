@@ -30,23 +30,23 @@ const globalConfig = {
 // Create a separate directory for each test so that the tests
 // can run in parallel
 
-test.cb.beforeEach(t => {
+test.beforeEach.cb(t => {
   createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
     t.context.directory = directory;
     t.end();
   });
 });
-test.cb.beforeEach(t => {
+test.beforeEach.cb(t => {
   createTestDirectory(cacheDir, t.title, (err, directory) => {
     if (err) return t.end(err);
     t.context.cacheDirectory = directory;
     t.end();
   });
 });
-test.cb.beforeEach(t => rimraf(defaultCacheDir, t.end));
-test.cb.afterEach(t => rimraf(t.context.directory, t.end));
-test.cb.afterEach(t => rimraf(t.context.cacheDirectory, t.end));
+test.beforeEach.cb(t => rimraf(defaultCacheDir, t.end));
+test.afterEach.cb(t => rimraf(t.context.directory, t.end));
+test.afterEach.cb(t => rimraf(t.context.cacheDirectory, t.end));
 
 test.cb("should output files to cache directory", t => {
   const config = Object.assign({}, globalConfig, {
@@ -81,7 +81,7 @@ test.cb("should output files to cache directory", t => {
   });
 });
 
-test.cb.serial(
+test.serial.cb(
   "should output json.gz files to standard cache dir by default",
   t => {
     const config = Object.assign({}, globalConfig, {
@@ -119,7 +119,7 @@ test.cb.serial(
   },
 );
 
-test.cb.serial(
+test.serial.cb(
   "should output non-compressed files to standard cache dir when cacheCompression is set to false",
   t => {
     const config = Object.assign({}, globalConfig, {
@@ -156,7 +156,7 @@ test.cb.serial(
   },
 );
 
-test.cb.serial(
+test.serial.cb(
   "should output files to standard cache dir if set to true in query",
   t => {
     const config = Object.assign({}, globalConfig, {

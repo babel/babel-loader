@@ -26,7 +26,7 @@ const globalConfig = {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
-test.cb.beforeEach(t => {
+test.beforeEach.cb(t => {
   createTestDirectory(outputDir, t.title, (err, directory) => {
     if (err) return t.end(err);
     t.context.directory = directory;
@@ -34,7 +34,7 @@ test.cb.beforeEach(t => {
   });
 });
 
-test.cb.afterEach(t => rimraf(t.context.directory, t.end));
+test.afterEach.cb(t => rimraf(t.context.directory, t.end));
 
 test.cb("should transpile the code snippet", t => {
   const config = Object.assign({}, globalConfig, {
