@@ -2239,10 +2239,10 @@ eslint-config-babel@^8.0.2:
   resolved "https://registry.yarnpkg.com/eslint-config-babel/-/eslint-config-babel-8.0.2.tgz#01f4b430148078522a4c69ab76944c672092d143"
   integrity sha512-UzYPHbDRGUZRTSTbNZ35i8cQUI31mu/rEDUu2WjeSsxJpH3GvecWVG5MqfNxobxs7M0IPkrQRbwn1/TPhqQd4Q==
 
-eslint-config-prettier@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-3.3.0.tgz#41afc8d3b852e757f06274ed6c44ca16f939a57d"
-  integrity sha512-Bc3bh5bAcKNvs3HOpSi6EfGA2IIp7EzWcg2tS4vP7stnXu/J1opihHDM7jI9JCIckyIDTgZLSWn7J3HY0j2JfA==
+eslint-config-prettier@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-4.0.0.tgz#16cedeea0a56e74de60dcbbe3be0ab2c645405b9"
+  integrity sha512-kWuiJxzV5NwOwZcpyozTzDT5KJhBw292bbYro9Is7BWnbNMg15Gmpluc1CTetiCatF8DRkNvgPAOaSyg+bYr3g==
   dependencies:
     get-stdin "^6.0.0"
 
