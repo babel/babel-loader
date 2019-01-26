@@ -30,7 +30,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^5.9.0",
     "eslint-config-babel": "^8.0.2",
-    "eslint-config-prettier": "^3.3.0",
+    "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-flowtype": "^3.2.0",
     "eslint-plugin-prettier": "^3.0.0",
     "husky": "^1.2.0",
