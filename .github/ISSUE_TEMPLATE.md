@@ -1,7 +1,7 @@
 ## **BEFORE YOU SUBMIT** please read the following:
 <!--
 If you have a support request or question please submit them to
-[StackOverflow](http://stackoverflow.com/questions/tagged/babel) using the tag
+[StackOverflow](http://stackoverflow.com/questions/tagged/babeljs) using the tag
 `[babel]` or
 the [Babel Slack](babeljs.slack.com). Future support requests will be closed.
 -->
