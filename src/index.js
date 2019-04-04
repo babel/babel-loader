@@ -60,7 +60,7 @@ async function loader(source, inputSourceMap, overrides) {
         "Customized loaders must be implemented as standalone modules.",
       );
     }
-    if (!path.isAbsolute(loaderOptions.customize)) {
+    if (!isAbsolute(loaderOptions.customize)) {
       throw new Error(
         "Customized loaders must be passed as absolute paths, since " +
           "babel-loader has no way to know what they would be relative to.",
