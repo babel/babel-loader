@@ -14,7 +14,7 @@ const zlib = require("zlib");
 const crypto = require("crypto");
 const mkdirpOrig = require("mkdirp");
 const findCacheDir = require("find-cache-dir");
-const promisify = require("util.promisify");
+const promisify = require("pify");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
