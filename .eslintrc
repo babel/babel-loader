@@ -6,6 +6,6 @@
   "extends": ["eslint-config-babel", "eslint-config-prettier"],
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": ["error", { "trailingComma": "all" }]
+    "prettier/prettier": "error"
   }
 }

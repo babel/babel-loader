@@ -19,12 +19,12 @@ if (/^6\./.test(babel.version)) {
   );
 }
 
-const {version} = require("../package.json");
+const { version } = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 const injectCaller = require("./injectCaller");
 
-const {isAbsolute} = require("path");
+const { isAbsolute } = require("path");
 const loaderUtils = require("loader-utils");
 
 function subscribe(subscriber, metadata, context) {
