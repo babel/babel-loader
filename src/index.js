@@ -19,12 +19,12 @@ if (/^6\./.test(babel.version)) {
   );
 }
 
-const pkg = require("../package.json");
+const {version} = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 const injectCaller = require("./injectCaller");
 
-const path = require("path");
+const {isAbsolute} = require("path");
 const loaderUtils = require("loader-utils");
 
 function subscribe(subscriber, metadata, context) {
@@ -60,7 +60,7 @@ async function loader(source, inputSourceMap, overrides) {
         "Customized loaders must be implemented as standalone modules.",
       );
     }
-    if (!path.isAbsolute(loaderOptions.customize)) {
+    if (!isAbsolute(loaderOptions.customize)) {
       throw new Error(
         "Customized loaders must be passed as absolute paths, since " +
           "babel-loader has no way to know what they would be relative to.",
@@ -178,7 +178,7 @@ async function loader(source, inputSourceMap, overrides) {
       cacheIdentifier = JSON.stringify({
         options,
         "@babel/core": transform.version,
-        "@babel/loader": pkg.version,
+        "@babel/loader": version,
       }),
       cacheCompression = true,
       metadataSubscribers = [],
