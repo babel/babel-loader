@@ -191,7 +191,7 @@ test.serial.cb(
   },
 );
 
-test.cb.skip("should read from cache directory if cached file exists", t => {
+test.cb("should read from cache directory if cached file exists", t => {
   const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
