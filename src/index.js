@@ -23,9 +23,11 @@ const { version } = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 const injectCaller = require("./injectCaller");
+const schema = require("./schema");
 
 const { isAbsolute } = require("path");
 const loaderUtils = require("loader-utils");
+const validateOptions = require("schema-utils");
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
@@ -53,6 +55,10 @@ async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
+
+  validateOptions(schema, loaderOptions, {
+    name: "Babel loader",
+  });
 
   if (loaderOptions.customize != null) {
     if (typeof loaderOptions.customize !== "string") {
