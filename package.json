@@ -13,7 +13,8 @@
     "find-cache-dir": "^2.0.0",
     "loader-utils": "^1.0.2",
     "mkdirp": "^0.5.1",
-    "pify": "^4.0.1"
+    "pify": "^4.0.1",
+    "schema-utils": "^2.6.4"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
@@ -45,7 +46,7 @@
   },
   "scripts": {
     "clean": "rimraf lib/",
-    "build": "babel src/ --out-dir lib/",
+    "build": "babel src/ --out-dir lib/ --copy-files",
     "format": "prettier --write --trailing-comma all 'src/**/*.js' 'test/**/*.test.js' 'test/helpers/*.js' && prettier --write --trailing-comma es5 'scripts/*.js'",
     "lint": "eslint src test",
     "precommit": "lint-staged",
