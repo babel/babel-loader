@@ -13,7 +13,7 @@ module.exports = function injectCaller(opts) {
         supportsDynamicImport: true,
 
         // Webpack 5 supports TLA behind a flag. We enable it by default
-        // for Babel, and then webpack will throw an error is the experimental
+        // for Babel, and then webpack will throw an error if the experimental
         // flag isn't enabled.
         supportsTopLevelAwait: true,
       },
