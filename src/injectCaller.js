@@ -1,12 +1,16 @@
 const babel = require("@babel/core");
 
-module.exports = function injectCaller(opts) {
+module.exports = function injectCaller(opts, target) {
   if (!supportsCallerOption()) return opts;
 
   return Object.assign({}, opts, {
     caller: Object.assign(
       {
         name: "babel-loader",
+
+        // Provide plugins with insight into webpack target.
+        // https://github.com/babel/babel-loader/issues/787
+        target,
 
         // Webpack >= 2 supports ESM and dynamic import.
         supportsStaticESM: true,

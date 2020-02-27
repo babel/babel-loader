@@ -158,7 +158,9 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
-  const config = babel.loadPartialConfig(injectCaller(programmaticOptions));
+  const config = babel.loadPartialConfig(
+    injectCaller(programmaticOptions, this.target),
+  );
   if (config) {
     let options = config.options;
     if (overrides && overrides.config) {
