@@ -171,11 +171,13 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
           t.is(err, null);
 
           // The full absolute path is included in the sourcemap properly
-          t.not(
-            data
-              .toString()
-              .indexOf(JSON.stringify(`==${globalConfig.entry}==`)),
-            -1,
+          t.regex(
+            data.toString(),
+            new RegExp(
+              // Forward slashes on Windows are common in Babel/Webpack:
+              // https://github.com/webpack/webpack/pull/1909
+              JSON.stringify(`==${globalConfig.entry.replace(/\\/g, "/")}==`),
+            ),
           );
 
           t.end();
