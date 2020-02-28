@@ -193,9 +193,9 @@ In the case one of your dependencies is installing `babel` and you cannot uninst
   }
 ```
 
-## Customize config for specific Webpack target
+## Customize config based on webpack target
 
-Webpack supports bundling for multiple different [targets](https://webpack.js.org/concepts/targets/) including the web, and node. Sometimes it can be useful to have a slightly different babel configuration for the different environments. This loader provides a `target` property via the babel [caller](https://babeljs.io/docs/en/config-files#apicallercb) API which can be used in this case.
+Webpack supports bundling multiple [targets](https://webpack.js.org/concepts/targets/). For cases where you may want different Babel configurations for each target (like `web` _and_ `node`), this loader provides a `target` property via Babel's [caller](https://babeljs.io/docs/en/config-files#apicallercb) API.
 
 For example, to change the environment targets passed to `@babel/preset-env` based on the webpack target:
 
