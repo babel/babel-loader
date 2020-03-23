@@ -12,7 +12,6 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 const crypto = require("crypto");
-const mkdirpOrig = require("mkdirp");
 const findCacheDir = require("find-cache-dir");
 const promisify = require("pify");
 
@@ -24,7 +23,7 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
-const mkdirp = promisify(mkdirpOrig);
+const makeDir = require("make-dir");
 
 /**
  * Read the contents from the compressed file.
@@ -99,7 +98,7 @@ const handleCache = async function(directory, params) {
 
   // Make sure the directory exists.
   try {
-    await mkdirp(directory);
+    await makeDir(directory);
   } catch (err) {
     if (fallback) {
       return handleCache(os.tmpdir(), params);
