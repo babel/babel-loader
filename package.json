@@ -17,8 +17,7 @@
     "schema-utils": "^2.6.5"
   },
   "peerDependencies": {
-    "@babel/core": "^7.0.0",
-    "webpack": ">=2"
+    "@babel/core": "^7.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.0",
