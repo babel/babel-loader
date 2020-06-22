@@ -76,6 +76,8 @@ module: {
 }
 ```
 
+*Please note that this loader internally uses `babel.loadPartialConfig`, which means that it will by default use the configuration from your project specific babel config file and any options you specify here would override those set in the project specific babel config.*
+
 This loader also supports the following loader-specific option:
 
 * `cacheDirectory`: Default `false`. When set, the given directory will be used to cache the results of the loader. Future webpack builds will attempt to read from the cache to avoid needing to run the potentially expensive Babel recompilation process on each run. If the value is set to `true` in options (`{cacheDirectory: true}`), the loader will use the default cache directory in `node_modules/.cache/babel-loader` or fallback to the default OS temporary file directory if no `node_modules` folder could be found in any root directory.
