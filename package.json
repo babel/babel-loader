@@ -1,7 +1,7 @@
 {
-  "name": "babel-loader",
-  "version": "8.1.0",
-  "description": "babel module loader for webpack",
+  "name": "@oqx/babel-loader",
+  "version": "8.2.0",
+  "description": "babel module loader for webpack 5+",
   "files": [
     "lib"
   ],
@@ -70,9 +70,9 @@
   "author": "Luis Couto <hello@luiscouto.pt>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/babel/babel-loader/issues"
+    "url": "https://github.com/oqx/babel-loader/issues"
   },
-  "homepage": "https://github.com/babel/babel-loader",
+  "homepage": "https://github.com/oqx/babel-loader",
   "nyc": {
     "all": true,
     "include": [
