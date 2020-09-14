@@ -167,7 +167,7 @@ test.serial.cb(
         rules: [
           {
             test: /\.jsx?/,
-            loader: `${babelLoader}?cacheDirectory=true&presets[]=@babel/preset-env`,
+            use: `${babelLoader}?cacheDirectory=true&presets[]=@babel/preset-env`,
             exclude: /node_modules/,
           },
         ],
