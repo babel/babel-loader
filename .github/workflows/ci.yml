@@ -1,0 +1,46 @@
+name: babel-loader
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "*"
+      - name: Install dependencies
+        run: yarn
+      - name: Lint
+        run: yarn run lint
+  test:
+    name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}, Webpack ${{ matrix.webpack-version }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [10.x, 12.x, 14.x]
+        webpack-version: [latest]
+        include:
+          - node: 14.x
+            os: ubuntu-latest
+            coverage: true
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn
+      - name: Install webpack ${{ matrix.webpack-version }}
+        run: yarn add webpack@${{ matrix.webpack-version }}
+      - name: Run tests for webpack version ${{ matrix.webpack-version }}
+        run: yarn test-only
+      - name: Submit coverage data to codecov
+        uses: codecov/codecov-action@v1
+        if: ${{ matrix.coverage }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
