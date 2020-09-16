@@ -2,8 +2,6 @@
 > Check the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) for docs with Babel v6
 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
-[![Build Status](https://travis-ci.org/babel/babel-loader.svg?branch=master)](https://travis-ci.org/babel/babel-loader)
-[![Build Status](https://ci.appveyor.com/api/projects/status/77y5mk6amwqt0q88/branch/master?svg=true)](https://ci.appveyor.com/project/babel/babel-loader/branch/master)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
 
 <div align="center">
