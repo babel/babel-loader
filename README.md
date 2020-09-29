@@ -191,7 +191,7 @@ In the case one of your dependencies is installing `babel` and you cannot uninst
   }
 ```
 
-### Compiled JavaScript won't run and throw errors
+### Exclude libraries that should not be transpiled
 
 `core-js` and `webpack/buildin` will cause errors if they are transplied by Babel.
 
