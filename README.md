@@ -191,6 +191,28 @@ In the case one of your dependencies is installing `babel` and you cannot uninst
   }
 ```
 
+### Exclude libraries that should not be transpiled
+
+`core-js` and `webpack/buildin` will cause errors if they are transpiled by Babel.
+
+You will need to exclude them form `babel-loader`.
+
+```js
+{
+  "loader": "babel-loader",
+  "options": {
+    "exclude": [
+      // \\ for Windows, \/ for Mac OS and Linux
+      /node_modules[\\\/]core-js/,
+      /node_modules[\\\/]webpack[\\\/]buildin/,
+    ],
+    "presets": [
+      "@babel/preset-env"
+    ]
+  }
+}
+```
+
 ## Customize config based on webpack target
 
 Webpack supports bundling multiple [targets](https://webpack.js.org/concepts/targets/). For cases where you may want different Babel configurations for each target (like `web` _and_ `node`), this loader provides a `target` property via Babel's [caller](https://babeljs.io/docs/en/config-files#apicallercb) API.
