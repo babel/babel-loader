@@ -4,6 +4,7 @@ import path from "path";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
+import isWebpack5 from "./helpers/isWebpack5";
 
 const outputDir = path.join(__dirname, "output/sourcemaps");
 const babelLoader = path.join(__dirname, "../lib");
@@ -43,7 +44,7 @@ test.cb("should output webpack's sourcemap", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=@babel/env",
+          use: babelLoader + "?presets[]=@babel/env",
           exclude: /node_modules/,
         },
       ],
@@ -58,14 +59,16 @@ test.cb("should output webpack's sourcemap", t => {
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
 
-      const map = files.filter(file => file.indexOf(".map") !== -1);
+      const map = files.filter(file => file.includes(".map"));
 
       t.true(map.length > 0);
 
       if (map.length > 0) {
         fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
           t.is(err, null);
-          t.not(data.toString().indexOf("webpack:///"), -1);
+          t.truthy(
+            data.toString().includes(isWebpack5 ? "webpack://" : "webpack:///"),
+          );
           t.end();
         });
       }
@@ -102,7 +105,7 @@ test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
 
-      const map = files.filter(file => file.indexOf(".map") !== -1);
+      const map = files.filter(file => file.includes(".map"));
 
       t.true(map.length > 0);
 
@@ -112,11 +115,20 @@ test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
 
           const mapObj = JSON.parse(data.toString());
 
-          t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+          if (isWebpack5) {
+            t.is(
+              mapObj.sources[0],
+              "webpack://babel-loader/./test/fixtures/basic.js",
+            );
 
-          // Ensure that the map contains the original code, not the
-          // compiled src.
-          t.is(mapObj.sourcesContent[1].indexOf("__esModule"), -1);
+            // Ensure that the map contains the original code, not the compiled src.
+            t.falsy(mapObj.sourcesContent[2].includes("__esModule"));
+          } else {
+            t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+
+            // Ensure that the map contains the original code, not the compiled src.
+            t.falsy(mapObj.sourcesContent[1].includes("__esModule"));
+          }
           t.end();
         });
       }
@@ -135,7 +147,7 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=@babel/env",
+          use: babelLoader + "?presets[]=@babel/env",
           exclude: /node_modules/,
         },
       ],
@@ -150,7 +162,7 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
 
-      const map = files.filter(file => file.indexOf(".map") !== -1);
+      const map = files.filter(file => file.includes(".map"));
 
       t.true(map.length > 0);
 
@@ -202,7 +214,7 @@ test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
 
-      const map = files.filter(file => file.indexOf(".map") !== -1);
+      const map = files.filter(file => file.includes(".map"));
 
       t.true(map.length > 0);
 
@@ -211,11 +223,23 @@ test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
           t.is(err, null);
 
           const mapObj = JSON.parse(data.toString());
-          t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
-          // Ensure that the code contains Babel's compiled output, because
-          // sourcemaps from Babel are disabled.
-          t.not(mapObj.sourcesContent[1].indexOf("__esModule"), -1);
+          if (isWebpack5) {
+            t.is(
+              mapObj.sources[0],
+              "webpack://babel-loader/./test/fixtures/basic.js",
+            );
+
+            // Ensure that the code contains Babel's compiled output, because
+            // sourcemaps from Babel are disabled.
+            t.truthy(mapObj.sourcesContent[2].includes("__esModule"));
+          } else {
+            t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+
+            // Ensure that the code contains Babel's compiled output, because
+            // sourcemaps from Babel are disabled.
+            t.truthy(mapObj.sourcesContent[1].includes("__esModule"));
+          }
 
           t.end();
         });
@@ -253,7 +277,7 @@ test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
 
-      const map = files.filter(file => file.indexOf(".map") !== -1);
+      const map = files.filter(file => file.includes(".map"));
 
       t.true(map.length > 0);
 
@@ -262,11 +286,23 @@ test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
           t.is(err, null);
 
           const mapObj = JSON.parse(data.toString());
-          t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
-          // Ensure that the code contains Babel's compiled output, because
-          // sourcemaps from Babel are disabled.
-          t.not(mapObj.sourcesContent[1].indexOf("__esModule"), -1);
+          if (isWebpack5) {
+            t.is(
+              mapObj.sources[0],
+              "webpack://babel-loader/./test/fixtures/basic.js",
+            );
+
+            // Ensure that the code contains Babel's compiled output, because
+            // sourcemaps from Babel are disabled.
+            t.truthy(mapObj.sourcesContent[2].includes("__esModule"));
+          } else {
+            t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+
+            // Ensure that the code contains Babel's compiled output, because
+            // sourcemaps from Babel are disabled.
+            t.truthy(mapObj.sourcesContent[1].includes("__esModule"));
+          }
 
           t.end();
         });

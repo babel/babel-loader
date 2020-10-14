@@ -92,7 +92,7 @@ test.cb("should not throw without config", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader,
+          use: babelLoader,
           exclude: /node_modules/,
         },
       ],
