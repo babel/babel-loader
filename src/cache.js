@@ -30,6 +30,7 @@ const makeDir = require("make-dir");
  *
  * @async
  * @params {String} filename
+ * @params {Boolean} compress
  */
 const read = async function(filename, compress) {
   const data = await readFile(filename + (compress ? ".gz" : ""));
@@ -43,6 +44,7 @@ const read = async function(filename, compress) {
  *
  * @async
  * @params {String} filename
+ * @params {Boolean} compress
  * @params {String} result
  */
 const write = async function(filename, compress, result) {
@@ -130,31 +132,23 @@ const handleCache = async function(directory, params) {
  *
  * @async
  * @param  {Object}   params
- * @param  {String}   params.directory  Directory to store cached files
- * @param  {String}   params.identifier Unique identifier to bust cache
+ * @param  {String}   params.cacheDirectory   Directory to store cached files
+ * @param  {String}   params.cacheIdentifier  Unique identifier to bust cache
+ * @param  {Boolean}  params.cacheCompression Whether compressing cached files
  * @param  {String}   params.source   Original contents of the file to be cached
  * @param  {Object}   params.options  Options to be given to the transform fn
- * @param  {Function} params.transform  Function that will transform the
- *                                      original file and whose result will be
- *                                      cached
  *
  * @example
  *
- *   cache({
- *     directory: '.tmp/cache',
- *     identifier: 'babel-loader-cachefile',
+ *   const result = await cache({
+ *     cacheDirectory: '.tmp/cache',
+ *     cacheIdentifier: 'babel-loader-cachefile',
  *     cacheCompression: false,
  *     source: *source code from file*,
  *     options: {
  *       experimental: true,
  *       runtime: true
  *     },
- *     transform: function(source, options) {
- *       var content = *do what you need with the source*
- *       return content;
- *     }
- *   }, function(err, result) {
- *
  *   });
  */
 
