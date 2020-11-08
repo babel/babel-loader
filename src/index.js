@@ -45,9 +45,10 @@ function makeLoader(callback) {
     // Make the loader async
     const callback = this.async();
 
-    loader
-      .call(this, source, inputSourceMap, overrides)
-      .then(args => callback(null, ...args), err => callback(err));
+    loader.call(this, source, inputSourceMap, overrides).then(
+      args => callback(null, ...args),
+      err => callback(err),
+    );
   };
 }
 
