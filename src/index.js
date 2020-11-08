@@ -159,7 +159,9 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
-  const config = babel.loadPartialConfig(
+  // babel.loadPartialConfigAsync is available in v7.8.0+
+  const { loadPartialConfigAsync = babel.loadPartialConfig } = babel;
+  const config = await loadPartialConfigAsync(
     injectCaller(programmaticOptions, this.target),
   );
   if (config) {

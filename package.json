@@ -42,6 +42,7 @@
     "react-intl": "^3.3.2",
     "react-intl-webpack-plugin": "^0.3.0",
     "rimraf": "^3.0.0",
+    "semver": "7.0.0",
     "webpack": "^4.0.0"
   },
   "scripts": {

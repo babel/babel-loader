@@ -2,6 +2,7 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
+import { satisfies } from "semver";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
 
@@ -127,3 +128,56 @@ test.cb(
     });
   },
 );
+
+test.cb("should load ESM config files", t => {
+  const config = Object.assign({}, globalConfig, {
+    entry: path.join(__dirname, "fixtures/constant.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          options: {
+            // Use relative path starting with a dot to satisfy module loader.
+            // https://github.com/nodejs/node/issues/31710
+            // File urls doesn't work with current resolve@1.12.0 package.
+            extends: (
+              "." +
+              path.sep +
+              path.relative(
+                process.cwd(),
+                path.resolve(__dirname, "fixtures/babelrc.mjs"),
+              )
+            ).replace(/\\/g, "/"),
+            babelrc: false,
+          },
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    // Node supports ESM without a flag starting from 12.13.0 and 13.2.0.
+    if (satisfies(process.version, `^12.13.0 || >=13.2.0`)) {
+      t.deepEqual(
+        stats.compilation.errors.map(e => e.message),
+        [],
+      );
+    } else {
+      t.is(stats.compilation.errors.length, 1);
+      const moduleBuildError = stats.compilation.errors[0];
+      const babelLoaderError = moduleBuildError.error;
+      t.true(babelLoaderError instanceof Error);
+      // Error messages are slightly different between versions:
+      // "modules aren't supported" or "modules not supported".
+      t.regex(babelLoaderError.message, /supported/i);
+    }
+    t.is(stats.compilation.warnings.length, 0);
+    t.end();
+  });
+});
