@@ -2,7 +2,7 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
-import { gte } from "semver";
+import { satisfies } from "semver";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
 
@@ -162,8 +162,8 @@ test.cb("should load ESM config files", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    // Node supports ESM without a flag starting from 13.2.0.
-    if (gte(process.version, `13.2.0`)) {
+    // Node supports ESM without a flag starting from 12.13.0 and 13.2.0.
+    if (satisfies(process.version, `^12.13.0 || >=13.2.0`)) {
       t.deepEqual(
         stats.compilation.errors.map(e => e.message),
         [],
