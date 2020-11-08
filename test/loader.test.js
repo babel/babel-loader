@@ -122,7 +122,7 @@ test.cb(
       t.is(stats.compilation.warnings.length, 0);
       const moduleBuildError = stats.compilation.errors[0];
       const babelLoaderError = moduleBuildError.error;
-      t.regex(babelLoaderError.stack, /Unexpected character/);
+      t.regex(babelLoaderError.stack, /Unexpected token/);
       t.end();
     });
   },
