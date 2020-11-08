@@ -5,7 +5,6 @@
   "files": [
     "lib"
   ],
-  "type": "commonjs",
   "main": "lib/index.js",
   "engines": {
     "node": ">= 6.9"
