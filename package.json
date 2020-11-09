@@ -44,7 +44,7 @@
     "react-intl-webpack-plugin": "^0.3.0",
     "rimraf": "^3.0.0",
     "semver": "7.3.2",
-    "webpack": "^4.0.0"
+    "webpack": "^5.4.0"
   },
   "scripts": {
     "clean": "rimraf lib/",

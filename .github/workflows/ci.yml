@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         node-version: [10.x, 12.x, 14.x, 15.x]
-        webpack-version: [latest, next]
+        webpack-version: [latest, '4']
         include:
           - node: 14.x
             os: ubuntu-latest
