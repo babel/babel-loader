@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Install webpack ${{ matrix.webpack-version }}
-        run: yarn add webpack@${{ matrix.webpack-version }}
+        run: yarn add -D webpack@${{ matrix.webpack-version }}
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
         run: yarn test-only
       - name: Submit coverage data to codecov

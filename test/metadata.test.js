@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
 import webpack from "webpack";
+import PnpWebpackPlugin from "pnp-webpack-plugin";
 import createTestDirectory from "./helpers/createTestDirectory";
 
 const ReactIntlPlugin = require("react-intl-webpack-plugin");
@@ -18,6 +19,9 @@ const globalConfig = {
     filename: "[id].metadata.js",
   },
   plugins: [new ReactIntlPlugin()],
+  resolve: {
+    plugins: [PnpWebpackPlugin],
+  },
   module: {
     rules: [
       {
