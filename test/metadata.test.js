@@ -25,7 +25,7 @@ const globalConfig = {
         loader: babelLoader,
         options: {
           metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
-          plugins: [["react-intl", { enforceDescriptions: false }]],
+          plugins: ["react-intl"],
           presets: [],
         },
         exclude: /node_modules/,
@@ -124,7 +124,7 @@ test.cb("should pass metadata code snippet ( cache version )", t => {
           loader: babelLoader,
           options: {
             metadataSubscribers: [ReactIntlPlugin.metadataContextFunctionName],
-            plugins: [["react-intl", { enforceDescriptions: false }]],
+            plugins: ["react-intl"],
             cacheDirectory: cacheDir,
             presets: [],
           },
