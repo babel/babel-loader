@@ -46,8 +46,8 @@ test.cb("should transpile the code snippet", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -76,7 +76,7 @@ test.cb("should not throw error on syntax error", t => {
   webpack(config, (err, stats) => {
     t.true(stats.compilation.errors.length === 1);
     t.true(stats.compilation.errors[0] instanceof Error);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.warnings, []);
 
     t.end();
   });
@@ -102,8 +102,8 @@ test.cb("should not throw without config", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     t.end();
   });
@@ -120,7 +120,7 @@ test.cb(
     });
     webpack(config, (err, stats) => {
       t.is(err, null);
-      t.is(stats.compilation.warnings.length, 0);
+      t.deepEqual(stats.compilation.warnings, []);
       const moduleBuildError = stats.compilation.errors[0];
       const babelLoaderError = moduleBuildError.error;
       t.regex(babelLoaderError.stack, /Unexpected token/);
@@ -177,7 +177,7 @@ test.cb("should load ESM config files", t => {
       // "modules aren't supported" or "modules not supported".
       t.regex(babelLoaderError.message, /supported/i);
     }
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.warnings, []);
     t.end();
   });
 });

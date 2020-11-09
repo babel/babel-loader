@@ -53,8 +53,8 @@ test.cb("should output webpack's sourcemap", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -99,8 +99,8 @@ test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -156,8 +156,8 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -214,8 +214,8 @@ test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -277,8 +277,8 @@ test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
