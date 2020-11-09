@@ -16,7 +16,7 @@ module.exports = async function (source, options) {
 
   // We don't return the full result here because some entries are not
   // really serializable. For a full list of properties see here:
-  // https://github.com/babel/babel/blob/master/packages/babel-core/src/transformation/index.js
+  // https://github.com/babel/babel/blob/main/packages/babel-core/src/transformation/index.js
   // For discussion on this topic see here:
   // https://github.com/babel/babel-loader/pull/629
   const { ast, code, map, metadata, sourceType } = result;

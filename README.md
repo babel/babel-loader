@@ -2,7 +2,7 @@
 > Check the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) for docs with Babel v6
 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
-[![codecov](https://codecov.io/gh/babel/babel-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
+[![codecov](https://codecov.io/gh/babel/babel-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
 
 <div align="center">
   <a href="https://github.com/babel/babel">
@@ -126,7 +126,7 @@ rules: [
 
 #### **NOTE**: transform-runtime & custom polyfills (e.g. Promise library)
 
-Since [@babel/plugin-transform-runtime](https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-runtime) includes a polyfill that includes a custom [regenerator-runtime](https://github.com/facebook/regenerator/blob/master/packages/regenerator-runtime/runtime.js) and [core-js](https://github.com/zloirock/core-js), the following usual shimming method using `webpack.ProvidePlugin` will not work:
+Since [@babel/plugin-transform-runtime](https://github.com/babel/babel/tree/main/packages/babel-plugin-transform-runtime) includes a polyfill that includes a custom [regenerator-runtime](https://github.com/facebook/regenerator/blob/master/packages/regenerator-runtime/runtime.js) and [core-js](https://github.com/zloirock/core-js), the following usual shimming method using `webpack.ProvidePlugin` will not work:
 
 ```javascript
 // ...

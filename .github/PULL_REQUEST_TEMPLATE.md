@@ -1,4 +1,4 @@
-**Please Read the [CONTRIBUTING Guidelines](https://github.com/babel/babel-loader/blob/master/CONTRIBUTING.md)**
+**Please Read the [CONTRIBUTING Guidelines](https://github.com/babel/babel-loader/blob/main/CONTRIBUTING.md)**
 *In particular the portion on Commit Message Formatting*
 
 **Please check if the PR fulfills these requirements**
