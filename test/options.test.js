@@ -51,8 +51,8 @@ test.cb("should interpret options given to the loader", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(outputDir, (err, files) => {
       t.is(err, null);

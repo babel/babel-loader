@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
 import webpack from "webpack";
+import PnpWebpackPlugin from "pnp-webpack-plugin";
 import createTestDirectory from "./helpers/createTestDirectory";
 
 const ReactIntlPlugin = require("react-intl-webpack-plugin");
@@ -18,6 +19,9 @@ const globalConfig = {
     filename: "[id].metadata.js",
   },
   plugins: [new ReactIntlPlugin()],
+  resolve: {
+    plugins: [PnpWebpackPlugin],
+  },
   module: {
     rules: [
       {
@@ -56,8 +60,8 @@ test.cb("should pass metadata code snippet", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
@@ -88,8 +92,8 @@ test.cb("should not throw error", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
     t.end();
   });
 });
@@ -106,7 +110,7 @@ test.cb("should throw error", t => {
   webpack(config, (err, stats) => {
     t.is(err, null);
     t.true(stats.compilation.errors.length > 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.warnings, []);
     t.end();
   });
 });
@@ -136,8 +140,8 @@ test.cb("should pass metadata code snippet ( cache version )", t => {
 
   webpack(config, (err, stats) => {
     t.is(err, null);
-    t.is(stats.compilation.errors.length, 0);
-    t.is(stats.compilation.warnings.length, 0);
+    t.deepEqual(stats.compilation.errors, []);
+    t.deepEqual(stats.compilation.warnings, []);
 
     fs.readdir(t.context.directory, (err, files) => {
       t.is(err, null);
