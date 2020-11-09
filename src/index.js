@@ -41,7 +41,7 @@ module.exports.custom = makeLoader;
 function makeLoader(callback) {
   const overrides = callback ? callback(babel) : undefined;
 
-  return function(source, inputSourceMap) {
+  return function (source, inputSourceMap) {
     // Make the loader async
     const callback = this.async();
 

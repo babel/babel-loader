@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import assign from "object-assign";
 import rimraf from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -48,7 +47,7 @@ test.beforeEach.cb(t => {
 test.afterEach.cb(t => rimraf(t.context.directory, t.end));
 
 test.cb("should pass metadata code snippet", t => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
       filename: "[id].metadata.js",
@@ -65,7 +64,7 @@ test.cb("should pass metadata code snippet", t => {
       t.true(files.length > 0);
       fs.readFile(
         path.resolve(t.context.directory, "reactIntlMessages.json"),
-        function(err, data) {
+        function (err, data) {
           t.is(err, null);
           const text = data.toString();
           const jsonText = JSON.parse(text);
@@ -80,7 +79,7 @@ test.cb("should pass metadata code snippet", t => {
 });
 
 test.cb("should not throw error", t => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
       filename: "[id].metadata.js",
@@ -96,7 +95,7 @@ test.cb("should not throw error", t => {
 });
 
 test.cb("should throw error", t => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
       filename: "[id].metadata.js",
@@ -113,7 +112,7 @@ test.cb("should throw error", t => {
 });
 
 test.cb("should pass metadata code snippet ( cache version )", t => {
-  const config = assign({}, globalConfig, {
+  const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
       filename: "[id].metadata.js",
@@ -145,7 +144,7 @@ test.cb("should pass metadata code snippet ( cache version )", t => {
       t.true(files.length > 0);
       fs.readFile(
         path.resolve(t.context.directory, "reactIntlMessages.json"),
-        function(err, data) {
+        function (err, data) {
           t.is(err, null);
           const text = data.toString();
           const jsonText = JSON.parse(text);
