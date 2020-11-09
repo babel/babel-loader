@@ -10,6 +10,7 @@
     "node": ">= 6.9"
   },
   "dependencies": {
+    "@ava/babel": "^1.0.1",
     "find-cache-dir": "^2.1.0",
     "loader-utils": "^1.4.0",
     "make-dir": "^2.1.0",
@@ -24,26 +25,26 @@
     "@babel/cli": "^7.12.1",
     "@babel/core": "^7.12.3",
     "@babel/preset-env": "^7.12.1",
-    "ava": "^2.4.0",
+    "ava": "^3.13.0",
     "babel-eslint": "^10.0.1",
-    "babel-plugin-istanbul": "^5.1.0",
-    "babel-plugin-react-intl": "^4.1.19",
-    "cross-env": "^6.0.0",
-    "eslint": "^6.5.1",
+    "babel-plugin-istanbul": "^6.0.0",
+    "babel-plugin-react-intl": "^8.2.15",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.13.0",
     "eslint-config-babel": "^9.0.0",
     "eslint-config-prettier": "^6.3.0",
-    "eslint-plugin-flowtype": "^4.3.0",
+    "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-prettier": "^3.0.0",
-    "husky": "^3.0.7",
-    "lint-staged": "^9.4.1",
-    "nyc": "^14.1.1",
-    "prettier": "^1.15.3",
-    "react": "^16.0.0",
-    "react-intl": "^3.3.2",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.5.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.1.2",
+    "react": "^17.0.1",
+    "react-intl": "^5.9.4",
     "react-intl-webpack-plugin": "^0.3.0",
     "rimraf": "^3.0.0",
-    "semver": "7.0.0",
-    "webpack": "^4.0.0"
+    "semver": "7.3.2",
+    "webpack": "^5.4.0"
   },
   "scripts": {
     "clean": "rimraf lib/",
@@ -92,12 +93,11 @@
       "!test/fixtures/**/*",
       "!test/helpers/**/*"
     ],
-    "helpers": [
-      "**/helpers/**/*"
-    ],
-    "sources": [
-      "src/**/*.js"
-    ]
+    "babel": {
+      "compileAsTests": [
+        "test/helpers/**/*"
+      ]
+    }
   },
   "lint-staged": {
     "scripts/*.js": [

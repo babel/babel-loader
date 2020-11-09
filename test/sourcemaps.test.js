@@ -141,7 +141,7 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
     devtool: "source-map",
     output: {
       path: t.context.directory,
-      devtoolModuleFilenameTemplate: "==[absolute-resource-path]==",
+      devtoolModuleFilenameTemplate: "=!=!=!=[absolute-resource-path]=!=!=!=",
     },
     module: {
       rules: [
@@ -171,11 +171,17 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
           t.is(err, null);
 
           // The full absolute path is included in the sourcemap properly
-          t.not(
-            data
-              .toString()
-              .indexOf(JSON.stringify(`==${globalConfig.entry}==`)),
-            -1,
+          t.regex(
+            data.toString(),
+            new RegExp(
+              JSON.stringify(
+                `=!=!=!=${globalConfig.entry.replace(
+                  // Webpack 5, webpack 4, windows, linux, ...
+                  /\\/g,
+                  "(?:/|\\\\)",
+                )}=!=!=!=`,
+              ),
+            ),
           );
 
           t.end();

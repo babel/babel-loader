@@ -1,5 +1,5 @@
 import path from "path";
-import mkdirp from "mkdirp";
+import fs from "fs";
 import rimraf from "rimraf";
 
 export default function createTestDirectory(baseDirectory, testTitle, cb) {
@@ -7,7 +7,9 @@ export default function createTestDirectory(baseDirectory, testTitle, cb) {
 
   rimraf(directory, err => {
     if (err) return cb(err);
-    mkdirp(directory, mkdirErr => cb(mkdirErr, directory));
+    fs.mkdir(directory, { recursive: true }, mkdirErr =>
+      cb(mkdirErr, directory),
+    );
   });
 }
 

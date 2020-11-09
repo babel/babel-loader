@@ -4,7 +4,7 @@ const LoaderError = require("./Error");
 
 const transform = promisify(babel.transform);
 
-module.exports = async function(source, options) {
+module.exports = async function (source, options) {
   let result;
   try {
     result = await transform(source, options);
