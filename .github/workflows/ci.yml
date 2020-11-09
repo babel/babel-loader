@@ -37,6 +37,10 @@ jobs:
         run: yarn
       - name: Install webpack ${{ matrix.webpack-version }}
         run: yarn add -D webpack@${{ matrix.webpack-version }}
+      - name: Build babel-loader
+        run: yarn run build
+        env:
+          BABEL_ENV: test
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
         run: yarn test-only
       - name: Submit coverage data to codecov
