@@ -48,3 +48,31 @@ jobs:
         if: ${{ matrix.coverage }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+  test-legacy:
+    name: Test - ubuntu-latest - Node v8.9, Webpack 4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install dependencies
+        run: yarn
+        env:
+          YARN_NODE_LINKER: node-modules
+      - name: Install webpack 4
+        run: yarn add -D webpack@4
+        env:
+          YARN_NODE_LINKER: node-modules
+      - name: Build babel-loader
+        run: yarn run build
+        env:
+          YARN_NODE_LINKER: node-modules
+          BABEL_ENV: test
+      - name: Use Node.js 8.9
+        uses: actions/setup-node@v1
+        with:
+          node-version: '8.9'
+      - name: Run tests for webpack version 4
+        run: npm run test-only
