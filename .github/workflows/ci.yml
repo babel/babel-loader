@@ -65,6 +65,7 @@ jobs:
         run: yarn add -D webpack@4
       - name: Build babel-loader
         run: yarn run build
+        env:
           BABEL_ENV: test
       - name: Use Node.js 8.9
         uses: actions/setup-node@v1
