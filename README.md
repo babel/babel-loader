@@ -108,20 +108,14 @@ For this, we suggest passing an `exclude` function for maintainability. You can 
 ```javascript
 {
     test: /\.m?js$/,
-    exclude: function excludeBabelLoader(modulePath) {
-      if (/node_modules/.test(modulePath)) {
-        if (
-          /node_modules[\\/]d3-array[\\/]/.test(modulePath) // compile d3-array to IE 11
-          || /node_modules[\\/](unfetch|d3-scale)[\\/]/.test(modulePath) // compile unfetch and d3-scale to IE 11
-          || /node_modules[\\/]@hapi[\\/]joi-date[\\/]/.test(modulePath) // compile @hapi/joi-date to IE 11
-        ) {
-          return false;
-        }
-        // Exclude other libraries in node_modules
-        return true;
-      }
-      // Compile every others not in node_modules
-      return false;
+    exclude: {
+      test: /node_modules/, // Exclude libraries in node_modules ...
+      not: [
+        // Except for a few of them that needs to be transpiled because use modern syntax
+        /unfetch/,
+        /d3-array|d3-scale/,
+        /@hapi[\\/]joi-date/,
+      ]
     },
     use: {
       loader: 'babel-loader',
