@@ -7,7 +7,7 @@
   ],
   "main": "lib/index.js",
   "engines": {
-    "node": ">= 6.9"
+    "node": ">= 8.9"
   },
   "dependencies": {
     "find-cache-dir": "^2.1.0",

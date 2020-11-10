@@ -8,3 +8,4 @@ test/output
 !.yarn/releases
 .pnp.*
 .vscode
+scripts/test-legacy-source/output
