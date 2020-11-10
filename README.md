@@ -1,5 +1,5 @@
 > This README is for babel-loader v8 + Babel v7
-> For docs with Babel v6 see [7.x branch](https://github.com/babel/babel-loader/tree/7.x) 
+> If you are using legacy Babel v6, see the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) docs
 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
@@ -98,12 +98,12 @@ To exclude `node_modules`, see the `exclude` option in the `loaders` config as d
 
 You can also speed up babel-loader by as much as 2x by using the `cacheDirectory` option. This will cache transformations to the filesystem.
 
-### Some files in my node_modules are not transpiled to IE 11
+### Some files in my node_modules are not transpiled for IE 11
 
-Although we recommend to exclude `node_modules`, there are cases when some libraries do not support IE 11 and you may need
+Although we typically recommend not compiling `node_modules`, you may need to when using libraries that do not support IE 11.
 to compile them for IE 11 compatibility.
 
-In this case we suggest use an `exclude` function for maintainability. You can also use negative lookahead regex as suggested [here](https://github.com/webpack/webpack/issues/2031#issuecomment-294706065).
+For this, we suggest passing an `exclude` function for maintainability. You can also use negative lookahead regex as suggested [here](https://github.com/webpack/webpack/issues/2031#issuecomment-294706065).
 
 ```javascript
 {
