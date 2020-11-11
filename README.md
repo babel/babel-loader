@@ -1,5 +1,5 @@
 > This README is for babel-loader v8 + Babel v7
-> Check the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) for docs with Babel v6
+> If you are using legacy Babel v6, see the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) docs
 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
 [![codecov](https://codecov.io/gh/babel/babel-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
@@ -21,7 +21,7 @@ This package allows transpiling JavaScript files using [Babel](https://github.co
 
 <h2 align="center">Install</h2>
 
-> webpack 4.x | babel-loader 8.x | babel 7.x
+> webpack `4.x || 5.x` | babel-loader 8.x | babel 7.x
 
 ```bash
 npm install -D babel-loader @babel/core @babel/preset-env webpack
@@ -38,11 +38,13 @@ module: {
   rules: [
     {
       test: /\.m?js$/,
-      exclude: /(node_modules|bower_components)/,
+      exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env']
+          presets: [
+            ['@babel/preset-env', { targets: "defaults" }]
+          ]
         }
       }
     }
@@ -54,19 +56,21 @@ module: {
 
 See the `babel` [options](https://babeljs.io/docs/en/options).
 
-You can pass options to the loader by using the [`options`](https://webpack.js.org/configuration/module/#rule-options-rule-query) property:
+You can pass options to the loader by using the [`options`](https://webpack.js.org/configuration/module/#ruleoptions--rulequery) property:
 
 ```javascript
 module: {
   rules: [
     {
       test: /\.m?js$/,
-      exclude: /(node_modules|bower_components)/,
+      exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env'],
-          plugins: ['@babel/plugin-proposal-object-rest-spread']
+          presets: [
+            ['@babel/preset-env', { targets: "defaults" }]
+          ],
+          plugins: ['@babel/plugin-proposal-class-properties']
         }
       }
     }
@@ -94,6 +98,35 @@ To exclude `node_modules`, see the `exclude` option in the `loaders` config as d
 
 You can also speed up babel-loader by as much as 2x by using the `cacheDirectory` option. This will cache transformations to the filesystem.
 
+### Some files in my node_modules are not transpiled for IE 11
+
+Although we typically recommend not compiling `node_modules`, you may need to when using libraries that do not support IE 11.
+
+For this, you can either use a combination of `test` and `not`, or [pass a function](https://webpack.js.org/configuration/module/#condition) to your `exclude` option. You can also use negative lookahead regex as suggested [here](https://github.com/webpack/webpack/issues/2031#issuecomment-294706065).
+
+```javascript
+{
+    test: /\.m?js$/,
+    exclude: {
+      test: /node_modules/, // Exclude libraries in node_modules ...
+      not: [
+        // Except for a few of them that needs to be transpiled because they use modern syntax
+        /unfetch/,
+        /d3-array|d3-scale/,
+        /@hapi[\\/]joi-date/,
+      ]
+    },
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: [
+          ['@babel/preset-env', { targets: "ie 11" }]
+        ]
+      }
+    }
+  }
+```
+
 ### Babel is injecting helpers into each file and bloating my code!
 
 Babel uses very small helpers for common functions such as `_extend`. By default, this will be added to every file that requires it.
@@ -112,11 +145,13 @@ rules: [
   // require the runtime instead of inlining it.
   {
     test: /\.m?js$/,
-    exclude: /(node_modules|bower_components)/,
+    exclude: /node_modules/,
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['@babel/preset-env'],
+        presets: [
+          ['@babel/preset-env', { targets: "defaults" }]
+        ],
         plugins: ['@babel/plugin-transform-runtime']
       }
     }
@@ -202,9 +237,9 @@ You will need to exclude them form `babel-loader`.
   "loader": "babel-loader",
   "options": {
     "exclude": [
-      // \\ for Windows, \/ for Mac OS and Linux
-      /node_modules[\\\/]core-js/,
-      /node_modules[\\\/]webpack[\\\/]buildin/,
+      // \\ for Windows, / for macOS and Linux
+      /node_modules[\\/]core-js/,
+      /node_modules[\\/]webpack[\\/]buildin/,
     ],
     "presets": [
       "@babel/preset-env"
