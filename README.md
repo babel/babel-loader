@@ -101,9 +101,8 @@ You can also speed up babel-loader by as much as 2x by using the `cacheDirectory
 ### Some files in my node_modules are not transpiled for IE 11
 
 Although we typically recommend not compiling `node_modules`, you may need to when using libraries that do not support IE 11.
-to compile them for IE 11 compatibility.
 
-For this, we suggest passing an `exclude` function for maintainability. You can also use negative lookahead regex as suggested [here](https://github.com/webpack/webpack/issues/2031#issuecomment-294706065).
+For this, you can either use a combination of `test` and `not`, or [pass a function](https://webpack.js.org/configuration/module/#condition) to your `exclude` option. You can also use negative lookahead regex as suggested [here](https://github.com/webpack/webpack/issues/2031#issuecomment-294706065).
 
 ```javascript
 {
@@ -111,7 +110,7 @@ For this, we suggest passing an `exclude` function for maintainability. You can 
     exclude: {
       test: /node_modules/, // Exclude libraries in node_modules ...
       not: [
-        // Except for a few of them that needs to be transpiled because use modern syntax
+        // Except for a few of them that needs to be transpiled because they use modern syntax
         /unfetch/,
         /d3-array|d3-scale/,
         /@hapi[\\/]joi-date/,
