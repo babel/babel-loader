@@ -10,9 +10,9 @@
     "node": ">= 8.9"
   },
   "dependencies": {
-    "find-cache-dir": "^2.1.0",
+    "find-cache-dir": "^3.3.1",
     "loader-utils": "^1.4.0",
-    "make-dir": "^2.1.0",
+    "make-dir": "^3.1.0",
     "pify": "^4.0.1",
     "schema-utils": "^2.6.5"
   },
