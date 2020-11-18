@@ -1,5 +1,5 @@
 const babel = require("@babel/core");
-const promisify = require("pify");
+const { promisify } = require("util");
 const LoaderError = require("./Error");
 
 const transform = promisify(babel.transform);

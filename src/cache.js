@@ -13,7 +13,7 @@ const path = require("path");
 const zlib = require("zlib");
 const crypto = require("crypto");
 const findCacheDir = require("find-cache-dir");
-const promisify = require("pify");
+const { promisify } = require("util");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
