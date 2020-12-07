@@ -88,6 +88,8 @@ This loader also supports the following loader-specific option:
 
 * `customize`: Default `null`. The path of a module that exports a `custom` callback [like the one that you'd pass to `.custom()`](#customized-loader). Since you already have to make a new file to use this, it is recommended that you instead use `.custom` to create a wrapper loader. Only use this if you _must_ continue using `babel-loader` directly, but still want to customize.
 
+* `metadataSubscribers`: Default `[]`. Takes an array of context function names. E.g. if you passed ['myMetadataPlugin'], you'd assign a subscriber function to `context.myMetadataPlugin` within your webpack plugin's hooks & that function will be called with `metadata`.
+
 ## Troubleshooting
 
 ### babel-loader is slow!
