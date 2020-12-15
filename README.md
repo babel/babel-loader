@@ -250,6 +250,26 @@ You will need to exclude them form `babel-loader`.
 }
 ```
 
+### Top level function (IIFE) is still arrow (on Webpack 5)
+
+That function is injected by Webpack itself _after_ running `babel-loader`. By default Webpack asumes that your target environment supports some ES2015 features, but you can overwrite this behavior using the `output.environment` Webpack option ([documentation]((https://webpack.js.org/configuration/output/#outputenvironment)).
+
+To avoid the top-level arrow function, you can use `output.environment.arrowFunction`:
+
+```js
+// webpack.config.js
+module.exports = {
+  // ...
+  output: {
+    // ...
+    environment: {
+      // ...
+      arrowFunction: false, // <-- this line does the trick
+    },
+  },
+};
+```
+
 ## Customize config based on webpack target
 
 Webpack supports bundling multiple [targets](https://webpack.js.org/concepts/targets/). For cases where you may want different Babel configurations for each target (like `web` _and_ `node`), this loader provides a `target` property via Babel's [caller](https://babeljs.io/docs/en/config-files#apicallercb) API.
