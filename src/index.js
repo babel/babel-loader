@@ -52,7 +52,17 @@ function makeLoader(callback) {
   };
 }
 
-async function loader(source, inputSourceMap, overrides) {
+function parseSourceMap(sourcemap) {
+  try {
+    return typeof sourcemap === "string" ? JSON.parse(sourcemap) : sourcemap;
+  } catch (_e) {
+    return sourcemap;
+  }
+}
+
+async function loader(source, sourceMap, overrides) {
+  const inputSourceMap = parseSourceMap(sourceMap);
+
   const filename = this.resourcePath;
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
