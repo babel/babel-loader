@@ -130,7 +130,7 @@ async function loader(source, inputSourceMap, overrides) {
 
   const programmaticOptions = Object.assign({}, loaderOptions, {
     filename,
-    inputSourceMap: inputSourceMap || undefined,
+    inputSourceMap: inputSourceMap || loaderOptions.inputSourceMap,
 
     // Set the default sourcemap behavior based on Webpack's mapping flag,
     // but allow users to override if they want.
