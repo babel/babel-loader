@@ -209,10 +209,19 @@ async function loader(source, inputSourceMap, overrides) {
       result = await transform(source, options);
     }
 
-    // TODO: Babel should really provide the full list of config files that
-    // were used so that this can also handle files loaded with 'extends'.
-    if (typeof config.babelrc === "string") {
-      this.addDependency(config.babelrc);
+    // Availabe since Babel 7.12
+    // https://github.com/babel/babel/pull/11907
+    if (config.files) {
+      config.files.forEach(configFile => this.addDependency(configFile));
+    } else {
+      // .babelrc.json
+      if (typeof config.babelrc === "string") {
+        this.addDependency(config.babelrc);
+      }
+      // babel.config.js
+      if (config.config) {
+        this.addDependency(config.config);
+      }
     }
 
     if (result) {
