@@ -117,12 +117,12 @@ test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
 
           if (isWebpack5) {
             t.is(
-              mapObj.sources[0],
+              mapObj.sources[3],
               "webpack://babel-loader/./test/fixtures/basic.js",
             );
 
             // Ensure that the map contains the original code, not the compiled src.
-            t.falsy(mapObj.sourcesContent[2].includes("__esModule"));
+            t.falsy(mapObj.sourcesContent[3].includes("__esModule"));
           } else {
             t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
@@ -232,13 +232,13 @@ test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
 
           if (isWebpack5) {
             t.is(
-              mapObj.sources[0],
+              mapObj.sources[3],
               "webpack://babel-loader/./test/fixtures/basic.js",
             );
 
             // Ensure that the code contains Babel's compiled output, because
             // sourcemaps from Babel are disabled.
-            t.truthy(mapObj.sourcesContent[2].includes("__esModule"));
+            t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
           } else {
             t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
@@ -295,13 +295,13 @@ test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
 
           if (isWebpack5) {
             t.is(
-              mapObj.sources[0],
+              mapObj.sources[3],
               "webpack://babel-loader/./test/fixtures/basic.js",
             );
 
             // Ensure that the code contains Babel's compiled output, because
             // sourcemaps from Babel are disabled.
-            t.truthy(mapObj.sourcesContent[2].includes("__esModule"));
+            t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
           } else {
             t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
