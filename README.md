@@ -110,7 +110,7 @@ For this, you can either use a combination of `test` and `not`, or [pass a funct
 {
     test: /\.m?js$/,
     exclude: {
-      test: /node_modules/, // Exclude libraries in node_modules ...
+      and: [/node_modules/], // Exclude libraries in node_modules ...
       not: [
         // Except for a few of them that needs to be transpiled because they use modern syntax
         /unfetch/,
