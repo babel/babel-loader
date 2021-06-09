@@ -323,5 +323,5 @@ test("should allow to specify the .babelrc file", async t => {
   t.deepEqual(multiStats.stats[1].compilation.warnings, []);
 
   const files = fs.readdirSync(t.context.cacheDirectory);
-  t.true(files.length === 2);
+  t.true(files.length === 1);
 });

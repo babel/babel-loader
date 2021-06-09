@@ -10,6 +10,7 @@
     "node": ">= 14.15.0"
   },
   "dependencies": {
+    "fast-stable-stringify": "^1.0.0",
     "find-cache-dir": "^4.0.0",
     "schema-utils": "^4.0.0"
   },
