@@ -63,7 +63,7 @@ const write = async function (filename, compress, result) {
  * @return {String}
  */
 const filename = function (source, identifier, options) {
-  const hash = crypto.createHash("md4");
+  const hash = crypto.createHash("md5");
 
   const contents = JSON.stringify({ source, options, identifier });
 
