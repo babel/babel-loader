@@ -22,6 +22,10 @@
     "customize": {
       "type": "string",
       "default": null
+    },
+    "hashType": {
+      "type": "string",
+      "default": null
     }
   },
   "additionalProperties": true

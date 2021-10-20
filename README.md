@@ -90,6 +90,8 @@ This loader also supports the following loader-specific option:
 
 * `metadataSubscribers`: Default `[]`. Takes an array of context function names. E.g. if you passed ['myMetadataPlugin'], you'd assign a subscriber function to `context.myMetadataPlugin` within your webpack plugin's hooks & that function will be called with `metadata`.
 
+* `hashType`: Default `md4`. The hash digest function to use. If you hit an `ERR_OSSL_EVP_UNSUPPORTED` error in your application with Node.js 17, it’s likely that your attempting to use an algorithm which is no longer allowed by default with OpenSSL 3.0. You can specify `md5` here to fix the issue.
+
 ## Troubleshooting
 
 ### babel-loader is slow!
