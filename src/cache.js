@@ -63,7 +63,14 @@ const write = async function (filename, compress, result) {
  * @return {String}
  */
 const filename = function (source, identifier, options) {
-  const hash = crypto.createHash("md4");
+  // md4 hashing is not supported starting with node v17.0.0
+  const majorNodeVersion = parseInt(process.versions.node.split(".")[0], 10);
+  let hashType = "md4";
+  if (majorNodeVersion >= 17) {
+    hashType = "md5";
+  }
+
+  const hash = crypto.createHash(hashType);
 
   const contents = JSON.stringify({ source, options, identifier });
 
