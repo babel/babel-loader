@@ -62,8 +62,15 @@ const write = async function (filename, compress, result) {
  *
  * @return {String}
  */
-const filename = function (source, identifier, options, hashType) {
-  const hash = crypto.createHash(hashType || "md4");
+const filename = function (source, identifier, options) {
+  // md4 hashing is not supported starting with node v17.0.0
+  const majorNodeVersion = parseInt(process.versions.node.split(".")[0], 10);
+  let hashType = "md4";
+  if (majorNodeVersion >= 17) {
+    hashType = "md5";
+  }
+
+  const hash = crypto.createHash(hashType);
 
   const contents = JSON.stringify({ source, options, identifier });
 
@@ -85,11 +92,9 @@ const handleCache = async function (directory, params) {
     cacheIdentifier,
     cacheDirectory,
     cacheCompression,
-    hashType,
   } = params;
 
-  const name = filename(source, cacheIdentifier, options, hashType);
-  const file = path.join(directory, name);
+  const file = path.join(directory, filename(source, cacheIdentifier, options));
 
   try {
     // No errors mean that the file was previously cached
@@ -137,7 +142,6 @@ const handleCache = async function (directory, params) {
  * @param  {String}   params.cacheDirectory   Directory to store cached files
  * @param  {String}   params.cacheIdentifier  Unique identifier to bust cache
  * @param  {Boolean}  params.cacheCompression Whether compressing cached files
- * @param  {Boolean}  params.hashType Hash digest to use for file names
  * @param  {String}   params.source   Original contents of the file to be cached
  * @param  {Object}   params.options  Options to be given to the transform fn
  *
@@ -147,7 +151,6 @@ const handleCache = async function (directory, params) {
  *     cacheDirectory: '.tmp/cache',
  *     cacheIdentifier: 'babel-loader-cachefile',
  *     cacheCompression: false,
- *     hashType: 'md4',
  *     source: *source code from file*,
  *     options: {
  *       experimental: true,

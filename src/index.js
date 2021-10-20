@@ -150,7 +150,6 @@ async function loader(source, inputSourceMap, overrides) {
   delete programmaticOptions.cacheIdentifier;
   delete programmaticOptions.cacheCompression;
   delete programmaticOptions.metadataSubscribers;
-  delete programmaticOptions.hashType;
 
   if (!babel.loadPartialConfig) {
     throw new Error(
@@ -194,7 +193,6 @@ async function loader(source, inputSourceMap, overrides) {
       }),
       cacheCompression = true,
       metadataSubscribers = [],
-      hashType = null,
     } = loaderOptions;
 
     let result;
@@ -206,7 +204,6 @@ async function loader(source, inputSourceMap, overrides) {
         cacheDirectory,
         cacheIdentifier,
         cacheCompression,
-        hashType,
       });
     } else {
       result = await transform(source, options);
