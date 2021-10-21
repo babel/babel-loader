@@ -252,7 +252,7 @@ You will need to exclude them form `babel-loader`.
 
 ### Top level function (IIFE) is still arrow (on Webpack 5)
 
-That function is injected by Webpack itself _after_ running `babel-loader`. By default Webpack asumes that your target environment supports some ES2015 features, but you can overwrite this behavior using the `output.environment` Webpack option ([documentation]((https://webpack.js.org/configuration/output/#outputenvironment)).
+That function is injected by Webpack itself _after_ running `babel-loader`. By default Webpack asumes that your target environment supports some ES2015 features, but you can overwrite this behavior using the `output.environment` Webpack option ([documentation](https://webpack.js.org/configuration/output/#outputenvironment)).
 
 To avoid the top-level arrow function, you can use `output.environment.arrowFunction`:
 
