@@ -63,13 +63,11 @@ const write = async function (filename, compress, result) {
  * @return {String}
  */
 const filename = function (source, identifier, options) {
-  // md4 hashing is not supported starting with OpenSSL v3.0.0
-  const majorOpensslVersion = parseInt(
-    process.versions.openssl.split(".")[0],
-    10,
-  );
   let hashType = "md4";
-  if (majorOpensslVersion >= 3) {
+
+  try {
+    crypto.createHash(hashType);
+  } catch (err) {
     hashType = "md5";
   }
 
