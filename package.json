@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "find-cache-dir": "^3.3.1",
+    "lmdb": "^2.2.4",
     "loader-utils": "^1.4.0",
-    "make-dir": "^3.1.0",
     "schema-utils": "^2.6.5"
   },
   "peerDependencies": {
@@ -36,6 +36,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.5.1",
+    "node-preload": "^0.2.1",
     "nyc": "^15.1.0",
     "pnp-webpack-plugin": "^1.6.4",
     "prettier": "^2.1.2",
