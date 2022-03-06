@@ -11,6 +11,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "*"
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn
       - name: Lint
@@ -20,7 +21,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [10.x, 12.x, 14.x, 15.x]
+        node-version: [12.x, 14.x, 16.x]
         webpack-version: [latest, '4']
         include:
           - node: 14.x
@@ -33,6 +34,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn
       - name: Install webpack ${{ matrix.webpack-version }}
@@ -48,29 +50,4 @@ jobs:
         if: ${{ matrix.coverage }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-  test-legacy:
-    name: Test - ubuntu-latest - Node v8.9, Webpack 4
-    runs-on: ubuntu-latest
-    env:
-      YARN_NODE_LINKER: node-modules
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - name: Install dependencies
-        run: yarn
-      - name: Install webpack 4
-        run: yarn add -D webpack@4
-      - name: Build babel-loader
-        run: yarn run build
-        env:
-          BABEL_ENV: test
-      - name: Use Node.js 8.9
-        uses: actions/setup-node@v1
-        with:
-          node-version: '8.9'
-      - name: Run tests for webpack version 4
-        run: node scripts/test-legacy
 
