@@ -3,7 +3,7 @@
     ["@babel/preset-env", {
       "loose": true,
       "targets": {
-        "node": "6.9"
+        "node": "12.0.0"
       }
     }]
   ],

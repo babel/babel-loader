@@ -1,5 +1,4 @@
 import test from "ava";
-import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
 import webpack from "webpack";
@@ -12,6 +11,7 @@ const defaultCacheDir = path.join(
 const cacheDir = path.join(__dirname, "output/cache/cachefiles");
 const outputDir = path.join(__dirname, "output/cache");
 const babelLoader = path.join(__dirname, "../lib");
+const { open } = require("lmdb");
 
 const globalConfig = {
   mode: "development",
@@ -48,7 +48,7 @@ test.beforeEach.cb(t => rimraf(defaultCacheDir, t.end));
 test.afterEach.cb(t => rimraf(t.context.directory, t.end));
 test.afterEach.cb(t => rimraf(t.context.cacheDirectory, t.end));
 
-test.cb("should output files to cache directory", t => {
+test.cb("should build a cache database in the cache directory", t => {
   const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -73,16 +73,14 @@ test.cb("should output files to cache directory", t => {
     t.deepEqual(stats.compilation.errors, []);
     t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.cacheDirectory, (err, files) => {
-      t.is(err, null);
-      t.true(files.length > 0);
-      t.end();
-    });
+    const cacheDB = open(t.context.cacheDirectory, { readOnly: true });
+    t.true(cacheDB.getStats().entryCount > 0);
+    t.end();
   });
 });
 
-test.serial.cb(
-  "should output json.gz files to standard cache dir by default",
+test.serial.cb.only(
+  "should add entries to cache db at standard cache dir by default",
   t => {
     const config = Object.assign({}, globalConfig, {
       output: {
@@ -108,56 +106,15 @@ test.serial.cb(
       t.deepEqual(stats.compilation.errors, []);
       t.deepEqual(stats.compilation.warnings, []);
 
-      fs.readdir(defaultCacheDir, (err, files) => {
-        files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
-
-        t.is(err, null);
-        t.true(files.length > 0);
-        t.end();
-      });
+      const cacheDB = open(defaultCacheDir, { readOnly: true });
+      t.true(cacheDB.getStats().entryCount > 0);
+      t.end();
     });
   },
 );
 
 test.serial.cb(
-  "should output non-compressed files to standard cache dir when cacheCompression is set to false",
-  t => {
-    const config = Object.assign({}, globalConfig, {
-      output: {
-        path: t.context.directory,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-            options: {
-              cacheDirectory: true,
-              cacheCompression: false,
-              presets: ["@babel/preset-env"],
-            },
-          },
-        ],
-      },
-    });
-
-    webpack(config, err => {
-      t.is(err, null);
-
-      fs.readdir(defaultCacheDir, (err, files) => {
-        files = files.filter(file => /\b[0-9a-f]{5,40}\b/.test(file));
-
-        t.is(err, null);
-        t.true(files.length > 0);
-        t.end();
-      });
-    });
-  },
-);
-
-test.serial.cb(
-  "should output files to standard cache dir if set to true in query",
+  "should add entries to cache db at standard cache dir if set to true in query",
   t => {
     const config = Object.assign({}, globalConfig, {
       output: {
@@ -179,14 +136,9 @@ test.serial.cb(
       t.deepEqual(stats.compilation.errors, []);
       t.deepEqual(stats.compilation.warnings, []);
 
-      fs.readdir(defaultCacheDir, (err, files) => {
-        files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
-
-        t.is(err, null);
-
-        t.true(files.length > 0);
-        t.end();
-      });
+      const cacheDB = open(t.context.cacheDirectory, { readOnly: true });
+      t.true(cacheDB.getStats().entryCount > 0);
+      t.end();
     });
   },
 );
@@ -220,16 +172,14 @@ test.cb("should read from cache directory if cached file exists", t => {
 
     webpack(config, err => {
       t.is(err, null);
-      fs.readdir(t.context.cacheDirectory, (err, files) => {
-        t.is(err, null);
-        t.true(files.length > 0);
-        t.end();
-      });
+      const cacheDB = open(t.context.cacheDirectory, { readOnly: true });
+      t.true(cacheDB.getStats().entryCount > 0);
+      t.end();
     });
   });
 });
 
-test.cb("should have one file per module", t => {
+test.cb("should have one cache entry per module", t => {
   const config = Object.assign({}, globalConfig, {
     output: {
       path: t.context.directory,
@@ -254,15 +204,13 @@ test.cb("should have one file per module", t => {
     t.deepEqual(stats.compilation.errors, []);
     t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.cacheDirectory, (err, files) => {
-      t.is(err, null);
-      t.true(files.length === 3);
-      t.end();
-    });
+    const cacheDB = open(t.context.cacheDirectory, { readOnly: true });
+    t.true(cacheDB.getStats().entryCount === 3);
+    t.end();
   });
 });
 
-test.cb("should generate a new file if the identifier changes", t => {
+test.cb("should add a new cache entry if the identifier changes", t => {
   const configs = [
     Object.assign({}, globalConfig, {
       output: {
@@ -313,11 +261,9 @@ test.cb("should generate a new file if the identifier changes", t => {
       counter -= 1;
 
       if (!counter) {
-        fs.readdir(t.context.cacheDirectory, (err, files) => {
-          t.is(err, null);
-          t.true(files.length === 6);
-          t.end();
-        });
+        const cacheDB = open(t.context.cacheDirectory, { readOnly: true });
+        t.true(cacheDB.getStats().entryCount === 6);
+        t.end();
       }
     });
   });
@@ -374,10 +320,8 @@ test.cb("should allow to specify the .babelrc file", t => {
     t.deepEqual(multiStats.stats[1].compilation.errors, []);
     t.deepEqual(multiStats.stats[1].compilation.warnings, []);
 
-    fs.readdir(t.context.cacheDirectory, (err, files) => {
-      t.is(err, null);
-      t.true(files.length === 2);
-      t.end();
-    });
+    const cacheDB = open(t.context.cacheDirectory, { readOnly: true });
+    t.true(cacheDB.getStats().entryCount === 1);
+    t.end();
   });
 });
