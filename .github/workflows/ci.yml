@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [10.x, 12.x, 14.x, 15.x]
+        node-version: [10.x, 14.x, 16.x]
         webpack-version: [latest, '4']
         include:
           - node: 14.x
@@ -29,10 +29,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use latest Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '*'
       - name: Install dependencies
         run: yarn
       - name: Install webpack ${{ matrix.webpack-version }}
@@ -41,6 +41,10 @@ jobs:
         run: yarn run build
         env:
           BABEL_ENV: test
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
         run: yarn test-only
       - name: Submit coverage data to codecov
@@ -55,10 +59,10 @@ jobs:
       YARN_NODE_LINKER: node-modules
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
+      - name: Use latest Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: '*'
       - name: Install dependencies
         run: yarn
       - name: Install webpack 4
