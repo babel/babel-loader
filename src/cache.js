@@ -19,6 +19,14 @@ const transform = require("./transform");
 // Lazily instantiated when needed
 let defaultCacheDirectory = null;
 
+let hashType = "md4";
+// use md5 hashing if md4 is not available
+try {
+  crypto.createHash(hashType);
+} catch (err) {
+  hashType = "md5";
+}
+
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const gunzip = promisify(zlib.gunzip);
@@ -63,13 +71,6 @@ const write = async function (filename, compress, result) {
  * @return {String}
  */
 const filename = function (source, identifier, options) {
-  // md4 hashing is not supported starting with node v17.0.0
-  const majorNodeVersion = parseInt(process.versions.node.split(".")[0], 10);
-  let hashType = "md4";
-  if (majorNodeVersion >= 17) {
-    hashType = "md5";
-  }
-
   const hash = crypto.createHash(hashType);
 
   const contents = JSON.stringify({ source, options, identifier });
