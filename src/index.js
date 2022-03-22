@@ -55,7 +55,7 @@ function makeLoader(callback) {
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
 
-  let loaderOptions = loaderUtils.getOptions(this) || {};
+  let loaderOptions = loaderUtils.getOptions(this);
 
   validateOptions(schema, loaderOptions, {
     name: "Babel loader",
