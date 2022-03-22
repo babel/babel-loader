@@ -20,10 +20,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [10.x, 14.x, 16.x]
+        node-version: [14.x, 16.x, 17.x]
         webpack-version: [latest, '4']
         include:
-          - node: 14.x
+          - node: 17.x
             os: ubuntu-latest
             coverage: true
     runs-on: ${{ matrix.os }}
