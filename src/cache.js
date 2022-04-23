@@ -19,8 +19,8 @@ const transform = require("./transform");
 // Lazily instantiated when needed
 let defaultCacheDirectory = null;
 
-let hashType = "md4";
-// use md5 hashing if md4 is not available
+let hashType = "sha256";
+// use md5 hashing if sha256 is not available
 try {
   crypto.createHash(hashType);
 } catch (err) {
