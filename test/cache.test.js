@@ -171,8 +171,12 @@ test.serial.cb(
         rules: [
           {
             test: /\.jsx?/,
-            use: `${babelLoader}?cacheDirectory=true&presets[]=@babel/preset-env`,
+            loader: babelLoader,
             exclude: /node_modules/,
+            options: {
+              cacheDirectory: true,
+              presets: ["@babel/preset-env"],
+            },
           },
         ],
       },
