@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "find-cache-dir": "^3.3.2",
-    "loader-utils": "^2.0.0",
     "schema-utils": "^4.0.0"
   },
   "peerDependencies": {

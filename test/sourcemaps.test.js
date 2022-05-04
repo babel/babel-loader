@@ -44,8 +44,11 @@ test.cb("should output webpack's sourcemap", t => {
       rules: [
         {
           test: /\.jsx?/,
-          use: babelLoader + "?presets[]=@babel/env",
+          loader: babelLoader,
           exclude: /node_modules/,
+          options: {
+            presets: ["@babel/env"],
+          },
         },
       ],
     },
@@ -147,8 +150,11 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
       rules: [
         {
           test: /\.jsx?/,
-          use: babelLoader + "?presets[]=@babel/env",
+          loader: babelLoader,
           exclude: /node_modules/,
+          options: {
+            presets: ["@babel/env"],
+          },
         },
       ],
     },
