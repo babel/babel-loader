@@ -5654,12 +5654,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-preload@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "node-preload@npm:0.2.1"
+"node-preload@npm:0.2.0":
+  version: 0.2.0
+  resolution: "node-preload@npm:0.2.0"
   dependencies:
     process-on-spawn: ^1.0.0
-  checksum: 4586f91ac7417b33accce0ac629fb60f642d0c8d212b3c536dc3dda37fe54f8a3b858273380e1036e41a65d85470332c358315d2288e6584260d620fb4b00fb3
+  checksum: 3345d11d5acc7fdb24f2853a784638880c54f53311159ce7aea7e26333471789d1f275ec1eba4ed263d3c69058995226bbf3a9e11ade5d5954a7afde98758256
   languageName: node
   linkType: hard
 
