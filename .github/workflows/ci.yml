@@ -20,10 +20,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [10.x, 12.x, 14.x, 15.x]
+        node-version: [12.x, 14.x, 16.x]
         webpack-version: [latest, '4']
         include:
-          - node: 14.x
+          - node-version: 18.x
+            webpack-version: latest
             os: ubuntu-latest
             coverage: true
     runs-on: ${{ matrix.os }}
@@ -55,10 +56,10 @@ jobs:
       YARN_NODE_LINKER: node-modules
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
+      - name: Use Node.js latest
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: '*'
       - name: Install dependencies
         run: yarn
       - name: Install webpack 4
