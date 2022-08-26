@@ -27,6 +27,10 @@ const globalConfig = {
   },
 };
 
+// Cache filename is either SHA256 or MD5 hash
+const UNCOMPRESSED_CACHE_FILE_REGEX = /^[0-9a-f]{32}(?:[0-9a-f]{32})?\.json$/;
+const CACHE_FILE_REGEX = /^[0-9a-f]{32}(?:[0-9a-f]{32})?\.json\.gz$/;
+
 // Create a separate directory for each test so that the tests
 // can run in parallel
 
@@ -109,7 +113,7 @@ test.serial.cb(
       t.deepEqual(stats.compilation.warnings, []);
 
       fs.readdir(defaultCacheDir, (err, files) => {
-        files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
+        files = files.filter(file => CACHE_FILE_REGEX.test(file));
 
         t.is(err, null);
         t.true(files.length > 0);
@@ -146,7 +150,7 @@ test.serial.cb(
       t.is(err, null);
 
       fs.readdir(defaultCacheDir, (err, files) => {
-        files = files.filter(file => /\b[0-9a-f]{5,40}\b/.test(file));
+        files = files.filter(file => UNCOMPRESSED_CACHE_FILE_REGEX.test(file));
 
         t.is(err, null);
         t.true(files.length > 0);
@@ -180,7 +184,7 @@ test.serial.cb(
       t.deepEqual(stats.compilation.warnings, []);
 
       fs.readdir(defaultCacheDir, (err, files) => {
-        files = files.filter(file => /\b[0-9a-f]{5,40}\.json\.gz\b/.test(file));
+        files = files.filter(file => CACHE_FILE_REGEX.test(file));
 
         t.is(err, null);
 
