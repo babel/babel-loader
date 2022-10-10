@@ -32,6 +32,7 @@ const writeFile = promisify(fs.writeFile);
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
 const makeDir = require("make-dir");
+const stringify = require("fast-stable-stringify");
 
 /**
  * Read the contents from the compressed file.
@@ -73,9 +74,7 @@ const write = async function (filename, compress, result) {
 const filename = function (source, identifier, options) {
   const hash = crypto.createHash(hashType);
 
-  const contents = JSON.stringify({ source, options, identifier });
-
-  hash.update(contents);
+  hash.update(stringify({ source, options, identifier }));
 
   return hash.digest("hex") + ".json";
 };

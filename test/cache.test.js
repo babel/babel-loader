@@ -380,7 +380,7 @@ test.cb("should allow to specify the .babelrc file", t => {
 
     fs.readdir(t.context.cacheDirectory, (err, files) => {
       t.is(err, null);
-      t.true(files.length === 2);
+      t.true(files.length === 1);
       t.end();
     });
   });

@@ -2140,6 +2140,7 @@ __metadata:
     eslint-config-prettier: ^6.3.0
     eslint-plugin-flowtype: ^5.2.0
     eslint-plugin-prettier: ^3.0.0
+    fast-stable-stringify: ^1.0.0
     find-cache-dir: ^3.3.1
     husky: ^4.3.0
     lint-staged: ^10.5.1
@@ -3729,6 +3730,13 @@ __metadata:
   version: 2.5.2
   resolution: "fast-memoize@npm:2.5.2"
   checksum: 79fa759719ba4eac7e8c22fb3b0eb3f18f4a31e218c00b1eb4a5b53c5781921133a6b84472d59ec5a6ea8f26ad57b43cd99a350c0547ccce51489bc9a5f0b28d
+  languageName: node
+  linkType: hard
+
+"fast-stable-stringify@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "fast-stable-stringify@npm:1.0.0"
+  checksum: 972291ed8b8a1a1e13130c91062852dc9142dceed14dc1655c1d0aebc07adcf8a60678252dd1410ec0cceddd3842c87cfea2a937ee3043dfaa6068c3f578f515
   languageName: node
   linkType: hard
 
