@@ -2244,7 +2244,7 @@ __metadata:
     webpack: ^5.34.0
   peerDependencies:
     "@babel/core": ^7.12.0
-    webpack: ">=2"
+    webpack: ">=5"
   languageName: unknown
   linkType: soft
 
