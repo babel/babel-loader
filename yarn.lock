@@ -2181,7 +2181,6 @@ __metadata:
     husky: ^4.3.0
     lint-staged: ^10.5.1
     loader-utils: ^2.0.0
-    make-dir: ^3.1.0
     nyc: ^15.1.0
     pnp-webpack-plugin: ^1.6.4
     prettier: ^2.1.2
@@ -5390,7 +5389,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
+"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
   dependencies:

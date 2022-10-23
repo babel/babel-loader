@@ -7,13 +7,13 @@
  * @see https://github.com/babel/babel-loader/issues/34
  * @see https://github.com/babel/babel-loader/pull/41
  */
-const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 const crypto = require("crypto");
 const findCacheDir = require("find-cache-dir");
 const { promisify } = require("util");
+const { readFile, writeFile, mkdir } = require("node:fs/promises");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
@@ -27,11 +27,8 @@ try {
   hashType = "md5";
 }
 
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
-const makeDir = require("make-dir");
 
 /**
  * Read the contents from the compressed file.
@@ -108,7 +105,8 @@ const handleCache = async function (directory, params) {
 
   // Make sure the directory exists.
   try {
-    await makeDir(directory);
+    // overwrite directory if exists
+    await mkdir(directory, { recursive: true });
   } catch (err) {
     if (fallback) {
       return handleCache(os.tmpdir(), params);
