@@ -27,7 +27,7 @@ const schema = require("./schema");
 
 const { isAbsolute } = require("path");
 const loaderUtils = require("loader-utils");
-const validateOptions = require("schema-utils");
+const validateOptions = require("schema-utils").validate;
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
