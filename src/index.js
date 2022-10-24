@@ -4,7 +4,7 @@ try {
 } catch (err) {
   if (err.code === "MODULE_NOT_FOUND") {
     err.message +=
-      "\n babel-loader@8 requires Babel 7.x (the package '@babel/core'). " +
+      "\n babel-loader@9 requires Babel 7.12+ (the package '@babel/core'). " +
       "If you'd like to use Babel 6.x ('babel-core'), you should install 'babel-loader@7'.";
   }
   throw err;
@@ -14,7 +14,7 @@ try {
 // people useful feedback if they try to use it alongside babel-loader.
 if (/^6\./.test(babel.version)) {
   throw new Error(
-    "\n babel-loader@8 will not work with the '@babel/core@6' bridge package. " +
+    "\n babel-loader@9 will not work with the '@babel/core@6' bridge package. " +
       "If you want to use Babel 6.x, install 'babel-loader@7'.",
   );
 }
@@ -27,7 +27,7 @@ const schema = require("./schema");
 
 const { isAbsolute } = require("path");
 const loaderUtils = require("loader-utils");
-const validateOptions = require("schema-utils");
+const validateOptions = require("schema-utils").validate;
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
@@ -151,17 +151,7 @@ async function loader(source, inputSourceMap, overrides) {
   delete programmaticOptions.cacheCompression;
   delete programmaticOptions.metadataSubscribers;
 
-  if (!babel.loadPartialConfig) {
-    throw new Error(
-      `babel-loader ^8.0.0-beta.3 requires @babel/core@7.0.0-beta.41, but ` +
-        `you appear to be using "${babel.version}". Either update your ` +
-        `@babel/core version, or pin you babel-loader version to 8.0.0-beta.2`,
-    );
-  }
-
-  // babel.loadPartialConfigAsync is available in v7.8.0+
-  const { loadPartialConfigAsync = babel.loadPartialConfig } = babel;
-  const config = await loadPartialConfigAsync(
+  const config = await babel.loadPartialConfigAsync(
     injectCaller(programmaticOptions, this.target),
   );
   if (config) {
@@ -209,20 +199,7 @@ async function loader(source, inputSourceMap, overrides) {
       result = await transform(source, options);
     }
 
-    // Availabe since Babel 7.12
-    // https://github.com/babel/babel/pull/11907
-    if (config.files) {
-      config.files.forEach(configFile => this.addDependency(configFile));
-    } else {
-      // .babelrc.json
-      if (typeof config.babelrc === "string") {
-        this.addDependency(config.babelrc);
-      }
-      // babel.config.js
-      if (config.config) {
-        this.addDependency(config.config);
-      }
-    }
+    config.files.forEach(configFile => this.addDependency(configFile));
 
     if (result) {
       if (overrides && overrides.result) {

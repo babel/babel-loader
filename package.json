@@ -7,16 +7,15 @@
   ],
   "main": "lib/index.js",
   "engines": {
-    "node": ">= 8.9"
+    "node": ">= 14.15.0"
   },
   "dependencies": {
-    "find-cache-dir": "^3.3.1",
+    "find-cache-dir": "^3.3.2",
     "loader-utils": "^2.0.0",
-    "make-dir": "^3.1.0",
-    "schema-utils": "^2.6.5"
+    "schema-utils": "^4.0.0"
   },
   "peerDependencies": {
-    "@babel/core": "^7.0.0",
+    "@babel/core": "^7.12.0",
     "webpack": ">=2"
   },
   "devDependencies": {
