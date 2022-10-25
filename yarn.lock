@@ -5805,9 +5805,9 @@ fsevents@~2.1.2:
   linkType: hard
 
 "normalize-url@npm:^4.1.0":
-  version: 4.5.0
-  resolution: "normalize-url@npm:4.5.0"
-  checksum: 34e9d01095df5c9348bf75f6cf0552c01438a29119aecdb747eead6ccd36a386209acdc093fc993edd32731b3056ff2977ffab44e4b8eed4d8aafdf0feae90c7
+  version: 4.5.1
+  resolution: "normalize-url@npm:4.5.1"
+  checksum: 9a9dee01df02ad23e171171893e56e22d752f7cff86fb96aafeae074819b572ea655b60f8302e2d85dbb834dc885c972cc1c573892fea24df46b2765065dd05a
   languageName: node
   linkType: hard
 
