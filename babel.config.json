@@ -1,10 +1,10 @@
 {
+  "targets": {
+    "node": "14.15.0"
+  },
   "presets": [
     ["@babel/preset-env", {
-      "loose": true,
-      "targets": {
-        "node": "6.9"
-      }
+      "loose": true
     }]
   ],
   "env": {
