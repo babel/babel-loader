@@ -17,7 +17,10 @@ const globalConfig = {
         test: /\.jsx?/,
         loader: babelLoader,
         options: {
-          presets: ["@babel/preset-env"],
+          targets: "chrome 42",
+          presets: [["@babel/preset-env", { bugfixes: true, loose: true }]],
+          configFile: false,
+          babelrc: false,
         },
         exclude: /node_modules/,
       },
@@ -54,10 +57,10 @@ test.cb("should transpile the code snippet", t => {
       t.true(files.length === 1);
       fs.readFile(path.resolve(t.context.directory, files[0]), (err, data) => {
         t.is(err, null);
-        const test = "var App = function App()";
+        const test = "var App = function App(arg)";
         const subject = data.toString();
 
-        t.not(subject.indexOf(test), -1);
+        t.true(subject.includes(test));
 
         t.end();
       });
