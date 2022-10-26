@@ -16,7 +16,7 @@ jobs:
       - name: Lint
         run: yarn run lint
   test:
-    name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}, Webpack ${{ matrix.webpack-version }}
+    name: Test - ${{ matrix.os }} - Node ${{ matrix.node-version }}, Webpack ${{ matrix.webpack-version }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
