@@ -11,12 +11,11 @@
   },
   "dependencies": {
     "find-cache-dir": "^3.3.2",
-    "loader-utils": "^2.0.0",
     "schema-utils": "^4.0.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.12.0",
-    "webpack": ">=2"
+    "webpack": ">=5"
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",

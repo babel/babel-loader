@@ -26,7 +26,6 @@ const injectCaller = require("./injectCaller");
 const schema = require("./schema");
 
 const { isAbsolute } = require("path");
-const loaderUtils = require("loader-utils");
 const validateOptions = require("schema-utils").validate;
 
 function subscribe(subscriber, metadata, context) {
@@ -55,8 +54,7 @@ function makeLoader(callback) {
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
 
-  let loaderOptions = loaderUtils.getOptions(this);
-
+  let loaderOptions = this.getOptions();
   validateOptions(schema, loaderOptions, {
     name: "Babel loader",
   });

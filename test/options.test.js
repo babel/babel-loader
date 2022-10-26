@@ -14,8 +14,11 @@ const globalConfig = {
     rules: [
       {
         test: /\.jsx?/,
-        use: babelLoader,
+        loader: babelLoader,
         exclude: /node_modules/,
+        options: {
+          presets: ["@babel/env"],
+        },
       },
     ],
   },
@@ -42,8 +45,11 @@ test.cb("should interpret options given to the loader", t => {
       rules: [
         {
           test: /\.jsx?/,
-          use: babelLoader + "?presets[]=@babel/env",
+          loader: babelLoader,
           exclude: /node_modules/,
+          options: {
+            presets: ["@babel/env"],
+          },
         },
       ],
     },
