@@ -21,7 +21,11 @@ This package allows transpiling JavaScript files using [Babel](https://github.co
 
 <h2 align="center">Install</h2>
 
-> webpack `4.x || 5.x` | babel-loader 8.x | babel 7.x
+> | babel-loader | supported webpack versions | supported Babel versions | supported Node.js versions |
+> |:-:|:-:|:-:|:-:|
+> | 8.x | 4.x or 5.x | 7.x | >= 8.9 |
+> | 9.x | 5.x | ^7.12.0 | >= 14.15.0 |
+
 
 ```bash
 npm install -D babel-loader @babel/core @babel/preset-env webpack
