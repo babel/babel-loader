@@ -13,7 +13,7 @@ const zlib = require("zlib");
 const crypto = require("crypto");
 const findCacheDir = require("find-cache-dir");
 const { promisify } = require("util");
-const { readFile, writeFile, mkdir } = require("node:fs/promises");
+const { readFile, writeFile, mkdir } = require("fs/promises");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
