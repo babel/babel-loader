@@ -23,6 +23,9 @@ jobs:
         node-version: [14, 16, 18]
         webpack-version: ['5']
         include:
+          - node-version: "14.15.0" # The minimum supported node version
+            webpack-version: latest
+            os: ubuntu-latest
           - node-version: latest
             webpack-version: latest
             os: ubuntu-latest
