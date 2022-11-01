@@ -181,3 +181,38 @@ test.cb("should load ESM config files", t => {
     t.end();
   });
 });
+
+test.cb("should track external dependencies", t => {
+  const dep = path.join(__dirname, "fixtures/metadata.js");
+  const config = Object.assign({}, globalConfig, {
+    entry: path.join(__dirname, "fixtures/constant.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          loader: babelLoader,
+          options: {
+            babelrc: false,
+            configFile: false,
+            plugins: [
+              api => {
+                api.cache.never();
+                api.addExternalDependency(dep);
+                return { visitor: {} };
+              },
+            ],
+          },
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.true(stats.compilation.fileDependencies.has(dep));
+    t.deepEqual(stats.compilation.warnings, []);
+    t.end();
+  });
+});

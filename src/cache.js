@@ -121,15 +121,19 @@ const handleCache = async function (directory, params) {
   // return it to the user asap and write it in cache
   const result = await transform(source, options);
 
-  try {
-    await write(file, cacheCompression, result);
-  } catch (err) {
-    if (fallback) {
-      // Fallback to tmpdir if node_modules folder not writable
-      return handleCache(os.tmpdir(), params);
-    }
+  // Do not cache if there are external dependencies,
+  // since they might change and we cannot control it.
+  if (!result.externalDependencies.length) {
+    try {
+      await write(file, cacheCompression, result);
+    } catch (err) {
+      if (fallback) {
+        // Fallback to tmpdir if node_modules folder not writable
+        return handleCache(os.tmpdir(), params);
+      }
 
-    throw err;
+      throw err;
+    }
   }
 
   return result;
