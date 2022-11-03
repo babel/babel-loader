@@ -35,7 +35,7 @@ webpack(config, (err, stats) => {
     assert.strictEqual(files.length, 1);
     fs.readFile(path.join(__dirname, "test-legacy-source/output", files[0]), (err, data) => {
       assert.strictEqual(err, null);
-      const test = "var App = function App()";
+      const test = "function App()";
       const subject = data.toString();
 
       assert.notStrictEqual(subject.indexOf(test), -1);

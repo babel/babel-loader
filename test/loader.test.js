@@ -54,7 +54,7 @@ test.cb("should transpile the code snippet", t => {
       t.true(files.length === 1);
       fs.readFile(path.resolve(t.context.directory, files[0]), (err, data) => {
         t.is(err, null);
-        const test = "var App = function App()";
+        const test = "function App()";
         const subject = data.toString();
 
         t.not(subject.indexOf(test), -1);
