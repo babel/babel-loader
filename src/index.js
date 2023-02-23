@@ -26,6 +26,7 @@ const injectCaller = require("./injectCaller");
 const schema = require("./schema");
 
 const { isAbsolute } = require("path");
+const fs = require("fs");
 const validateOptions = require("schema-utils").validate;
 
 function subscribe(subscriber, metadata, context) {
@@ -39,19 +40,22 @@ module.exports.custom = makeLoader;
 
 function makeLoader(callback) {
   const overrides = callback ? callback(babel) : undefined;
+  const data = {
+    cachedDepMtimes: { __proto__: null },
+  };
 
   return function (source, inputSourceMap) {
     // Make the loader async
     const callback = this.async();
 
-    loader.call(this, source, inputSourceMap, overrides).then(
+    loader.call(this, source, inputSourceMap, overrides, data).then(
       args => callback(null, ...args),
       err => callback(err),
     );
   };
 }
 
-async function loader(source, inputSourceMap, overrides) {
+async function loader(source, inputSourceMap, overrides, data) {
   const filename = this.resourcePath;
 
   let loaderOptions = this.getOptions();
@@ -185,6 +189,16 @@ async function loader(source, inputSourceMap, overrides) {
 
     let result;
     if (cacheDirectory) {
+      const cachedDepMtimes = [];
+      for (const dep of Object.keys(data.cachedDepMtimes)) {
+        let mtime = 0;
+        try {
+          mtime = fs.statSync(dep).mtime;
+        } catch (error) {}
+        cachedDepMtimes.push(dep + mtime);
+      }
+      cachedDepMtimes.sort();
+
       result = await cache({
         source,
         options,
@@ -192,6 +206,7 @@ async function loader(source, inputSourceMap, overrides) {
         cacheDirectory,
         cacheIdentifier,
         cacheCompression,
+        cachedDepMtimes,
       });
     } else {
       result = await transform(source, options);
@@ -212,7 +227,17 @@ async function loader(source, inputSourceMap, overrides) {
 
       const { code, map, metadata, externalDependencies } = result;
 
-      externalDependencies?.forEach(dep => this.addDependency(dep));
+      externalDependencies?.forEach(dep => {
+        if (data.cachedDepMtimes[dep] == null) {
+          let mtime = 0;
+          try {
+            mtime = fs.statSync(dep).mtime;
+          } catch (error) {}
+          data.cachedDepMtimes[dep] = mtime;
+        }
+        this.addDependency(dep);
+      });
+
       metadataSubscribers.forEach(subscriber => {
         subscribe(subscriber, metadata, this);
       });
