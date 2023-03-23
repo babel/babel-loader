@@ -389,3 +389,90 @@ test.cb("should allow to specify the .babelrc file", t => {
     });
   });
 });
+
+test.cb("should cache external dependencies", t => {
+  const dep = path.join(cacheDir, "externalDependency.txt");
+
+  fs.writeFileSync(dep, "123");
+
+  let counter = 0;
+
+  const config = Object.assign({}, globalConfig, {
+    entry: path.join(__dirname, "fixtures/constant.js"),
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          loader: babelLoader,
+          options: {
+            babelrc: false,
+            configFile: false,
+            cacheDirectory: t.context.cacheDirectory,
+            plugins: [
+              api => {
+                api.cache.never();
+                api.addExternalDependency(dep);
+                return {
+                  visitor: {
+                    BooleanLiteral(path) {
+                      counter++;
+                      path.replaceWith(
+                        api.types.stringLiteral(fs.readFileSync(dep, "utf8")),
+                      );
+                      path.stop();
+                    },
+                  },
+                };
+              },
+            ],
+          },
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.deepEqual(stats.compilation.warnings, []);
+    t.deepEqual(stats.compilation.errors, []);
+
+    t.true(stats.compilation.fileDependencies.has(dep));
+
+    t.is(counter, 1);
+
+    webpack(config, (err, stats) => {
+      t.deepEqual(stats.compilation.warnings, []);
+      t.deepEqual(stats.compilation.errors, []);
+
+      t.true(stats.compilation.fileDependencies.has(dep));
+
+      t.is(counter, 2);
+
+      webpack(config, (err, stats) => {
+        t.deepEqual(stats.compilation.warnings, []);
+        t.deepEqual(stats.compilation.errors, []);
+
+        t.true(stats.compilation.fileDependencies.has(dep));
+
+        t.is(counter, 2);
+
+        fs.writeFileSync(dep, "456");
+
+        setTimeout(() => {
+          webpack(config, (err, stats) => {
+            t.deepEqual(stats.compilation.warnings, []);
+            t.deepEqual(stats.compilation.errors, []);
+
+            t.true(stats.compilation.fileDependencies.has(dep));
+
+            t.is(counter, 3);
+
+            t.end();
+          });
+        }, 1000);
+      });
+    });
+  });
+});

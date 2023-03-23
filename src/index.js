@@ -193,7 +193,7 @@ async function loader(source, inputSourceMap, overrides, data) {
       for (const dep of Object.keys(data.cachedDepMtimes)) {
         let mtime = 0;
         try {
-          mtime = fs.statSync(dep).mtime;
+          mtime = fs.statSync(dep).mtimeMs;
         } catch (error) {}
         cachedDepMtimes.push(dep + mtime);
       }
@@ -231,7 +231,7 @@ async function loader(source, inputSourceMap, overrides, data) {
         if (data.cachedDepMtimes[dep] == null) {
           let mtime = 0;
           try {
-            mtime = fs.statSync(dep).mtime;
+            mtime = fs.statSync(dep).mtimeMs;
           } catch (error) {}
           data.cachedDepMtimes[dep] = mtime;
         }
