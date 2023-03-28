@@ -41,7 +41,7 @@ Within your webpack configuration object, you'll need to add the babel-loader to
 module: {
   rules: [
     {
-      test: /\.m?js$/,
+      test: /\.(?:js|mjs|cjs)$/,
       exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
@@ -66,7 +66,7 @@ You can pass options to the loader by using the [`options`](https://webpack.js.o
 module: {
   rules: [
     {
-      test: /\.m?js$/,
+      test: /\.(?:js|mjs|cjs)$/,
       exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
@@ -106,13 +106,13 @@ You can also speed up babel-loader by as much as 2x by using the `cacheDirectory
 
 ### Some files in my node_modules are not transpiled for IE 11
 
-Although we typically recommend not compiling `node_modules`, you may need to when using libraries that do not support IE 11.
+Although we typically recommend not compiling `node_modules`, you may need to when using libraries that do not support IE 11 or any legacy targets.
 
 For this, you can either use a combination of `test` and `not`, or [pass a function](https://webpack.js.org/configuration/module/#condition) to your `exclude` option. You can also use negative lookahead regex as suggested [here](https://github.com/webpack/webpack/issues/2031#issuecomment-294706065).
 
 ```javascript
 {
-    test: /\.m?js$/,
+    test: /\.(?:js|mjs|cjs)$/,
     exclude: {
       and: [/node_modules/], // Exclude libraries in node_modules ...
       not: [
@@ -150,7 +150,7 @@ rules: [
   // the 'transform-runtime' plugin tells Babel to
   // require the runtime instead of inlining it.
   {
-    test: /\.m?js$/,
+    test: /\.(?:js|mjs|cjs)$/,
     exclude: /node_modules/,
     use: {
       loader: 'babel-loader',
@@ -216,7 +216,7 @@ require('./app');
 If you receive this message, it means that you have the npm package `babel` installed and are using the short notation of the loader in the webpack config (which is not valid anymore as of webpack 2.x):
 ```javascript
   {
-    test: /\.m?js$/,
+    test: /\.(?:js|mjs|cjs)$/,
     loader: 'babel',
   }
 ```
@@ -227,7 +227,7 @@ To fix this, you should uninstall the npm package `babel`, as it is deprecated i
 In the case one of your dependencies is installing `babel` and you cannot uninstall it yourself, use the complete name of the loader in the webpack config:
 ```javascript
   {
-    test: /\.m?js$/,
+    test: /\.(?:js|mjs|cjs)$/,
     loader: 'babel-loader',
   }
 ```
