@@ -320,7 +320,7 @@ your `custom` callback function.
 // Export from "./my-custom-loader.js" or whatever you want.
 module.exports = require("babel-loader").custom(babel => {
   // Extract the custom options in the custom plugin
-  function myPlugin({ opt1, opt2 }) {
+  function myPlugin(api, { opt1, opt2 }) {
     return {
       visitor: {},
     };
@@ -351,7 +351,7 @@ module.exports = require("babel-loader").custom(babel => {
           ...(cfg.options.plugins || []),
 
           // Include a custom plugin in the options and passing it the customOptions object.
-          (...pluginArgs) => myPlugin(customOptions, ...pluginArgs),
+          [myPlugin, customOptions],
         ],
       };
     },
