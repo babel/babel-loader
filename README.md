@@ -323,7 +323,8 @@ your `custom` callback function.
 ```js
 // Export from "./my-custom-loader.js" or whatever you want.
 module.exports = require("babel-loader").custom(babel => {
-  function myPlugin() {
+  // Extract the custom options in the custom plugin
+  function myPlugin(api, { opt1, opt2 }) {
     return {
       visitor: {},
     };
@@ -342,7 +343,7 @@ module.exports = require("babel-loader").custom(babel => {
     },
 
     // Passed Babel's 'PartialConfig' object.
-    config(cfg) {
+    config(cfg, { customOptions }) {
       if (cfg.hasFilesystemConfig()) {
         // Use the normal config
         return cfg.options;
@@ -353,8 +354,8 @@ module.exports = require("babel-loader").custom(babel => {
         plugins: [
           ...(cfg.options.plugins || []),
 
-          // Include a custom plugin in the options.
-          myPlugin,
+          // Include a custom plugin in the options and passing it the customOptions object.
+          [myPlugin, customOptions],
         ],
       };
     },
@@ -389,7 +390,7 @@ Given the loader's options, split custom options out of `babel-loader`'s
 options.
 
 
-### `config(cfg: PartialConfig): Object`
+### `config(cfg: PartialConfig, options: { source, customOptions }): Object`
 
 Given Babel's `PartialConfig` object, return the `options` object that should
 be passed to `babel.transform`.
