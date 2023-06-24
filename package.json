@@ -41,7 +41,7 @@
     "react-intl": "^5.9.4",
     "react-intl-webpack-plugin": "^0.3.0",
     "rimraf": "^3.0.0",
-    "semver": "7.3.2",
+    "semver": "7.5.2",
     "webpack": "^5.74.0"
   },
   "scripts": {
