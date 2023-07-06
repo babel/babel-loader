@@ -10,7 +10,7 @@
     "node": ">= 14.15.0"
   },
   "dependencies": {
-    "find-cache-dir": "^3.3.2",
+    "find-cache-dir": "^4.0.0",
     "schema-utils": "^4.0.0"
   },
   "peerDependencies": {
