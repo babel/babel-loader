@@ -26,7 +26,6 @@
     "babel-eslint": "^10.1.0",
     "babel-plugin-react-intl": "^8.2.25",
     "c8": "^8.0.0",
-    "cross-env": "^7.0.2",
     "eslint": "^7.13.0",
     "eslint-config-babel": "^9.0.0",
     "eslint-config-prettier": "^6.3.0",
@@ -117,8 +116,5 @@
       "node ./scripts/yarn-install.js",
       "git add yarn.lock"
     ]
-  },
-  "resolutions": {
-    "nyc/node-preload": "0.2.0"
   }
 }

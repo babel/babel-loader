@@ -2285,7 +2285,6 @@ __metadata:
     babel-eslint: ^10.1.0
     babel-plugin-react-intl: ^8.2.25
     c8: ^8.0.0
-    cross-env: ^7.0.2
     eslint: ^7.13.0
     eslint-config-babel: ^9.0.0
     eslint-config-prettier: ^6.3.0
@@ -2923,19 +2922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-env@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "cross-env@npm:7.0.2"
-  dependencies:
-    cross-spawn: ^7.0.1
-  bin:
-    cross-env: src/bin/cross-env.js
-    cross-env-shell: src/bin/cross-env-shell.js
-  checksum: dcfb07e279ca83abfe2205199a38d719bd9e1ba1dd4eed0878b12bb9b45132df0e7aea4a2fcf310b6845d232d2991488fafb30059261bb4c822fd12f71fe5e28
-  languageName: node
-  linkType: hard
-
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2":
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
