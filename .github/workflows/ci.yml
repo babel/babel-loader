@@ -14,6 +14,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: latest
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn
       - name: Lint
@@ -40,6 +41,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn
       - name: Install webpack ${{ matrix.webpack-version }}
