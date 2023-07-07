@@ -6,19 +6,6 @@ permissions:
   contents: read #  to fetch code (actions/checkout)
 
 jobs:
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: latest
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn
-      - name: Lint
-        run: yarn run lint
   test:
     name: Test - ${{ matrix.os }} - Node ${{ matrix.node-version }}, Webpack ${{ matrix.webpack-version }}
     strategy:
@@ -30,10 +17,6 @@ jobs:
           - node-version: "14.15.0" # The minimum supported node version
             webpack-version: latest
             os: ubuntu-latest
-          - node-version: latest
-            webpack-version: latest
-            os: ubuntu-latest
-            coverage: true
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -48,13 +31,29 @@ jobs:
         run: yarn add -D webpack@${{ matrix.webpack-version }}
       - name: Build babel-loader
         run: yarn run build
-        env:
-          BABEL_ENV: test
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
         run: yarn test-only
+
+  lint-coverage:
+    name: Lint and Coverage - ${{ matrix.os }} - Node ${{ matrix.node-version }}, Webpack 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn
+      - name: Run lint and coverage tests
+        run: yarn test
       - name: Submit coverage data to codecov
         uses: codecov/codecov-action@v3
-        if: ${{ matrix.coverage }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
