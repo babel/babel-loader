@@ -1,5 +1,5 @@
 {
-  "include": [
-    "lib/*.js"
-  ]
+  "all": true,
+  "src": ["./src"],
+  "include": ["lib/**"]
 }

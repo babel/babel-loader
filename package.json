@@ -50,7 +50,7 @@
     "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",
     "preversion": "yarn run test",
-    "test": "yarn run lint && yarn run build && c8 yarn run test-only",
+    "test": "yarn run lint && yarn run build --source-maps && c8 yarn run test-only",
     "test-only": "ava"
   },
   "repository": {
