@@ -24,9 +24,8 @@
     "@babel/preset-env": "^7.19.4",
     "ava": "^3.13.0",
     "babel-eslint": "^10.1.0",
-    "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-react-intl": "^8.2.25",
-    "cross-env": "^7.0.2",
+    "c8": "^8.0.0",
     "eslint": "^7.13.0",
     "eslint-config-babel": "^9.0.0",
     "eslint-config-prettier": "^6.3.0",
@@ -34,7 +33,6 @@
     "eslint-plugin-prettier": "^3.0.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.5.1",
-    "nyc": "^15.1.0",
     "pnp-webpack-plugin": "^1.6.4",
     "prettier": "^2.1.2",
     "react": "^17.0.1",
@@ -52,8 +50,8 @@
     "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",
     "preversion": "yarn run test",
-    "test": "yarn run lint && cross-env BABEL_ENV=test yarn run build && yarn run test-only",
-    "test-only": "nyc ava"
+    "test": "yarn run lint && yarn run build --source-maps && c8 yarn run test-only",
+    "test-only": "ava"
   },
   "repository": {
     "type": "git",
@@ -118,8 +116,5 @@
       "node ./scripts/yarn-install.js",
       "git add yarn.lock"
     ]
-  },
-  "resolutions": {
-    "nyc/node-preload": "0.2.0"
   }
 }

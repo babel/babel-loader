@@ -1,0 +1,6 @@
+{
+  "all": true,
+  "src": ["./src"],
+  "include": ["lib/**"],
+  "reporter": ["lcov", "text"]
+}
