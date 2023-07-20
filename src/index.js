@@ -12,7 +12,14 @@ try {
 
 // Since we've got the reverse bridge package at @babel/core@6.x, give
 // people useful feedback if they try to use it alongside babel-loader.
-if (/^6\./.test(babel.version)) {
+let babelVersion;
+try {
+  babelVersion = babel.version;
+} catch (e) {
+  // In Babel 8, .version cannot be synchronously accesssed.
+  // It's ok, it's not Babel 7.
+}
+if (babelVersion && /^6\./.test(babelVersion)) {
   throw new Error(
     "\n babel-loader@9 will not work with the '@babel/core@6' bridge package. " +
       "If you want to use Babel 6.x, install 'babel-loader@7'.",
@@ -176,7 +183,7 @@ async function loader(source, inputSourceMap, overrides) {
       cacheDirectory = null,
       cacheIdentifier = JSON.stringify({
         options,
-        "@babel/core": transform.version,
+        "@babel/core": babel.version,
         "@babel/loader": version,
       }),
       cacheCompression = true,

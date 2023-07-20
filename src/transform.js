@@ -36,4 +36,6 @@ module.exports = async function (source, options) {
   };
 };
 
-module.exports.version = babel.version;
+Object.defineProperty(module.exports, "version", {
+  get: () => babel.version,
+});
