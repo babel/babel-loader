@@ -90,9 +90,16 @@ const handleCache = async function (directory, params) {
     cacheIdentifier,
     cacheDirectory,
     cacheCompression,
+    cachedDepMtimes,
   } = params;
 
-  const file = path.join(directory, filename(source, cacheIdentifier, options));
+  const file = path.join(
+    directory,
+    filename(source, cacheIdentifier, {
+      options,
+      __cachedDepMtimes: cachedDepMtimes,
+    }),
+  );
 
   try {
     // No errors mean that the file was previously cached
@@ -119,19 +126,15 @@ const handleCache = async function (directory, params) {
   // return it to the user asap and write it in cache
   const result = await transform(source, options);
 
-  // Do not cache if there are external dependencies,
-  // since they might change and we cannot control it.
-  if (!result.externalDependencies.length) {
-    try {
-      await write(file, cacheCompression, result);
-    } catch (err) {
-      if (fallback) {
-        // Fallback to tmpdir if node_modules folder not writable
-        return handleCache(os.tmpdir(), params);
-      }
-
-      throw err;
+  try {
+    await write(file, cacheCompression, result);
+  } catch (err) {
+    if (fallback) {
+      // Fallback to tmpdir if node_modules folder not writable
+      return handleCache(os.tmpdir(), params);
     }
+
+    throw err;
   }
 
   return result;
