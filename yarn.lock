@@ -5443,12 +5443,19 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"minipass@npm:6.0.2":
+  version: 6.0.2
+  resolution: "minipass@npm:6.0.2"
+  checksum: d140b91f4ab2e5ce5a9b6c468c0e82223504acc89114c1a120d4495188b81fedf8cade72a9f4793642b4e66672f990f1e0d902dd858485216a07cd3c8a62fac9
+  languageName: node
+  linkType: hard
+
 "minipass@npm:^3.0.0":
-  version: 3.1.3
-  resolution: "minipass@npm:3.1.3"
+  version: 3.3.6
+  resolution: "minipass@npm:3.3.6"
   dependencies:
     yallist: ^4.0.0
-  checksum: 74b623c1f996caafa66772301b66a1b634b20270f0d1a731ef86195d5a1a5f9984a773a1e88a6cecfd264d6c471c4c0fc8574cd96488f01c8f74c0b600021e55
+  checksum: a30d083c8054cee83cdcdc97f97e4641a3f58ae743970457b1489ce38ee1167b3aaf7d815cd39ec7a99b9c40397fd4f686e83750e73e652b21cb516f6d845e48
   languageName: node
   linkType: hard
 
