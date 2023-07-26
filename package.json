@@ -51,6 +51,9 @@
     "test": "yarn run lint && yarn run build --source-maps && c8 yarn run test-only",
     "test-only": "ava"
   },
+  "resolutions": {
+    "minipass": "6.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/babel/babel-loader.git"
