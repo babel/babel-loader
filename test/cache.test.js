@@ -1,7 +1,7 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import rimraf from "rimraf";
+import { rimraf } from "rimraf";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
 
@@ -48,9 +48,8 @@ test.beforeEach.cb(t => {
     t.end();
   });
 });
-test.beforeEach.cb(t => rimraf(defaultCacheDir, t.end));
-test.afterEach.cb(t => rimraf(t.context.directory, t.end));
-test.afterEach.cb(t => rimraf(t.context.cacheDirectory, t.end));
+test.beforeEach(() => rimraf(defaultCacheDir));
+test.afterEach(t => rimraf([t.context.directory, t.context.cacheDirectory]));
 
 test.cb("should output files to cache directory", t => {
   const config = Object.assign({}, globalConfig, {

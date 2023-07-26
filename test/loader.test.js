@@ -1,7 +1,7 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import rimraf from "rimraf";
+import { rimraf } from "rimraf";
 import { satisfies } from "semver";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
@@ -38,7 +38,7 @@ test.beforeEach.cb(t => {
   });
 });
 
-test.afterEach.cb(t => rimraf(t.context.directory, t.end));
+test.afterEach(t => rimraf(t.context.directory));
 
 test.cb("should transpile the code snippet", t => {
   const config = Object.assign({}, globalConfig, {
