@@ -93,9 +93,6 @@
       ]
     }
   },
-  "resolutions": {
-    "path-scurry/minipass": "6.0.2"
-  },
   "lint-staged": {
     "scripts/*.js": [
       "prettier --trailing-comma es5 --write",
@@ -117,5 +114,6 @@
       "node ./scripts/yarn-install.js",
       "git add yarn.lock"
     ]
-  }
+  },
+  "packageManager": "yarn@3.6.1"
 }
