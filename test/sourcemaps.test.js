@@ -2,9 +2,9 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import { rimraf } from "rimraf";
-import webpack from "webpack";
-import createTestDirectory from "./helpers/createTestDirectory";
-import isWebpack5 from "./helpers/isWebpack5";
+import { webpackAsync } from "./helpers/webpackAsync.js";
+import createTestDirectory from "./helpers/createTestDirectory.js";
+import isWebpack5 from "./helpers/isWebpack5.js";
 
 const outputDir = path.join(__dirname, "output/sourcemaps");
 const babelLoader = path.join(__dirname, "../lib");
@@ -24,17 +24,14 @@ const globalConfig = {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
-test.beforeEach.cb(t => {
-  createTestDirectory(outputDir, t.title, (err, directory) => {
-    if (err) return t.end(err);
-    t.context.directory = directory;
-    t.end();
-  });
+test.beforeEach(async t => {
+  const directory = await createTestDirectory(outputDir, t.title);
+  t.context.directory = directory;
 });
 
 test.afterEach(t => rimraf(t.context.directory));
 
-test.cb("should output webpack's sourcemap", t => {
+test("should output webpack's sourcemap", async t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -54,32 +51,26 @@ test.cb("should output webpack's sourcemap", t => {
     },
   });
 
-  webpack(config, (err, stats) => {
-    t.is(err, null);
-    t.deepEqual(stats.compilation.errors, []);
-    t.deepEqual(stats.compilation.warnings, []);
+  const stats = await webpackAsync(config);
+  t.deepEqual(stats.compilation.errors, []);
+  t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.directory, (err, files) => {
-      t.is(err, null);
+  const files = fs.readdirSync(t.context.directory);
 
-      const map = files.filter(file => file.includes(".map"));
+  const map = files.filter(file => file.includes(".map"));
 
-      t.true(map.length > 0);
+  t.true(map.length > 0);
 
-      if (map.length > 0) {
-        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
-          t.is(err, null);
-          t.truthy(
-            data.toString().includes(isWebpack5 ? "webpack://" : "webpack:///"),
-          );
-          t.end();
-        });
-      }
-    });
-  });
+  const sourceMapContent = fs.readFileSync(
+    path.resolve(t.context.directory, map[0]),
+    "utf8",
+  );
+  t.truthy(
+    sourceMapContent.includes(isWebpack5 ? "webpack://" : "webpack:///"),
+  );
 });
 
-test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
+test("should output webpack's sourcemap properly when set 'inline'", async t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -100,46 +91,32 @@ test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
     },
   });
 
-  webpack(config, (err, stats) => {
-    t.is(err, null);
-    t.deepEqual(stats.compilation.errors, []);
-    t.deepEqual(stats.compilation.warnings, []);
+  const stats = await webpackAsync(config);
+  t.deepEqual(stats.compilation.errors, []);
+  t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.directory, (err, files) => {
-      t.is(err, null);
+  const files = fs.readdirSync(t.context.directory);
+  const map = files.filter(file => file.includes(".map"));
 
-      const map = files.filter(file => file.includes(".map"));
+  t.true(map.length > 0);
 
-      t.true(map.length > 0);
+  const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
+  const mapObj = JSON.parse(data);
 
-      if (map.length > 0) {
-        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
-          t.is(err, null);
+  if (isWebpack5) {
+    t.is(mapObj.sources[3], "webpack://babel-loader/./test/fixtures/basic.js");
 
-          const mapObj = JSON.parse(data.toString());
+    // Ensure that the map contains the original code, not the compiled src.
+    t.falsy(mapObj.sourcesContent[3].includes("__esModule"));
+  } else {
+    t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
-          if (isWebpack5) {
-            t.is(
-              mapObj.sources[3],
-              "webpack://babel-loader/./test/fixtures/basic.js",
-            );
-
-            // Ensure that the map contains the original code, not the compiled src.
-            t.falsy(mapObj.sourcesContent[3].includes("__esModule"));
-          } else {
-            t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
-
-            // Ensure that the map contains the original code, not the compiled src.
-            t.falsy(mapObj.sourcesContent[1].includes("__esModule"));
-          }
-          t.end();
-        });
-      }
-    });
-  });
+    // Ensure that the map contains the original code, not the compiled src.
+    t.falsy(mapObj.sourcesContent[1].includes("__esModule"));
+  }
 });
 
-test.cb("should output webpack's devtoolModuleFilename option", t => {
+test("should output webpack's devtoolModuleFilename option", async t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -160,44 +137,35 @@ test.cb("should output webpack's devtoolModuleFilename option", t => {
     },
   });
 
-  webpack(config, (err, stats) => {
-    t.is(err, null);
-    t.deepEqual(stats.compilation.errors, []);
-    t.deepEqual(stats.compilation.warnings, []);
+  const stats = await webpackAsync(config);
+  t.deepEqual(stats.compilation.errors, []);
+  t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.directory, (err, files) => {
-      t.is(err, null);
+  const files = fs.readdirSync(t.context.directory);
+  const map = files.filter(file => file.includes(".map"));
 
-      const map = files.filter(file => file.includes(".map"));
+  t.true(map.length > 0);
 
-      t.true(map.length > 0);
+  const sourceMapContent = fs.readFileSync(
+    path.resolve(t.context.directory, map[0]),
+    "utf8",
+  );
 
-      if (map.length > 0) {
-        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
-          t.is(err, null);
-
-          // The full absolute path is included in the sourcemap properly
-          t.regex(
-            data.toString(),
-            new RegExp(
-              JSON.stringify(
-                `=!=!=!=${globalConfig.entry.replace(
-                  // Webpack 5, webpack 4, windows, linux, ...
-                  /\\/g,
-                  "(?:/|\\\\)",
-                )}=!=!=!=`,
-              ),
-            ),
-          );
-
-          t.end();
-        });
-      }
-    });
-  });
+  t.regex(
+    sourceMapContent,
+    new RegExp(
+      JSON.stringify(
+        `=!=!=!=${globalConfig.entry.replace(
+          // Webpack 5, webpack 4, windows, linux, ...
+          /\\/g,
+          "(?:/|\\\\)",
+        )}=!=!=!=`,
+      ),
+    ),
+  );
 });
 
-test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
+test("should disable sourcemap output with 'sourceMaps:false'", async t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -218,49 +186,34 @@ test.cb("should disable sourcemap output with 'sourceMaps:false'", t => {
     },
   });
 
-  webpack(config, (err, stats) => {
-    t.is(err, null);
-    t.deepEqual(stats.compilation.errors, []);
-    t.deepEqual(stats.compilation.warnings, []);
+  const stats = await webpackAsync(config);
+  t.deepEqual(stats.compilation.errors, []);
+  t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.directory, (err, files) => {
-      t.is(err, null);
+  const files = fs.readdirSync(t.context.directory);
+  const map = files.filter(file => file.includes(".map"));
 
-      const map = files.filter(file => file.includes(".map"));
+  t.true(map.length > 0);
 
-      t.true(map.length > 0);
+  const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
+  const mapObj = JSON.parse(data);
 
-      if (map.length > 0) {
-        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
-          t.is(err, null);
+  if (isWebpack5) {
+    t.is(mapObj.sources[3], "webpack://babel-loader/./test/fixtures/basic.js");
 
-          const mapObj = JSON.parse(data.toString());
+    // Ensure that the code contains Babel's compiled output, because
+    // sourcemaps from Babel are disabled.
+    t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
+  } else {
+    t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
-          if (isWebpack5) {
-            t.is(
-              mapObj.sources[3],
-              "webpack://babel-loader/./test/fixtures/basic.js",
-            );
-
-            // Ensure that the code contains Babel's compiled output, because
-            // sourcemaps from Babel are disabled.
-            t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
-          } else {
-            t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
-
-            // Ensure that the code contains Babel's compiled output, because
-            // sourcemaps from Babel are disabled.
-            t.truthy(mapObj.sourcesContent[1].includes("__esModule"));
-          }
-
-          t.end();
-        });
-      }
-    });
-  });
+    // Ensure that the code contains Babel's compiled output, because
+    // sourcemaps from Babel are disabled.
+    t.truthy(mapObj.sourcesContent[1].includes("__esModule"));
+  }
 });
 
-test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
+test("should disable sourcemap output with 'sourceMap:false'", async t => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
@@ -281,44 +234,29 @@ test.cb("should disable sourcemap output with 'sourceMap:false'", t => {
     },
   });
 
-  webpack(config, (err, stats) => {
-    t.is(err, null);
-    t.deepEqual(stats.compilation.errors, []);
-    t.deepEqual(stats.compilation.warnings, []);
+  const stats = await webpackAsync(config);
+  t.deepEqual(stats.compilation.errors, []);
+  t.deepEqual(stats.compilation.warnings, []);
 
-    fs.readdir(t.context.directory, (err, files) => {
-      t.is(err, null);
+  const files = fs.readdirSync(t.context.directory);
+  const map = files.filter(file => file.includes(".map"));
 
-      const map = files.filter(file => file.includes(".map"));
+  t.true(map.length > 0);
 
-      t.true(map.length > 0);
+  const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
+  const mapObj = JSON.parse(data);
 
-      if (map.length > 0) {
-        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
-          t.is(err, null);
+  if (isWebpack5) {
+    t.is(mapObj.sources[3], "webpack://babel-loader/./test/fixtures/basic.js");
 
-          const mapObj = JSON.parse(data.toString());
+    // Ensure that the code contains Babel's compiled output, because
+    // sourcemaps from Babel are disabled.
+    t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
+  } else {
+    t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
 
-          if (isWebpack5) {
-            t.is(
-              mapObj.sources[3],
-              "webpack://babel-loader/./test/fixtures/basic.js",
-            );
-
-            // Ensure that the code contains Babel's compiled output, because
-            // sourcemaps from Babel are disabled.
-            t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
-          } else {
-            t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
-
-            // Ensure that the code contains Babel's compiled output, because
-            // sourcemaps from Babel are disabled.
-            t.truthy(mapObj.sourcesContent[1].includes("__esModule"));
-          }
-
-          t.end();
-        });
-      }
-    });
-  });
+    // Ensure that the code contains Babel's compiled output, because
+    // sourcemaps from Babel are disabled.
+    t.truthy(mapObj.sourcesContent[1].includes("__esModule"));
+  }
 });
