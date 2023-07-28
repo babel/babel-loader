@@ -100,10 +100,14 @@ test("should output webpack's sourcemap properly when set 'inline'", async t => 
   const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
   const mapObj = JSON.parse(data);
 
-  t.is(mapObj.sources[3], "webpack://babel-loader/./test/fixtures/basic.js");
+  const fixtureBasicIndex = mapObj.sources.indexOf(
+    "webpack://babel-loader/./test/fixtures/basic.js",
+  );
+  // The index may vary across webpack versions
+  t.not(fixtureBasicIndex, -1);
 
   // Ensure that the map contains the original code, not the compiled src.
-  t.falsy(mapObj.sourcesContent[3].includes("__esModule"));
+  t.falsy(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
 });
 
 test("should output webpack's devtoolModuleFilename option", async t => {
@@ -188,11 +192,15 @@ test("should disable sourcemap output with 'sourceMaps:false'", async t => {
   const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
   const mapObj = JSON.parse(data);
 
-  t.is(mapObj.sources[3], "webpack://babel-loader/./test/fixtures/basic.js");
+  const fixtureBasicIndex = mapObj.sources.indexOf(
+    "webpack://babel-loader/./test/fixtures/basic.js",
+  );
+  // The index may vary across webpack versions
+  t.not(fixtureBasicIndex, -1);
 
   // Ensure that the code contains Babel's compiled output, because
   // sourcemaps from Babel are disabled.
-  t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
+  t.truthy(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
 });
 
 test("should disable sourcemap output with 'sourceMap:false'", async t => {
@@ -228,9 +236,13 @@ test("should disable sourcemap output with 'sourceMap:false'", async t => {
   const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
   const mapObj = JSON.parse(data);
 
-  t.is(mapObj.sources[3], "webpack://babel-loader/./test/fixtures/basic.js");
+  const fixtureBasicIndex = mapObj.sources.indexOf(
+    "webpack://babel-loader/./test/fixtures/basic.js",
+  );
+  // The index may vary across webpack versions
+  t.not(fixtureBasicIndex, -1);
 
   // Ensure that the code contains Babel's compiled output, because
   // sourcemaps from Babel are disabled.
-  t.truthy(mapObj.sourcesContent[3].includes("__esModule"));
+  t.truthy(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
 });
