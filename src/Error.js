@@ -32,4 +32,4 @@ class LoaderError extends Error {
   }
 }
 
-module.exports = LoaderError;
+export default LoaderError;

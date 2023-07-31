@@ -1,11 +1,13 @@
 import test from "ava";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { rimraf } from "rimraf";
 import PnpWebpackPlugin from "pnp-webpack-plugin";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import ReactIntlPlugin from "react-intl-webpack-plugin";
+import { fileURLToPath } from "node:url";
+const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
 const cacheDir = path.join(__dirname, "output/cache/cachefiles");
 const outputDir = path.join(__dirname, "output/metadata");

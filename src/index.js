@@ -1,6 +1,6 @@
 let babel;
 try {
-  babel = require("@babel/core");
+  babel = await import("@babel/core");
 } catch (err) {
   if (err.code === "MODULE_NOT_FOUND") {
     err.message +=
@@ -19,14 +19,17 @@ if (/^6\./.test(babel.version)) {
   );
 }
 
-const { version } = require("../package.json");
-const cache = require("./cache");
-const transform = require("./transform");
-const injectCaller = require("./injectCaller");
-const schema = require("./schema");
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 
-const { isAbsolute } = require("path");
-const validateOptions = require("schema-utils").validate;
+const { version } = require("../package.json");
+import cache from "./cache.js";
+import transform from "./transform.js";
+import injectCaller from "./injectCaller.js";
+const schema = require("./schema.json");
+
+import { isAbsolute } from "node:path";
+import { validate as validateOptions } from "schema-utils";
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
@@ -34,8 +37,8 @@ function subscribe(subscriber, metadata, context) {
   }
 }
 
-module.exports = makeLoader();
-module.exports.custom = makeLoader;
+export default makeLoader();
+export const custom = makeLoader;
 
 function makeLoader(callback) {
   const overrides = callback ? callback(babel) : undefined;

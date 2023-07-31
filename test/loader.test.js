@@ -1,10 +1,13 @@
 import test from "ava";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { rimraf } from "rimraf";
 import { satisfies } from "semver";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { webpackAsync } from "./helpers/webpackAsync.js";
+import { fileURLToPath } from "node:url";
+
+const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
 const outputDir = path.join(__dirname, "output/loader");
 const babelLoader = path.join(__dirname, "../lib");

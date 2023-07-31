@@ -1,6 +1,6 @@
-const babel = require("@babel/core");
+import babel from "@babel/core";
 
-module.exports = function injectCaller(opts, target) {
+export default function injectCaller(opts, target) {
   if (!supportsCallerOption()) return opts;
 
   return Object.assign({}, opts, {
@@ -24,7 +24,7 @@ module.exports = function injectCaller(opts, target) {
       opts.caller,
     ),
   });
-};
+}
 
 // TODO: We can remove this eventually, I'm just adding it so that people have
 // a little time to migrate to the newer RCs of @babel/core without getting

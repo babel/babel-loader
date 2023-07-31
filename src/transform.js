@@ -1,13 +1,10 @@
-const babel = require("@babel/core");
-const { promisify } = require("util");
-const LoaderError = require("./Error");
+import { transformAsync } from "@babel/core";
+import LoaderError from "./Error.js";
 
-const transform = promisify(babel.transform);
-
-module.exports = async function (source, options) {
+export default async function (source, options) {
   let result;
   try {
-    result = await transform(source, options);
+    result = await transformAsync(source, options);
   } catch (err) {
     throw err.message && err.codeFrame ? new LoaderError(err) : err;
   }
@@ -34,6 +31,6 @@ module.exports = async function (source, options) {
     // Convert it from a Set to an Array to make it JSON-serializable.
     externalDependencies: Array.from(externalDependencies || []),
   };
-};
+}
 
-module.exports.version = babel.version;
+export { version } from "@babel/core";

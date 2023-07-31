@@ -7,15 +7,15 @@
  * @see https://github.com/babel/babel-loader/issues/34
  * @see https://github.com/babel/babel-loader/pull/41
  */
-const os = require("os");
-const path = require("path");
-const zlib = require("zlib");
-const crypto = require("crypto");
-const { promisify } = require("util");
-const { readFile, writeFile, mkdir } = require("fs/promises");
+import os from "node:os";
+import path from "node:path";
+import zlib from "node:zlib";
+import crypto from "node:crypto";
+import { promisify } from "node:util";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 const findCacheDirP = import("find-cache-dir");
 
-const transform = require("./transform");
+import transform from "./transform.js";
 // Lazily instantiated when needed
 let defaultCacheDirectory = null;
 
@@ -162,7 +162,7 @@ const handleCache = async function (directory, params) {
  *   });
  */
 
-module.exports = async function (params) {
+export default async function cache(params) {
   let directory;
 
   if (typeof params.cacheDirectory === "string") {
@@ -178,4 +178,4 @@ module.exports = async function (params) {
   }
 
   return await handleCache(directory, params);
-};
+}
