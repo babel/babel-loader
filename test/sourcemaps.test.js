@@ -4,7 +4,6 @@ import path from "node:path";
 import { rimraf } from "rimraf";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import createTestDirectory from "./helpers/createTestDirectory.js";
-import isWebpack5 from "./helpers/isWebpack5.js";
 import { fileURLToPath } from "node:url";
 const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
