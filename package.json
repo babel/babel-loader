@@ -118,5 +118,5 @@
       "git add yarn.lock"
     ]
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@3.6.4"
 }
