@@ -19,10 +19,10 @@
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",
-    "@babel/cli": "^7.22.9",
-    "@babel/core": "^7.22.9",
-    "@babel/eslint-parser": "^7.22.9",
-    "@babel/preset-env": "^7.22.9",
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.3",
+    "@babel/eslint-parser": "^7.23.3",
+    "@babel/preset-env": "^7.23.3",
     "ava": "^3.13.0",
     "babel-plugin-react-intl": "^8.2.25",
     "c8": "^8.0.0",
@@ -38,7 +38,7 @@
     "react-intl-webpack-plugin": "^0.3.0",
     "rimraf": "^5.0.1",
     "semver": "7.5.2",
-    "webpack": "^5.74.0"
+    "webpack": "^5.89.0"
   },
   "scripts": {
     "clean": "rimraf lib/",
@@ -118,5 +118,5 @@
       "git add yarn.lock"
     ]
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@3.6.4"
 }
