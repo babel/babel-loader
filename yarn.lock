@@ -1829,15 +1829,9 @@ __metadata:
   linkType: hard
 
 "@types/estree@npm:*, @types/estree@npm:^1.0.0":
-<<<<<<< HEAD
-  version: 1.0.5
-  resolution: "@types/estree@npm:1.0.5"
-  checksum: dd8b5bed28e6213b7acd0fb665a84e693554d850b0df423ac8076cc3ad5823a6bc26b0251d080bdc545af83179ede51dd3f6fa78cad2c46ed1f29624ddf3e41a
-=======
   version: 1.0.1
   resolution: "@types/estree@npm:1.0.1"
   checksum: e9aa175eacb797216fafce4d41e8202c7a75555bc55232dee0f9903d7171f8f19f0ae7d5191bb1a88cb90e65468be508c0df850a9fb81b4433b293a5a749899d
->>>>>>> f1047a7 (Use promises in test cases)
   languageName: node
   linkType: hard
 
@@ -2120,18 +2114,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"acorn@npm:^8.0.1, acorn@npm:^8.7.1, acorn@npm:^8.8.2, acorn@npm:^8.9.0":
-  version: 8.11.2
-  resolution: "acorn@npm:8.11.2"
-=======
 "acorn@npm:^8.0.4, acorn@npm:^8.7.1, acorn@npm:^8.8.2, acorn@npm:^8.9.0":
-  version: 8.10.0
-  resolution: "acorn@npm:8.10.0"
->>>>>>> f1047a7 (Use promises in test cases)
+  version: 8.12.0
+  resolution: "acorn@npm:8.12.0"
   bin:
     acorn: bin/acorn
-  checksum: 818450408684da89423e3daae24e4dc9b68692db8ab49ea4569c7c5abb7a3f23669438bf129cc81dfdada95e1c9b944ee1bfca2c57a05a4dc73834a612fbf6a7
+  checksum: ae142de8739ef15a5d936c550c1d267fc4dedcdbe62ad1aa2c0009afed1de84dd0a584684a5d200bb55d8db14f3e09a95c6e92a5303973c04b9a7413c36d1df0
   languageName: node
   linkType: hard
 
@@ -2488,11 +2476,7 @@ __metadata:
     rimraf: ^5.0.1
     schema-utils: ^4.0.0
     semver: 7.5.2
-<<<<<<< HEAD
     webpack: ^5.89.0
-=======
-    webpack: ^5.88.2
->>>>>>> f1047a7 (Use promises in test cases)
   peerDependencies:
     "@babel/core": ^7.12.0
     webpack: ">=5"
@@ -3502,67 +3486,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"es-abstract@npm:^1.17.0-next.1":
-  version: 1.17.7
-  resolution: "es-abstract@npm:1.17.7"
-  dependencies:
-    es-to-primitive: ^1.2.1
-    function-bind: ^1.1.1
-    has: ^1.0.3
-    has-symbols: ^1.0.1
-    is-callable: ^1.2.2
-    is-regex: ^1.1.1
-    object-inspect: ^1.8.0
-    object-keys: ^1.1.1
-    object.assign: ^4.1.1
-    string.prototype.trimend: ^1.0.1
-    string.prototype.trimstart: ^1.0.1
-  checksum: 0863830708ebbb7aa5555746278ad9825cda6c58009f006d62342131277364309793441439a33daf51e0b1d042bff4711b4d8ecda16ca64f8a113faa46d94ac2
-  languageName: node
-  linkType: hard
-
-"es-abstract@npm:^1.18.0-next.1":
-  version: 1.18.0-next.1
-  resolution: "es-abstract@npm:1.18.0-next.1"
-  dependencies:
-    es-to-primitive: ^1.2.1
-    function-bind: ^1.1.1
-    has: ^1.0.3
-    has-symbols: ^1.0.1
-    is-callable: ^1.2.2
-    is-negative-zero: ^2.0.0
-    is-regex: ^1.1.1
-    object-inspect: ^1.8.0
-    object-keys: ^1.1.1
-    object.assign: ^4.1.1
-    string.prototype.trimend: ^1.0.1
-    string.prototype.trimstart: ^1.0.1
-  checksum: 4797f1f6c8db002ad38a2cbb9d1709f9c39946fe3d26f85ae42431bb4c2aac20dcc1f8685a055aa2b7e61e320bb841b83becc340b940de31761944613d76c1a3
-  languageName: node
-  linkType: hard
-
-"es-module-lexer@npm:^1.2.1":
-  version: 1.3.1
-  resolution: "es-module-lexer@npm:1.3.1"
-  checksum: 3beafa7e171eb1e8cc45695edf8d51638488dddf65294d7911f8d6a96249da6a9838c87529262cc6ea53988d8272cec0f4bff93f476ed031a54ba3afb51a0ed3
-  languageName: node
-  linkType: hard
-
-"es-to-primitive@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "es-to-primitive@npm:1.2.1"
-  dependencies:
-    is-callable: ^1.1.4
-    is-date-object: ^1.0.1
-    is-symbol: ^1.0.2
-  checksum: 4ead6671a2c1402619bdd77f3503991232ca15e17e46222b0a41a5d81aebc8740a77822f5b3c965008e631153e9ef0580540007744521e72de8e33599fca2eed
-=======
 "es-module-lexer@npm:^1.2.1":
   version: 1.3.0
   resolution: "es-module-lexer@npm:1.3.0"
   checksum: 48fd9f504a9d2a894126f75c8b7ccc6273a289983e9b67255f165bfd9ae765d50100218251e94e702ca567826905ea2f7b3b4a0c4d74d3ce99cce3a2a606a238
->>>>>>> f1047a7 (Use promises in test cases)
   languageName: node
   linkType: hard
 
@@ -6659,8 +6586,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-=======
 "serialize-error@npm:^7.0.1":
   version: 7.0.1
   resolution: "serialize-error@npm:7.0.1"
@@ -6670,7 +6595,6 @@ __metadata:
   languageName: node
   linkType: hard
 
->>>>>>> f1047a7 (Use promises in test cases)
 "serialize-javascript@npm:^6.0.1":
   version: 6.0.1
   resolution: "serialize-javascript@npm:6.0.1"
@@ -7090,16 +7014,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"term-size@npm:^2.1.0":
-  version: 2.2.1
-  resolution: "term-size@npm:2.2.1"
-  checksum: 1ed981335483babc1e8206f843e06bd2bf89b85f0bf5a9a9d928033a0fcacdba183c03ba7d91814643015543ba002f1339f7112402a21da8f24b6c56b062a5a9
-  languageName: node
-  linkType: hard
-
-=======
->>>>>>> f1047a7 (Use promises in test cases)
 "terser-webpack-plugin@npm:^5.3.7":
   version: 5.3.9
   resolution: "terser-webpack-plugin@npm:5.3.9"
@@ -7123,13 +7037,8 @@ __metadata:
   linkType: hard
 
 "terser@npm:^5.16.8":
-<<<<<<< HEAD
-  version: 5.24.0
-  resolution: "terser@npm:5.24.0"
-=======
   version: 5.19.2
   resolution: "terser@npm:5.19.2"
->>>>>>> f1047a7 (Use promises in test cases)
   dependencies:
     "@jridgewell/source-map": ^0.3.3
     acorn: ^8.8.2
@@ -7137,11 +7046,7 @@ __metadata:
     source-map-support: ~0.5.20
   bin:
     terser: bin/terser
-<<<<<<< HEAD
-  checksum: d88f774b6fa711a234fcecefd7657f99189c367e17dbe95a51c2776d426ad0e4d98d1ffe6edfdf299877c7602e495bdd711d21b2caaec188410795e5447d0f6c
-=======
   checksum: e059177775b4d4f4cff219ad89293175aefbd1b081252270444dc83e42a2c5f07824eb2a85eae6e22ef6eb7ef04b21af36dd7d1dd7cfb93912310e57d416a205
->>>>>>> f1047a7 (Use promises in test cases)
   languageName: node
   linkType: hard
 
@@ -7519,15 +7424,9 @@ typescript@^4.0:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "webpack@npm:^5.89.0":
   version: 5.89.0
   resolution: "webpack@npm:5.89.0"
-=======
-"webpack@npm:^5.88.2":
-  version: 5.88.2
-  resolution: "webpack@npm:5.88.2"
->>>>>>> f1047a7 (Use promises in test cases)
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^1.0.0
@@ -7558,11 +7457,7 @@ typescript@^4.0:
       optional: true
   bin:
     webpack: bin/webpack.js
-<<<<<<< HEAD
   checksum: 43fe0dbc30e168a685ef5a86759d5016a705f6563b39a240aa00826a80637d4a3deeb8062e709d6a4b05c63e796278244c84b04174704dc4a37bedb0f565c5ed
-=======
-  checksum: 79476a782da31a21f6dd38fbbd06b68da93baf6a62f0d08ca99222367f3b8668f5a1f2086b7bb78e23172e31fa6df6fa7ab09b25e827866c4fc4dc2b30443ce2
->>>>>>> f1047a7 (Use promises in test cases)
   languageName: node
   linkType: hard
 
