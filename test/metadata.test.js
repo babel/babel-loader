@@ -2,7 +2,6 @@ import test from "ava";
 import fs from "fs";
 import path from "path";
 import { rimraf } from "rimraf";
-import PnpWebpackPlugin from "pnp-webpack-plugin";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import ReactIntlPlugin from "react-intl-webpack-plugin";
@@ -18,9 +17,6 @@ const globalConfig = {
     filename: "[id].metadata.js",
   },
   plugins: [new ReactIntlPlugin()],
-  resolve: {
-    plugins: [PnpWebpackPlugin],
-  },
   module: {
     rules: [
       {

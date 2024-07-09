@@ -31,7 +31,6 @@
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
-    "pnp-webpack-plugin": "^1.7.0",
     "prettier": "^3.0.0",
     "react": "^17.0.1",
     "react-intl": "^5.9.4",
