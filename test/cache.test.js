@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import { rimraf } from "rimraf";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 
@@ -40,8 +39,13 @@ test.beforeEach(async t => {
   const cacheDirectory = await createTestDirectory(cacheDir, t.title);
   t.context.cacheDirectory = cacheDirectory;
 });
-test.beforeEach(() => rimraf(defaultCacheDir));
-test.afterEach(t => rimraf([t.context.directory, t.context.cacheDirectory]));
+test.beforeEach(() =>
+  fs.rmSync(defaultCacheDir, { recursive: true, force: true }),
+);
+test.afterEach(t => {
+  fs.rmSync(t.context.directory, { recursive: true, force: true });
+  fs.rmSync(t.context.cacheDirectory, { recursive: true, force: true });
+});
 
 test("should output files to cache directory", async t => {
   const config = Object.assign({}, globalConfig, {
@@ -100,7 +104,6 @@ test("should output json.gz files to standard cache dir by default", async t => 
   t.true(files.length > 0);
 });
 
-// eslint-disable-next-line max-len
 test("should output non-compressed files to standard cache dir when cacheCompression is set to false", async t => {
   const config = Object.assign({}, globalConfig, {
     output: {

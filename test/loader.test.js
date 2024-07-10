@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import { rimraf } from "rimraf";
 import { satisfies } from "semver";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { webpackAsync } from "./helpers/webpackAsync.js";
@@ -35,7 +34,9 @@ test.beforeEach(async t => {
   t.context.directory = directory;
 });
 
-test.afterEach(t => rimraf(t.context.directory));
+test.afterEach(t =>
+  fs.rmSync(t.context.directory, { recursive: true, force: true }),
+);
 
 test("should transpile the code snippet", async t => {
   const config = Object.assign({}, globalConfig, {

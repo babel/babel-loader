@@ -1,11 +1,10 @@
 import path from "path";
 import fs from "fs/promises";
-import { rimraf } from "rimraf";
 
 export default async function createTestDirectory(baseDirectory, testTitle) {
   const directory = path.join(baseDirectory, escapeDirectory(testTitle));
 
-  await rimraf(directory);
+  await fs.rm(directory, { recursive: true, force: true });
   await fs.mkdir(directory, { recursive: true });
   return directory;
 }

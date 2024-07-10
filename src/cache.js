@@ -23,7 +23,7 @@ let hashType = "sha256";
 // use md5 hashing if sha256 is not available
 try {
   crypto.createHash(hashType);
-} catch (err) {
+} catch {
   hashType = "md5";
 }
 
@@ -98,7 +98,7 @@ const handleCache = async function (directory, params) {
     // No errors mean that the file was previously cached
     // we just need to return it
     return await read(file, cacheCompression);
-  } catch (err) {}
+  } catch {}
 
   const fallback =
     typeof cacheDirectory !== "string" && directory !== os.tmpdir();

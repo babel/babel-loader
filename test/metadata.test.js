@@ -1,6 +1,6 @@
 import test from "ava";
 import path from "path";
-import { rimraf } from "rimraf";
+import fs from "fs";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import { NormalModule } from "webpack";
@@ -45,7 +45,9 @@ test.beforeEach(async t => {
   t.context.directory = directory;
 });
 
-test.afterEach(t => rimraf(t.context.directory));
+test.afterEach(t =>
+  fs.rmSync(t.context.directory, { recursive: true, force: true }),
+);
 
 test("should obtain metadata from the transform result", async t => {
   let actualMetadata;
