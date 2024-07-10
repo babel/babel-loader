@@ -32,11 +32,10 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
-    "rimraf": "^5.0.1",
     "webpack": "^5.89.0"
   },
   "scripts": {
-    "clean": "rimraf lib/",
+    "clean": "node ./scripts/rimraf.mjs lib",
     "build": "babel src/ --out-dir lib/ --copy-files",
     "format": "prettier --write --trailing-comma all 'src/**/*.js' 'test/**/*.test.js' 'test/helpers/*.js' && prettier --write --trailing-comma es5 'scripts/*.js'",
     "lint": "eslint src test",

@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import { rimraf } from "rimraf";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 
@@ -31,7 +30,9 @@ test.beforeEach(async t => {
   t.context.directory = directory;
 });
 
-test.afterEach(t => rimraf(t.context.directory));
+test.afterEach(t =>
+  fs.rmSync(t.context.directory, { recursive: true, force: true }),
+);
 
 test("should interpret options given to the loader", async t => {
   const config = Object.assign({}, globalConfig, {

@@ -1,7 +1,6 @@
 import test from "ava";
 import fs from "fs";
 import path from "path";
-import { rimraf } from "rimraf";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 
@@ -40,8 +39,13 @@ test.beforeEach(async t => {
   const cacheDirectory = await createTestDirectory(cacheDir, t.title);
   t.context.cacheDirectory = cacheDirectory;
 });
-test.beforeEach(() => rimraf(defaultCacheDir));
-test.afterEach(t => rimraf([t.context.directory, t.context.cacheDirectory]));
+test.beforeEach(() =>
+  fs.rmSync(defaultCacheDir, { recursive: true, force: true }),
+);
+test.afterEach(t => {
+  fs.rmSync(t.context.directory, { recursive: true, force: true });
+  fs.rmSync(t.context.cacheDirectory, { recursive: true, force: true });
+});
 
 test("should output files to cache directory", async t => {
   const config = Object.assign({}, globalConfig, {
