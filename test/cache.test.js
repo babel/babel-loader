@@ -100,7 +100,6 @@ test("should output json.gz files to standard cache dir by default", async t => 
   t.true(files.length > 0);
 });
 
-// eslint-disable-next-line max-len
 test("should output non-compressed files to standard cache dir when cacheCompression is set to false", async t => {
   const config = Object.assign({}, globalConfig, {
     output: {
