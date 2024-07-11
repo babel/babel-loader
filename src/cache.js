@@ -13,10 +13,11 @@ const zlib = require("zlib");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const { readFile, writeFile, mkdir } = require("fs/promises");
+// Lazily instantiated when needed
 const findCacheDirP = import("find-cache-dir");
 
 const transform = require("./transform");
-// Lazily instantiated when needed
+const serialize = require("./serialize");
 let defaultCacheDirectory = null;
 
 let hashType = "sha256";
@@ -29,7 +30,6 @@ try {
 
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
-const stringify = require("fast-stable-stringify");
 
 /**
  * Read the contents from the compressed file.
@@ -71,7 +71,7 @@ const write = async function (filename, compress, result) {
 const filename = function (source, identifier, options) {
   const hash = crypto.createHash(hashType);
 
-  hash.update(stringify({ source, options, identifier }));
+  hash.update(serialize([options, source, identifier]));
 
   return hash.digest("hex") + ".json";
 };
