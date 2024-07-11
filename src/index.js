@@ -27,7 +27,6 @@ const schema = require("./schema");
 
 const { isAbsolute } = require("path");
 const validateOptions = require("schema-utils").validate;
-const stringify = require("fast-stable-stringify");
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
@@ -175,11 +174,7 @@ async function loader(source, inputSourceMap, overrides) {
 
     const {
       cacheDirectory = null,
-      cacheIdentifier = stringify({
-        options,
-        "@babel/core": transform.version,
-        "@babel/loader": version,
-      }),
+      cacheIdentifier = "core" + transform.version + "," + "loader" + version,
       cacheCompression = true,
       metadataSubscribers = [],
     } = loaderOptions;
