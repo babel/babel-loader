@@ -13,7 +13,6 @@ const zlib = require("zlib");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const { readFile, writeFile, mkdir } = require("fs/promises");
-const findCacheDirP = import("find-cache-dir");
 
 const transform = require("./transform");
 // Lazily instantiated when needed
@@ -169,7 +168,7 @@ module.exports = async function (params) {
     directory = params.cacheDirectory;
   } else {
     if (defaultCacheDirectory === null) {
-      const { default: findCacheDir } = await findCacheDirP;
+      const { default: findCacheDir } = await import("find-cache-dir");
       defaultCacheDirectory =
         findCacheDir({ name: "babel-loader" }) || os.tmpdir();
     }
