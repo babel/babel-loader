@@ -1,10 +1,14 @@
-import test from "ava";
-import path from "path";
-import fs from "fs";
+import test from "node:test";
+import assert from "node:assert/strict";
+import path from "node:path";
+import fs from "node:fs";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { webpackAsync } from "./helpers/webpackAsync.js";
-import { NormalModule } from "webpack";
+import webpack from "webpack";
+const { NormalModule } = webpack;
+import { fileURLToPath } from "node:url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cacheDir = path.join(__dirname, "output/cache/cachefiles");
 const outputDir = path.join(__dirname, "output/metadata");
 const babelLoader = path.join(__dirname, "../lib");
@@ -40,23 +44,24 @@ class WebpackMetadataSubscriberPlugin {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
+const context = { directory: undefined };
 test.beforeEach(async t => {
-  const directory = await createTestDirectory(outputDir, t.title);
-  t.context.directory = directory;
+  const directory = await createTestDirectory(outputDir, t.name);
+  context.directory = directory;
 });
 
-test.afterEach(t =>
-  fs.rmSync(t.context.directory, { recursive: true, force: true }),
+test.afterEach(() =>
+  fs.rmSync(context.directory, { recursive: true, force: true }),
 );
 
-test("should obtain metadata from the transform result", async t => {
+test("should obtain metadata from the transform result", async () => {
   let actualMetadata;
 
   const config = {
     mode: "development",
     entry: "./test/fixtures/basic.js",
     output: {
-      path: t.context.directory,
+      path: context.directory,
       filename: "[id].metadata.js",
     },
     plugins: [
@@ -82,20 +87,20 @@ test("should obtain metadata from the transform result", async t => {
   };
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  t.deepEqual(actualMetadata, { hello: "world" });
+  assert.deepEqual(actualMetadata, { hello: "world" });
 });
 
-test("should obtain metadata from the transform result with cache", async t => {
+test("should obtain metadata from the transform result with cache", async () => {
   let actualMetadata;
 
   const config = {
     mode: "development",
     entry: "./test/fixtures/basic.js",
     output: {
-      path: t.context.directory,
+      path: context.directory,
       filename: "[id].metadata.js",
     },
     plugins: [
@@ -122,8 +127,8 @@ test("should obtain metadata from the transform result with cache", async t => {
   };
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  t.deepEqual(actualMetadata, { hello: "world" });
+  assert.deepEqual(actualMetadata, { hello: "world" });
 });
