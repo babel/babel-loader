@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [14, 16, 18, 20]
+        node-version: [18, 20, 22]
         webpack-version: ["5"]
         include:
-          - node-version: "14.15.0" # The minimum supported node version
+          - node-version: "18.20.0" # The minimum supported node version
             webpack-version: "5.0.0" # The minimum supported webpack version
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
