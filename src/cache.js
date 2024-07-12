@@ -13,10 +13,11 @@ const zlib = require("zlib");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const { readFile, writeFile, mkdir } = require("fs/promises");
+// Lazily instantiated when needed
 const findCacheDirP = import("find-cache-dir");
 
 const transform = require("./transform");
-// Lazily instantiated when needed
+const serialize = require("./serialize");
 let defaultCacheDirectory = null;
 
 let hashType = "sha256";
@@ -70,9 +71,7 @@ const write = async function (filename, compress, result) {
 const filename = function (source, identifier, options) {
   const hash = crypto.createHash(hashType);
 
-  const contents = JSON.stringify({ source, options, identifier });
-
-  hash.update(contents);
+  hash.update(serialize([options, source, identifier]));
 
   return hash.digest("hex") + ".json";
 };

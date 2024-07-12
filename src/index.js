@@ -174,11 +174,7 @@ async function loader(source, inputSourceMap, overrides) {
 
     const {
       cacheDirectory = null,
-      cacheIdentifier = JSON.stringify({
-        options,
-        "@babel/core": transform.version,
-        "@babel/loader": version,
-      }),
+      cacheIdentifier = "core" + transform.version + "," + "loader" + version,
       cacheCompression = true,
       metadataSubscribers = [],
     } = loaderOptions;
