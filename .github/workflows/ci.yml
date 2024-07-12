@@ -15,7 +15,7 @@ jobs:
         webpack-version: ["5"]
         include:
           - node-version: "18.20.0" # The minimum supported node version
-            webpack-version: "5.0.0" # The minimum supported webpack version
+            webpack-version: "5.61.0" # The minimum supported webpack version
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
