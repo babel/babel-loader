@@ -1,9 +1,12 @@
-import test from "ava";
-import fs from "fs";
-import path from "path";
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import createTestDirectory from "./helpers/createTestDirectory.js";
+import { fileURLToPath } from "node:url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outputDir = path.join(__dirname, "output/sourcemaps");
 const babelLoader = path.join(__dirname, "../lib");
 const globalConfig = {
@@ -22,20 +25,21 @@ const globalConfig = {
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
+const context = { directory: undefined };
 test.beforeEach(async t => {
-  const directory = await createTestDirectory(outputDir, t.title);
-  t.context.directory = directory;
+  const directory = await createTestDirectory(outputDir, t.name);
+  context.directory = directory;
 });
 
-test.afterEach(t =>
-  fs.rmSync(t.context.directory, { recursive: true, force: true }),
+test.afterEach(() =>
+  fs.rmSync(context.directory, { recursive: true, force: true }),
 );
 
-test("should output webpack's sourcemap", async t => {
+test("should output webpack's sourcemap", async () => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
-      path: t.context.directory,
+      path: context.directory,
     },
     module: {
       rules: [
@@ -52,27 +56,27 @@ test("should output webpack's sourcemap", async t => {
   });
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  const files = fs.readdirSync(t.context.directory);
+  const files = fs.readdirSync(context.directory);
 
   const map = files.filter(file => file.includes(".map"));
 
-  t.true(map.length > 0);
+  assert.ok(map.length > 0);
 
   const sourceMapContent = fs.readFileSync(
-    path.resolve(t.context.directory, map[0]),
+    path.resolve(context.directory, map[0]),
     "utf8",
   );
-  t.truthy(sourceMapContent.includes("webpack://"));
+  assert.ok(sourceMapContent.includes("webpack://"));
 });
 
-test("should output webpack's sourcemap properly when set 'inline'", async t => {
+test("should output webpack's sourcemap properly when set 'inline'", async () => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
-      path: t.context.directory,
+      path: context.directory,
     },
     module: {
       rules: [
@@ -90,32 +94,35 @@ test("should output webpack's sourcemap properly when set 'inline'", async t => 
   });
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  const files = fs.readdirSync(t.context.directory);
+  const files = fs.readdirSync(context.directory);
   const map = files.filter(file => file.includes(".map"));
 
-  t.true(map.length > 0);
+  assert.ok(map.length > 0);
 
-  const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
+  const data = fs.readFileSync(path.resolve(context.directory, map[0]));
   const mapObj = JSON.parse(data);
 
   const fixtureBasicIndex = mapObj.sources.indexOf(
     "webpack://babel-loader/./test/fixtures/basic.js",
   );
   // The index may vary across webpack versions
-  t.not(fixtureBasicIndex, -1);
+  assert.notStrictEqual(fixtureBasicIndex, -1);
 
   // Ensure that the map contains the original code, not the compiled src.
-  t.falsy(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
+  assert.strictEqual(
+    mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"),
+    false,
+  );
 });
 
-test("should output webpack's devtoolModuleFilename option", async t => {
+test("should output webpack's devtoolModuleFilename option", async () => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
-      path: t.context.directory,
+      path: context.directory,
       devtoolModuleFilenameTemplate: "=!=!=!=[absolute-resource-path]=!=!=!=",
     },
     module: {
@@ -133,20 +140,20 @@ test("should output webpack's devtoolModuleFilename option", async t => {
   });
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  const files = fs.readdirSync(t.context.directory);
+  const files = fs.readdirSync(context.directory);
   const map = files.filter(file => file.includes(".map"));
 
-  t.true(map.length > 0);
+  assert.ok(map.length > 0);
 
   const sourceMapContent = fs.readFileSync(
-    path.resolve(t.context.directory, map[0]),
+    path.resolve(context.directory, map[0]),
     "utf8",
   );
 
-  t.regex(
+  assert.match(
     sourceMapContent,
     new RegExp(
       JSON.stringify(
@@ -160,11 +167,11 @@ test("should output webpack's devtoolModuleFilename option", async t => {
   );
 });
 
-test("should disable sourcemap output with 'sourceMaps:false'", async t => {
+test("should disable sourcemap output with 'sourceMaps:false'", async () => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
-      path: t.context.directory,
+      path: context.directory,
     },
     module: {
       rules: [
@@ -182,33 +189,33 @@ test("should disable sourcemap output with 'sourceMaps:false'", async t => {
   });
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  const files = fs.readdirSync(t.context.directory);
+  const files = fs.readdirSync(context.directory);
   const map = files.filter(file => file.includes(".map"));
 
-  t.true(map.length > 0);
+  assert.ok(map.length > 0);
 
-  const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
+  const data = fs.readFileSync(path.resolve(context.directory, map[0]));
   const mapObj = JSON.parse(data);
 
   const fixtureBasicIndex = mapObj.sources.indexOf(
     "webpack://babel-loader/./test/fixtures/basic.js",
   );
   // The index may vary across webpack versions
-  t.not(fixtureBasicIndex, -1);
+  assert.notStrictEqual(fixtureBasicIndex, -1);
 
   // Ensure that the code contains Babel's compiled output, because
   // sourcemaps from Babel are disabled.
-  t.truthy(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
+  assert.ok(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
 });
 
-test("should disable sourcemap output with 'sourceMap:false'", async t => {
+test("should disable sourcemap output with 'sourceMap:false'", async () => {
   const config = Object.assign({}, globalConfig, {
     devtool: "source-map",
     output: {
-      path: t.context.directory,
+      path: context.directory,
     },
     module: {
       rules: [
@@ -226,24 +233,24 @@ test("should disable sourcemap output with 'sourceMap:false'", async t => {
   });
 
   const stats = await webpackAsync(config);
-  t.deepEqual(stats.compilation.errors, []);
-  t.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
 
-  const files = fs.readdirSync(t.context.directory);
+  const files = fs.readdirSync(context.directory);
   const map = files.filter(file => file.includes(".map"));
 
-  t.true(map.length > 0);
+  assert.ok(map.length > 0);
 
-  const data = fs.readFileSync(path.resolve(t.context.directory, map[0]));
+  const data = fs.readFileSync(path.resolve(context.directory, map[0]));
   const mapObj = JSON.parse(data);
 
   const fixtureBasicIndex = mapObj.sources.indexOf(
     "webpack://babel-loader/./test/fixtures/basic.js",
   );
   // The index may vary across webpack versions
-  t.not(fixtureBasicIndex, -1);
+  assert.notStrictEqual(fixtureBasicIndex, -1);
 
   // Ensure that the code contains Babel's compiled output, because
   // sourcemaps from Babel are disabled.
-  t.truthy(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
+  assert.ok(mapObj.sourcesContent[fixtureBasicIndex].includes("__esModule"));
 });

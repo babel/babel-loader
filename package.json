@@ -18,12 +18,10 @@
     "webpack": ">=5.61.0"
   },
   "devDependencies": {
-    "@ava/babel": "^1.0.1",
     "@babel/cli": "^7.23.0",
     "@babel/core": "^7.23.3",
     "@babel/eslint-parser": "^7.23.3",
     "@babel/preset-env": "^7.23.3",
-    "ava": "^3.13.0",
     "c8": "^8.0.0",
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
@@ -43,7 +41,7 @@
     "prepublish": "yarn run clean && yarn run build",
     "preversion": "yarn run test",
     "test": "yarn run lint && yarn run build --source-maps && c8 yarn run test-only",
-    "test-only": "ava"
+    "test-only": "node --test test/**/*.test.js"
   },
   "resolutions": {
     "minipass": "6.0.2"
@@ -77,18 +75,6 @@
     ],
     "sourceMap": false,
     "instrument": false
-  },
-  "ava": {
-    "files": [
-      "test/**/*.test.js",
-      "!test/fixtures/**/*",
-      "!test/helpers/**/*"
-    ],
-    "babel": {
-      "compileAsTests": [
-        "test/helpers/**/*"
-      ]
-    }
   },
   "lint-staged": {
     "scripts/*.js": [
