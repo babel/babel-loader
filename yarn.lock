@@ -2289,10 +2289,10 @@ __metadata:
     lint-staged: ^13.2.3
     prettier: ^3.0.0
     schema-utils: ^4.0.0
-    webpack: ^5.89.0
+    webpack: ^5.93.0
   peerDependencies:
     "@babel/core": ^7.12.0
-    webpack: ">=5"
+    webpack: ">=5.61.0"
   languageName: unknown
   linkType: soft
 
@@ -6805,9 +6805,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.89.0":
-  version: 5.92.1
-  resolution: "webpack@npm:5.92.1"
+"webpack@npm:^5.93.0":
+  version: 5.93.0
+  resolution: "webpack@npm:5.93.0"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^1.0.5
@@ -6838,7 +6838,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 11bec781260c4180883e98a4a15a08df297aca654ded45e70598f688881dd722f992d680addafe6f6342debede345cddcce2b781c50f5cde29d6c0bc33a82452
+  checksum: c93bd73d9e1ab49b07e139582187f1c3760ee2cf0163b6288fab2ae210e39e59240a26284e7e5d29bec851255ef4b43c51642c882fa5a94e16ce7cb906deeb47
   languageName: node
   linkType: hard
 

@@ -18,7 +18,7 @@
     "superIsCallableConstructor": true
   },
   "targets": {
-    "node": "14.15.0"
+    "node": "18.20.0"
   },
   "presets": [
     [

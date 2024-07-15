@@ -7,7 +7,7 @@
   ],
   "main": "lib/index.js",
   "engines": {
-    "node": ">= 14.15.0"
+    "node": "^18.20.0 || ^20.10.0 || >=22.0.0"
   },
   "dependencies": {
     "find-cache-dir": "^4.0.0",
@@ -15,7 +15,7 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.12.0",
-    "webpack": ">=5"
+    "webpack": ">=5.61.0"
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",
@@ -32,7 +32,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
-    "webpack": "^5.89.0"
+    "webpack": "^5.93.0"
   },
   "scripts": {
     "clean": "node ./scripts/rimraf.mjs lib",
