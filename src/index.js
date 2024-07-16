@@ -181,6 +181,9 @@ async function loader(source, inputSourceMap, overrides) {
 
     let result;
     if (cacheDirectory) {
+      const hash = this.utils.createHash(
+        this._compilation.outputOptions.hashFunction,
+      );
       result = await cache({
         source,
         options,
@@ -188,6 +191,7 @@ async function loader(source, inputSourceMap, overrides) {
         cacheDirectory,
         cacheIdentifier,
         cacheCompression,
+        hash,
       });
     } else {
       result = await transform(source, options);

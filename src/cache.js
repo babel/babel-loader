@@ -10,7 +10,6 @@
 const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
-const crypto = require("crypto");
 const { promisify } = require("util");
 const { readFile, writeFile, mkdir } = require("fs/promises");
 // Lazily instantiated when needed
@@ -19,14 +18,6 @@ const findCacheDirP = import("find-cache-dir");
 const transform = require("./transform");
 const serialize = require("./serialize");
 let defaultCacheDirectory = null;
-
-let hashType = "sha256";
-// use md5 hashing if sha256 is not available
-try {
-  crypto.createHash(hashType);
-} catch {
-  hashType = "md5";
-}
 
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
@@ -68,9 +59,7 @@ const write = async function (filename, compress, result) {
  *
  * @return {String}
  */
-const filename = function (source, identifier, options) {
-  const hash = crypto.createHash(hashType);
-
+const filename = function (source, identifier, options, hash) {
   hash.update(serialize([options, source, identifier]));
 
   return hash.digest("hex") + ".json";
@@ -89,9 +78,13 @@ const handleCache = async function (directory, params) {
     cacheIdentifier,
     cacheDirectory,
     cacheCompression,
+    hash,
   } = params;
 
-  const file = path.join(directory, filename(source, cacheIdentifier, options));
+  const file = path.join(
+    directory,
+    filename(source, cacheIdentifier, options, hash),
+  );
 
   try {
     // No errors mean that the file was previously cached
