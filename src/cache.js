@@ -90,7 +90,9 @@ const handleCache = async function (directory, params) {
     // No errors mean that the file was previously cached
     // we just need to return it
     return await read(file, cacheCompression);
-  } catch {}
+  } catch {
+    // conitnue if cache can't be read
+  }
 
   const fallback =
     typeof cacheDirectory !== "string" && directory !== os.tmpdir();
