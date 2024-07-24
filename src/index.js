@@ -26,7 +26,6 @@ const injectCaller = require("./injectCaller");
 const schema = require("./schema");
 
 const { isAbsolute } = require("path");
-const validateOptions = require("schema-utils").validate;
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
@@ -54,17 +53,9 @@ function makeLoader(callback) {
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
 
-  let loaderOptions = this.getOptions();
-  validateOptions(schema, loaderOptions, {
-    name: "Babel loader",
-  });
+  let loaderOptions = this.getOptions(schema);
 
   if (loaderOptions.customize != null) {
-    if (typeof loaderOptions.customize !== "string") {
-      throw new Error(
-        "Customized loaders must be implemented as standalone modules.",
-      );
-    }
     if (!isAbsolute(loaderOptions.customize)) {
       throw new Error(
         "Customized loaders must be passed as absolute paths, since " +
@@ -99,17 +90,21 @@ async function loader(source, inputSourceMap, overrides) {
 
   // Deprecation handling
   if ("forceEnv" in loaderOptions) {
-    console.warn(
-      "The option `forceEnv` has been removed in favor of `envName` in Babel 7.",
+    this.emitWarning(
+      new Error(
+        "The option `forceEnv` has been removed in favor of `envName` in Babel 7.",
+      ),
     );
   }
   if (typeof loaderOptions.babelrc === "string") {
-    console.warn(
-      "The option `babelrc` should not be set to a string anymore in the babel-loader config. " +
-        "Please update your configuration and set `babelrc` to true or false.\n" +
-        "If you want to specify a specific babel config file to inherit config from " +
-        "please use the `extends` option.\nFor more information about this options see " +
-        "https://babeljs.io/docs/core-packages/#options",
+    this.emitWarning(
+      new Error(
+        "The option `babelrc` should not be set to a string anymore in the babel-loader config. " +
+          "Please update your configuration and set `babelrc` to true or false.\n" +
+          "If you want to specify a specific babel config file to inherit config from " +
+          "please use the `extends` option.\nFor more information about this options see " +
+          "https://babeljs.io/docs/#options",
+      ),
     );
   }
 

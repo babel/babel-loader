@@ -1,8 +1,9 @@
 {
+  "title": "Babel Loader options",
   "type": "object",
   "properties": {
     "cacheDirectory": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "boolean"
         },
@@ -20,8 +21,18 @@
       "default": true
     },
     "customize": {
-      "type": "string",
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        }
+      ],
       "default": null
+    },
+    "metadataSubscribers": {
+      "type": "array"
     }
   },
   "additionalProperties": true
