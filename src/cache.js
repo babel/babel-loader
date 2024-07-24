@@ -12,9 +12,8 @@ const path = require("path");
 const zlib = require("zlib");
 const { promisify } = require("util");
 const { readFile, writeFile, mkdir } = require("fs/promises");
-// Lazily instantiated when needed
-const findCacheDirP = import("find-cache-dir");
-
+const { sync: findUpSync } = require("find-up");
+const { env } = process;
 const transform = require("./transform");
 const serialize = require("./serialize");
 let defaultCacheDirectory = null;
@@ -162,14 +161,20 @@ module.exports = async function (params) {
   if (typeof params.cacheDirectory === "string") {
     directory = params.cacheDirectory;
   } else {
-    if (defaultCacheDirectory === null) {
-      const { default: findCacheDir } = await findCacheDirP;
-      defaultCacheDirectory =
-        findCacheDir({ name: "babel-loader" }) || os.tmpdir();
-    }
-
+    defaultCacheDirectory ??= findCacheDir("babel-loader");
     directory = defaultCacheDirectory;
   }
 
   return await handleCache(directory, params);
 };
+
+function findCacheDir(name) {
+  if (env.CACHE_DIR && !["true", "false", "1", "0"].includes(env.CACHE_DIR)) {
+    return path.join(env.CACHE_DIR, name);
+  }
+  const rootPkgJSONPath = path.dirname(findUpSync("package.json"));
+  if (rootPkgJSONPath) {
+    return path.join(rootPkgJSONPath, "node_modules", ".cache", name);
+  }
+  return os.tmpdir();
+}
