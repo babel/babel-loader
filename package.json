@@ -10,7 +10,7 @@
     "node": "^18.20.0 || ^20.10.0 || >=22.0.0"
   },
   "dependencies": {
-    "find-cache-dir": "^4.0.0"
+    "find-up": "^5.0.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.12.0",
