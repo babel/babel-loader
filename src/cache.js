@@ -91,7 +91,7 @@ const areExternalDependenciesModified = async function (
     let newTimestamp;
     try {
       newTimestamp = (await getFileTimestamp(dep)).timestamp + "";
-    } catch (err) {
+    } catch {
       return true;
     }
     if (timestamp !== newTimestamp) {
