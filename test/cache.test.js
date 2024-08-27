@@ -400,3 +400,34 @@ test("should cache result when there are external dependencies", async () => {
   assert.ok(stats.compilation.fileDependencies.has(dep));
   assert.strictEqual(counter, 2);
 });
+
+test("should output debug logs when stats.loggingDebug includes babel-loader", async () => {
+  const config = Object.assign({}, globalConfig, {
+    output: {
+      path: context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          options: {
+            cacheDirectory: true,
+            presets: ["@babel/preset-env"],
+          },
+        },
+      ],
+    },
+    stats: {
+      loggingDebug: ["babel-loader"],
+    },
+  });
+
+  const stats = await webpackAsync(config);
+
+  assert.match(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+reading cache file.+\n\s+discarded cache as it can not be read\n\s+creating cache folder.+\n\s+applying Babel transform\n\s+writing result to cache file.+\n\s+added '.+babel.config.json' to webpack dependencies/,
+  );
+});
