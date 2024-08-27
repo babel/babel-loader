@@ -65,10 +65,7 @@ const filename = function (source, identifier, options, hash) {
   return hash.digest("hex") + ".json";
 };
 
-const handleExternalDepedencies = async function (
-  externalDependencies,
-  getFileTimestamp,
-) {
+const addTimestamps = async function (externalDependencies, getFileTimestamp) {
   for (const depAndEmptyTimestamp of externalDependencies) {
     try {
       const [dep] = depAndEmptyTimestamp;
@@ -78,7 +75,6 @@ const handleExternalDepedencies = async function (
       // ignore errors if timestamp is not available
     }
   }
-  return externalDependencies;
 };
 
 const areExternalDependenciesModified = async function (
@@ -156,10 +152,7 @@ const handleCache = async function (directory, params) {
   // Otherwise just transform the file
   // return it to the user asap and write it in cache
   const result = await transform(source, options);
-  result.externalDependencies = await handleExternalDepedencies(
-    result.externalDependencies,
-    getFileTimestamp,
-  );
+  await addTimestamps(result.externalDependencies, getFileTimestamp);
 
   try {
     await write(file, cacheCompression, result);
