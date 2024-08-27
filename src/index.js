@@ -176,10 +176,10 @@ async function loader(source, inputSourceMap, overrides) {
     } = loaderOptions;
 
     let result;
-    const getFileTimestamp = promisify((path, cb) => {
-      this._compilation.fileSystemInfo.getFileTimestamp(path, cb);
-    });
     if (cacheDirectory) {
+      const getFileTimestamp = promisify((path, cb) => {
+        this._compilation.fileSystemInfo.getFileTimestamp(path, cb);
+      });
       const hash = this.utils.createHash(
         this._compilation.outputOptions.hashFunction,
       );
