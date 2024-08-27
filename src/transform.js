@@ -32,7 +32,9 @@ module.exports = async function (source, options) {
     metadata,
     sourceType,
     // Convert it from a Set to an Array to make it JSON-serializable.
-    externalDependencies: Array.from(externalDependencies || []),
+    externalDependencies: Array.from(externalDependencies || [], dep => [
+      dep,
+    ]).sort(),
   };
 };
 

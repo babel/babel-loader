@@ -212,8 +212,7 @@ async function loader(source, inputSourceMap, overrides) {
 
       const { code, map, metadata, externalDependencies } = result;
 
-      externalDependencies?.forEach(depAndTimestamp => {
-        const dep = depAndTimestamp.split("\0")[0];
+      externalDependencies?.forEach(([dep]) => {
         this.addDependency(dep);
       });
       metadataSubscribers.forEach(subscriber => {

@@ -69,17 +69,16 @@ const handleExternalDepedencies = async function (
   externalDependencies,
   getFileTimestamp,
 ) {
-  const result = [];
-  for (const dep of externalDependencies) {
+  for (const depAndEmptyTimestamp of externalDependencies) {
     try {
+      const [dep] = depAndEmptyTimestamp;
       const { timestamp } = await getFileTimestamp(dep);
-      result.push(dep + "\0" + timestamp);
+      depAndEmptyTimestamp.push(timestamp);
     } catch {
-      result.push(dep);
+      // ignore errors if timestamp is not available
     }
   }
-  result.sort();
-  return result;
+  return externalDependencies;
 };
 
 const areExternalDependenciesModified = async function (
@@ -87,10 +86,10 @@ const areExternalDependenciesModified = async function (
   getFileTimestamp,
 ) {
   for (const depAndTimestamp of externalDepsWithTimestamp) {
-    const [dep, timestamp] = depAndTimestamp.split("\0");
+    const [dep, timestamp] = depAndTimestamp;
     let newTimestamp;
     try {
-      newTimestamp = (await getFileTimestamp(dep)).timestamp + "";
+      newTimestamp = (await getFileTimestamp(dep)).timestamp;
     } catch {
       return true;
     }
