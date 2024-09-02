@@ -222,7 +222,7 @@ test("should have one file per module", async () => {
   assert.deepEqual(stats.compilation.warnings, []);
 
   const files = fs.readdirSync(context.cacheDirectory);
-  assert.ok(files.length === 3);
+  assert.strictEqual(files.length, 3);
 });
 
 test("should generate a new file if the identifier changes", async () => {
@@ -276,7 +276,7 @@ test("should generate a new file if the identifier changes", async () => {
   );
 
   const files = fs.readdirSync(context.cacheDirectory);
-  assert.ok(files.length === 6);
+  assert.strictEqual(files.length, 6);
 });
 
 test("should allow to specify the .babelrc file", async () => {
@@ -331,5 +331,72 @@ test("should allow to specify the .babelrc file", async () => {
   const files = fs.readdirSync(context.cacheDirectory);
   // The two configs resolved to same Babel config because "fixtures/babelrc"
   // is { "presets": ["@babel/preset-env"] }
-  assert.ok(files.length === 1);
+  assert.strictEqual(files.length, 1);
+});
+
+test("should cache result when there are external dependencies", async () => {
+  const dep = path.join(cacheDir, "externalDependency.txt");
+
+  fs.writeFileSync(dep, "first update");
+
+  let counter = 0;
+
+  const config = Object.assign({}, globalConfig, {
+    entry: path.join(__dirname, "fixtures/constant.js"),
+    output: {
+      path: context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          loader: babelLoader,
+          options: {
+            babelrc: false,
+            configFile: false,
+            cacheDirectory: context.cacheDirectory,
+            plugins: [
+              api => {
+                api.cache.never();
+                api.addExternalDependency(dep);
+                return {
+                  visitor: {
+                    BooleanLiteral(path) {
+                      counter++;
+                      path.replaceWith(
+                        api.types.stringLiteral(fs.readFileSync(dep, "utf8")),
+                      );
+                      path.stop();
+                    },
+                  },
+                };
+              },
+            ],
+          },
+        },
+      ],
+    },
+  });
+
+  let stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+
+  assert.ok(stats.compilation.fileDependencies.has(dep));
+  assert.strictEqual(counter, 1);
+
+  stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+
+  assert.ok(stats.compilation.fileDependencies.has(dep));
+  assert.strictEqual(counter, 1);
+
+  fs.writeFileSync(dep, "second update");
+  stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+
+  assert.ok(stats.compilation.fileDependencies.has(dep));
+  assert.strictEqual(counter, 2);
 });

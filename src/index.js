@@ -26,6 +26,7 @@ const injectCaller = require("./injectCaller");
 const schema = require("./schema");
 
 const { isAbsolute } = require("path");
+const { promisify } = require("util");
 
 function subscribe(subscriber, metadata, context) {
   if (context[subscriber]) {
@@ -176,6 +177,9 @@ async function loader(source, inputSourceMap, overrides) {
 
     let result;
     if (cacheDirectory) {
+      const getFileTimestamp = promisify((path, cb) => {
+        this._compilation.fileSystemInfo.getFileTimestamp(path, cb);
+      });
       const hash = this.utils.createHash(
         this._compilation.outputOptions.hashFunction,
       );
@@ -187,6 +191,7 @@ async function loader(source, inputSourceMap, overrides) {
         cacheIdentifier,
         cacheCompression,
         hash,
+        getFileTimestamp,
       });
     } else {
       result = await transform(source, options);
@@ -207,7 +212,9 @@ async function loader(source, inputSourceMap, overrides) {
 
       const { code, map, metadata, externalDependencies } = result;
 
-      externalDependencies?.forEach(dep => this.addDependency(dep));
+      externalDependencies?.forEach(([dep]) => {
+        this.addDependency(dep);
+      });
       metadataSubscribers.forEach(subscriber => {
         subscribe(subscriber, metadata, this);
       });

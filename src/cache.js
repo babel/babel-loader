@@ -64,6 +64,37 @@ const filename = function (source, identifier, options, hash) {
   return hash.digest("hex") + ".json";
 };
 
+const addTimestamps = async function (externalDependencies, getFileTimestamp) {
+  for (const depAndEmptyTimestamp of externalDependencies) {
+    try {
+      const [dep] = depAndEmptyTimestamp;
+      const { timestamp } = await getFileTimestamp(dep);
+      depAndEmptyTimestamp.push(timestamp);
+    } catch {
+      // ignore errors if timestamp is not available
+    }
+  }
+};
+
+const areExternalDependenciesModified = async function (
+  externalDepsWithTimestamp,
+  getFileTimestamp,
+) {
+  for (const depAndTimestamp of externalDepsWithTimestamp) {
+    const [dep, timestamp] = depAndTimestamp;
+    let newTimestamp;
+    try {
+      newTimestamp = (await getFileTimestamp(dep)).timestamp;
+    } catch {
+      return true;
+    }
+    if (timestamp !== newTimestamp) {
+      return true;
+    }
+  }
+  return false;
+};
+
 /**
  * Handle the cache
  *
@@ -78,6 +109,7 @@ const handleCache = async function (directory, params) {
     cacheDirectory,
     cacheCompression,
     hash,
+    getFileTimestamp,
   } = params;
 
   const file = path.join(
@@ -88,7 +120,15 @@ const handleCache = async function (directory, params) {
   try {
     // No errors mean that the file was previously cached
     // we just need to return it
-    return await read(file, cacheCompression);
+    const result = await read(file, cacheCompression);
+    if (
+      !(await areExternalDependenciesModified(
+        result.externalDependencies,
+        getFileTimestamp,
+      ))
+    ) {
+      return result;
+    }
   } catch {
     // conitnue if cache can't be read
   }
@@ -111,20 +151,17 @@ const handleCache = async function (directory, params) {
   // Otherwise just transform the file
   // return it to the user asap and write it in cache
   const result = await transform(source, options);
+  await addTimestamps(result.externalDependencies, getFileTimestamp);
 
-  // Do not cache if there are external dependencies,
-  // since they might change and we cannot control it.
-  if (!result.externalDependencies.length) {
-    try {
-      await write(file, cacheCompression, result);
-    } catch (err) {
-      if (fallback) {
-        // Fallback to tmpdir if node_modules folder not writable
-        return handleCache(os.tmpdir(), params);
-      }
-
-      throw err;
+  try {
+    await write(file, cacheCompression, result);
+  } catch (err) {
+    if (fallback) {
+      // Fallback to tmpdir if node_modules folder not writable
+      return handleCache(os.tmpdir(), params);
     }
+
+    throw err;
   }
 
   return result;
