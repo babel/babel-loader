@@ -385,3 +385,39 @@ test.cb("should allow to specify the .babelrc file", t => {
     });
   });
 });
+
+test.cb(
+  "should output debug logs when stats.loggingDebug includes babel-loader",
+  t => {
+    const config = Object.assign({}, globalConfig, {
+      output: {
+        path: t.context.directory,
+      },
+      module: {
+        rules: [
+          {
+            test: /\.jsx?/,
+            loader: babelLoader,
+            exclude: /node_modules/,
+            options: {
+              cacheDirectory: true,
+              presets: ["@babel/preset-env"],
+            },
+          },
+        ],
+      },
+      stats: {
+        loggingDebug: ["babel-loader"],
+      },
+    });
+
+    webpack(config, (err, stats) => {
+      t.is(err, null);
+      t.regex(
+        stats.toString(config.stats),
+        /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+reading cache file.+\n\s+discarded cache as it can not be read\n\s+creating cache folder.+\n\s+applying Babel transform\n\s+writing result to cache file.+\n\s+added '.+babel.config.json' to webpack dependencies/,
+      );
+      t.end();
+    });
+  },
+);

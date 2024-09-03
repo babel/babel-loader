@@ -54,6 +54,7 @@ function makeLoader(callback) {
 
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
+  const logger = this.getLogger("babel-loader");
 
   let loaderOptions = loaderUtils.getOptions(this);
 
@@ -80,17 +81,20 @@ async function loader(source, inputSourceMap, overrides) {
       );
     }
 
+    logger.debug(`loading customize override: '${loaderOptions.customize}'`);
     let override = require(loaderOptions.customize);
     if (override.__esModule) override = override.default;
 
     if (typeof override !== "function") {
       throw new Error("Custom overrides must be functions.");
     }
+    logger.debug("applying customize override to @babel/core");
     overrides = override(babel);
   }
 
   let customOptions;
   if (overrides && overrides.customOptions) {
+    logger.debug("applying overrides customOptions() to loader options");
     const result = await overrides.customOptions.call(this, loaderOptions, {
       source,
       map: inputSourceMap,
@@ -115,6 +119,7 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
+  logger.debug("normalizing loader options");
   // Standardize on 'sourceMaps' as the key passed through to Webpack, so that
   // users may safely use either one alongside our default use of
   // 'this.sourceMap' below without getting error about conflicting aliases.
@@ -161,12 +166,14 @@ async function loader(source, inputSourceMap, overrides) {
 
   // babel.loadPartialConfigAsync is available in v7.8.0+
   const { loadPartialConfigAsync = babel.loadPartialConfig } = babel;
+  logger.debug("resolving Babel configs");
   const config = await loadPartialConfigAsync(
     injectCaller(programmaticOptions, this.target),
   );
   if (config) {
     let options = config.options;
     if (overrides && overrides.config) {
+      logger.debug("applying overrides config() to Babel config");
       options = await overrides.config.call(this, config, {
         source,
         map: inputSourceMap,
@@ -197,6 +204,7 @@ async function loader(source, inputSourceMap, overrides) {
 
     let result;
     if (cacheDirectory) {
+      logger.debug("cache is enabled");
       result = await cache({
         source,
         options,
@@ -204,28 +212,36 @@ async function loader(source, inputSourceMap, overrides) {
         cacheDirectory,
         cacheIdentifier,
         cacheCompression,
+        logger,
       });
     } else {
+      logger.debug("cache is disabled, applying Babel transform");
       result = await transform(source, options);
     }
 
     // Availabe since Babel 7.12
     // https://github.com/babel/babel/pull/11907
     if (config.files) {
-      config.files.forEach(configFile => this.addDependency(configFile));
+      config.files.forEach(configFile => {
+        this.addDependency(configFile);
+        logger.debug(`added '${configFile}' to webpack dependencies`);
+      });
     } else {
       // .babelrc.json
       if (typeof config.babelrc === "string") {
         this.addDependency(config.babelrc);
+        logger.debug(`added '${config.babelrc}' to webpack dependencies`);
       }
       // babel.config.js
       if (config.config) {
         this.addDependency(config.config);
+        logger.debug(`added '${config.config}' to webpack dependencies`);
       }
     }
 
     if (result) {
       if (overrides && overrides.result) {
+        logger.debug("applying overrides result() to Babel transform results");
         result = await overrides.result.call(this, result, {
           source,
           map: inputSourceMap,
@@ -237,9 +253,13 @@ async function loader(source, inputSourceMap, overrides) {
 
       const { code, map, metadata, externalDependencies } = result;
 
-      externalDependencies?.forEach(dep => this.addDependency(dep));
+      externalDependencies?.forEach(dep => {
+        this.addDependency(dep);
+        logger.debug(`added '${dep}' to webpack dependencies`);
+      });
       metadataSubscribers.forEach(subscriber => {
         subscribe(subscriber, metadata, this);
+        logger.debug(`invoked metadata subscriber '${String(subscriber)}'`);
       });
 
       return [code, map];
