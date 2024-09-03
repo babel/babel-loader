@@ -325,3 +325,34 @@ test("should allow to specify the .babelrc file", async t => {
   const files = fs.readdirSync(t.context.cacheDirectory);
   t.true(files.length === 2);
 });
+
+test("should output debug logs when stats.loggingDebug includes babel-loader", async t => {
+  const config = Object.assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader,
+          exclude: /node_modules/,
+          options: {
+            cacheDirectory: true,
+            presets: ["@babel/preset-env"],
+          },
+        },
+      ],
+    },
+    stats: {
+      loggingDebug: ["babel-loader"],
+    },
+  });
+
+  const stats = await webpackAsync(config);
+
+  t.regex(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+reading cache file.+\n\s+discarded cache as it can not be read\n\s+creating cache folder.+/,
+  );
+});
