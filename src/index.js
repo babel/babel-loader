@@ -53,6 +53,7 @@ function makeLoader(callback) {
 
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
+  const logger = this.getLogger("babel-loader");
 
   let loaderOptions = this.getOptions(schema);
 
@@ -70,17 +71,20 @@ async function loader(source, inputSourceMap, overrides) {
       );
     }
 
+    logger.debug(`loading customize override: '${loaderOptions.customize}'`);
     let override = require(loaderOptions.customize);
     if (override.__esModule) override = override.default;
 
     if (typeof override !== "function") {
       throw new Error("Custom overrides must be functions.");
     }
+    logger.debug("applying customize override to @babel/core");
     overrides = override(babel);
   }
 
   let customOptions;
   if (overrides && overrides.customOptions) {
+    logger.debug("applying overrides customOptions() to loader options");
     const result = await overrides.customOptions.call(this, loaderOptions, {
       source,
       map: inputSourceMap,
@@ -109,6 +113,7 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
+  logger.debug("normalizing loader options");
   // Standardize on 'sourceMaps' as the key passed through to Webpack, so that
   // users may safely use either one alongside our default use of
   // 'this.sourceMap' below without getting error about conflicting aliases.
@@ -145,12 +150,14 @@ async function loader(source, inputSourceMap, overrides) {
   delete programmaticOptions.cacheCompression;
   delete programmaticOptions.metadataSubscribers;
 
+  logger.debug("resolving Babel configs");
   const config = await babel.loadPartialConfigAsync(
     injectCaller(programmaticOptions, this.target),
   );
   if (config) {
     let options = config.options;
     if (overrides && overrides.config) {
+      logger.debug("applying overrides config() to Babel config");
       options = await overrides.config.call(this, config, {
         source,
         map: inputSourceMap,
@@ -177,6 +184,7 @@ async function loader(source, inputSourceMap, overrides) {
 
     let result;
     if (cacheDirectory) {
+      logger.debug("cache is enabled");
       const getFileTimestamp = promisify((path, cb) => {
         this._compilation.fileSystemInfo.getFileTimestamp(path, cb);
       });
@@ -192,15 +200,21 @@ async function loader(source, inputSourceMap, overrides) {
         cacheCompression,
         hash,
         getFileTimestamp,
+        logger,
       });
     } else {
+      logger.debug("cache is disabled, applying Babel transform");
       result = await transform(source, options);
     }
 
-    config.files.forEach(configFile => this.addDependency(configFile));
+    config.files.forEach(configFile => {
+      this.addDependency(configFile);
+      logger.debug(`added '${configFile}' to webpack dependencies`);
+    });
 
     if (result) {
       if (overrides && overrides.result) {
+        logger.debug("applying overrides result() to Babel transform results");
         result = await overrides.result.call(this, result, {
           source,
           map: inputSourceMap,
@@ -214,9 +228,11 @@ async function loader(source, inputSourceMap, overrides) {
 
       externalDependencies?.forEach(([dep]) => {
         this.addDependency(dep);
+        logger.debug(`added '${dep}' to webpack dependencies`);
       });
       metadataSubscribers.forEach(subscriber => {
         subscribe(subscriber, metadata, this);
+        logger.debug(`invoked metadata subscriber '${String(subscriber)}'`);
       });
 
       return [code, map];

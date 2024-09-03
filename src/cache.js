@@ -110,6 +110,7 @@ const handleCache = async function (directory, params) {
     cacheCompression,
     hash,
     getFileTimestamp,
+    logger,
   } = params;
 
   const file = path.join(
@@ -120,6 +121,7 @@ const handleCache = async function (directory, params) {
   try {
     // No errors mean that the file was previously cached
     // we just need to return it
+    logger.debug(`reading cache file '${file}'`);
     const result = await read(file, cacheCompression);
     if (
       !(await areExternalDependenciesModified(
@@ -127,10 +129,15 @@ const handleCache = async function (directory, params) {
         getFileTimestamp,
       ))
     ) {
+      logger.debug(`validated cache file '${file}'`);
       return result;
     }
+    logger.debug(
+      `discarded cache file '${file}' due to changes in external dependencies`,
+    );
   } catch {
     // conitnue if cache can't be read
+    logger.debug(`discarded cache as it can not be read`);
   }
 
   const fallback =
@@ -139,6 +146,7 @@ const handleCache = async function (directory, params) {
   // Make sure the directory exists.
   try {
     // overwrite directory if exists
+    logger.debug(`creating cache folder '${directory}'`);
     await mkdir(directory, { recursive: true });
   } catch (err) {
     if (fallback) {
@@ -150,10 +158,12 @@ const handleCache = async function (directory, params) {
 
   // Otherwise just transform the file
   // return it to the user asap and write it in cache
+  logger.debug(`applying Babel transform`);
   const result = await transform(source, options);
   await addTimestamps(result.externalDependencies, getFileTimestamp);
 
   try {
+    logger.debug(`writing result to cache file '${file}'`);
     await write(file, cacheCompression, result);
   } catch (err) {
     if (fallback) {
