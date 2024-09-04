@@ -2,6 +2,7 @@ import test from "node:test";
 import fs from "node:fs";
 import path from "node:path";
 import assert from "node:assert/strict";
+import webpack from "webpack";
 import { webpackAsync } from "./helpers/webpackAsync.js";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { fileURLToPath } from "node:url";
@@ -403,6 +404,9 @@ test("should cache result when there are external dependencies", async () => {
 
 test("should output debug logs when stats.loggingDebug includes babel-loader", async () => {
   const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "memory",
+    },
     output: {
       path: context.directory,
     },
@@ -410,12 +414,20 @@ test("should output debug logs when stats.loggingDebug includes babel-loader", a
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader,
+
           exclude: /node_modules/,
-          options: {
-            cacheDirectory: true,
-            presets: ["@babel/preset-env"],
-          },
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                cacheDirectory: true,
+                presets: ["@babel/preset-env"],
+              },
+            },
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+            },
+          ],
         },
       ],
     },
@@ -424,10 +436,24 @@ test("should output debug logs when stats.loggingDebug includes babel-loader", a
     },
   });
 
-  const stats = await webpackAsync(config);
-
-  assert.match(
-    stats.toString(config.stats),
-    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+reading cache file.+\n\s+discarded cache as it can not be read\n\s+creating cache folder.+\n\s+applying Babel transform\n\s+writing result to cache file.+\n\s+added '.+babel.config.json' to webpack dependencies/,
-  );
+  return new Promise((resolve, reject) => {
+    const compiler = webpack(config);
+    compiler.run((err, stats) => {
+      if (err) reject(err);
+      assert.match(
+        stats.toString(config.stats),
+        /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+\n\s+added '.+babel.config.json' to webpack dependencies/,
+        "The first run stat does not match the snapshot regex",
+      );
+      compiler.run((err, newStats) => {
+        if (err) reject(err);
+        assert.match(
+          newStats.toString(config.stats),
+          /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+found cache for.+\n\s+added '.+babel.config.json' to webpack dependencies/,
+          "The second run stat does not match the snapshot regex",
+        );
+        resolve();
+      });
+    });
+  });
 });
