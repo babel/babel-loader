@@ -360,7 +360,7 @@ test("should allow to specify the .babelrc file", async () => {
   assert.deepEqual(stats.compilation.warnings, []);
   assert.match(
     stats.toString(configs[0].stats),
-    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+\s+added '.+fixtures\/babelrc' to webpack dependencies/,
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+\s+added '.+fixtures[\\/]babelrc' to webpack dependencies/,
     "The first run stat does not match the snapshot regex",
   );
 
