@@ -457,6 +457,89 @@ test("should cache result when there are external dependencies", async () => {
   assert.strictEqual(counter, 2);
 });
 
+test("should burst cache when the external dependency is removed from filesystem", async () => {
+  const dep = path.join(cacheDir, "externalDependency.txt");
+
+  fs.writeFileSync(dep, "first update");
+
+  let counter = 0;
+
+  const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "filesystem",
+      cacheDirectory: context.cacheDirectory,
+    },
+    entry: path.join(__dirname, "fixtures/constant.js"),
+    output: {
+      path: context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                babelrc: false,
+                configFile: false,
+                cacheDirectory: true,
+                plugins: [
+                  api => {
+                    api.cache.never();
+                    api.addExternalDependency(dep);
+                    return {
+                      visitor: {
+                        BooleanLiteral(path) {
+                          counter++;
+                          let depContent = "dep is removed";
+                          try {
+                            depContent = fs.readFileSync(dep, "utf8");
+                          } catch {
+                            // ignore if dep is removed
+                          }
+                          path.replaceWith(api.types.stringLiteral(depContent));
+                          path.stop();
+                        },
+                      },
+                    };
+                  },
+                ],
+              },
+            },
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  let stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+
+  assert.ok(stats.compilation.fileDependencies.has(dep));
+  assert.strictEqual(counter, 1);
+
+  stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+
+  assert.ok(stats.compilation.fileDependencies.has(dep));
+  assert.strictEqual(counter, 1);
+
+  fs.rmSync(dep);
+  stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.deepEqual(stats.compilation.errors, []);
+
+  assert.ok(stats.compilation.fileDependencies.has(dep));
+  assert.strictEqual(counter, 2);
+});
+
 test("should work with memory type webpack cache", async () => {
   const config = Object.assign({}, globalConfig, {
     cache: {
