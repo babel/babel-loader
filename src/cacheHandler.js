@@ -94,6 +94,8 @@ async function handleCache(
     await itemCache.storePromise(result);
     logger.debug(`cached result for '${filename}'`);
   }
+
+  return result;
 }
 
 module.exports = handleCache;

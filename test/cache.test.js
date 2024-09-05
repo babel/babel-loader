@@ -9,10 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const defaultCacheDir = path.join(
-  __dirname,
-  "../node_modules/.cache/babel-loader",
-);
+const defaultCacheDir = path.join(__dirname, "../node_modules/.cache/webpack");
 const cacheDir = path.join(__dirname, "output/cache/cachefiles");
 const outputDir = path.join(__dirname, "output/cache");
 const babelLoader = path.join(__dirname, "../lib");
@@ -31,9 +28,10 @@ const globalConfig = {
   },
 };
 
-// Cache filename is either SHA256 or MD5 hash
-const UNCOMPRESSED_CACHE_FILE_REGEX = /^[0-9a-f]{32}(?:[0-9a-f]{32})?\.json$/;
-const CACHE_FILE_REGEX = /^[0-9a-f]{32}(?:[0-9a-f]{32})?\.json\.gz$/;
+// example: 0.pack, index.pack
+const UNCOMPRESSED_CACHE_FILE_REGEX = /.+\.pack$/;
+// example: 0.pack.gz, index.pack.gz
+const CACHE_FILE_REGEX = /.+\.pack\.gz$/;
 
 // Create a separate directory for each test so that the tests
 // can run in parallel
@@ -50,25 +48,37 @@ test.beforeEach(() =>
   fs.rmSync(defaultCacheDir, { recursive: true, force: true }),
 );
 test.afterEach(() => {
+  fs.rmSync(defaultCacheDir, { recursive: true, force: true });
   fs.rmSync(context.directory, { recursive: true, force: true });
   fs.rmSync(context.cacheDirectory, { recursive: true, force: true });
 });
 
-test("should output files to cache directory", async () => {
+test("should output files to cache directory when cache type is filesystem", async () => {
   const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "filesystem",
+      cacheDirectory: context.cacheDirectory,
+    },
     output: {
       path: context.directory,
     },
     module: {
       rules: [
         {
-          test: /\.js$/,
-          loader: babelLoader,
+          test: /\.jsx?/,
           exclude: /node_modules/,
-          options: {
-            cacheDirectory: context.cacheDirectory,
-            presets: ["@babel/preset-env"],
-          },
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                cacheDirectory: true,
+                presets: ["@babel/preset-env"],
+              },
+            },
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+            },
+          ],
         },
       ],
     },
@@ -82,8 +92,12 @@ test("should output files to cache directory", async () => {
   assert.ok(files.length > 0);
 });
 
-test("should output json.gz files to standard cache dir by default", async () => {
+test("should output pack.gz files to standard cache dir when cache.compression is gzip", async () => {
   const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "filesystem",
+      compression: "gzip",
+    },
     output: {
       path: context.directory,
     },
@@ -91,12 +105,19 @@ test("should output json.gz files to standard cache dir by default", async () =>
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader,
           exclude: /node_modules/,
-          options: {
-            cacheDirectory: true,
-            presets: ["@babel/preset-env"],
-          },
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                cacheDirectory: true,
+                presets: ["@babel/preset-env"],
+              },
+            },
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+            },
+          ],
         },
       ],
     },
@@ -106,13 +127,17 @@ test("should output json.gz files to standard cache dir by default", async () =>
   assert.deepEqual(stats.compilation.errors, []);
   assert.deepEqual(stats.compilation.warnings, []);
 
-  let files = fs.readdirSync(defaultCacheDir);
+  let files = fs.readdirSync(defaultCacheDir, { recursive: true });
   files = files.filter(file => CACHE_FILE_REGEX.test(file));
   assert.ok(files.length > 0);
 });
 
-test("should output non-compressed files to standard cache dir when cacheCompression is set to false", async () => {
+test("should output non-compressed files to standard cache dir when cache.compression is set to false", async () => {
   const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "filesystem",
+      compression: false,
+    },
     output: {
       path: context.directory,
     },
@@ -124,8 +149,8 @@ test("should output non-compressed files to standard cache dir when cacheCompres
           exclude: /node_modules/,
           options: {
             cacheDirectory: true,
-            cacheCompression: false,
             presets: ["@babel/preset-env"],
+            configFile: false,
           },
         },
       ],
@@ -133,13 +158,16 @@ test("should output non-compressed files to standard cache dir when cacheCompres
   });
 
   await webpackAsync(config);
-  let files = fs.readdirSync(defaultCacheDir);
+  let files = fs.readdirSync(defaultCacheDir, { recursive: true });
   files = files.filter(file => UNCOMPRESSED_CACHE_FILE_REGEX.test(file));
   assert.ok(files.length > 0);
 });
 
-test("should output files to standard cache dir if set to true in query", async () => {
+test("should read from cache directory if cached exists", async () => {
   const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "filesystem",
+    },
     output: {
       path: context.directory,
     },
@@ -147,143 +175,121 @@ test("should output files to standard cache dir if set to true in query", async 
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader,
           exclude: /node_modules/,
-          options: {
-            cacheDirectory: true,
-            presets: ["@babel/preset-env"],
-          },
-        },
-      ],
-    },
-  });
-
-  const stats = await webpackAsync(config);
-  assert.deepEqual(stats.compilation.errors, []);
-  assert.deepEqual(stats.compilation.warnings, []);
-
-  let files = fs.readdirSync(defaultCacheDir);
-  files = files.filter(file => CACHE_FILE_REGEX.test(file));
-  assert.ok(files.length > 0);
-});
-
-test("should read from cache directory if cached file exists", async () => {
-  const config = Object.assign({}, globalConfig, {
-    output: {
-      path: context.directory,
-    },
-    module: {
-      rules: [
-        {
-          test: /\.jsx?/,
-          loader: babelLoader,
-          exclude: /node_modules/,
-          options: {
-            cacheDirectory: context.cacheDirectory,
-            presets: ["@babel/preset-env"],
-          },
-        },
-      ],
-    },
-  });
-
-  // @TODO Find a way to know if the file as correctly read without relying on
-  // Istanbul for coverage.
-  const stats = await webpackAsync(config);
-  assert.deepEqual(stats.compilation.errors, []);
-  assert.deepEqual(stats.compilation.warnings, []);
-
-  await webpackAsync(config);
-  const files = fs.readdirSync(context.cacheDirectory);
-  assert.ok(files.length > 0);
-});
-
-test("should have one file per module", async () => {
-  const config = Object.assign({}, globalConfig, {
-    output: {
-      path: context.directory,
-    },
-    module: {
-      rules: [
-        {
-          test: /\.jsx?/,
-          loader: babelLoader,
-          exclude: /node_modules/,
-          options: {
-            cacheDirectory: context.cacheDirectory,
-            presets: ["@babel/preset-env"],
-          },
-        },
-      ],
-    },
-  });
-
-  const stats = await webpackAsync(config);
-  assert.deepEqual(stats.compilation.errors, []);
-  assert.deepEqual(stats.compilation.warnings, []);
-
-  const files = fs.readdirSync(context.cacheDirectory);
-  assert.strictEqual(files.length, 3);
-});
-
-test("should generate a new file if the identifier changes", async () => {
-  const configs = [
-    Object.assign({}, globalConfig, {
-      output: {
-        path: context.directory,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-            options: {
-              cacheDirectory: context.cacheDirectory,
-              cacheIdentifier: "a",
-              presets: ["@babel/preset-env"],
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                cacheDirectory: true,
+                presets: ["@babel/preset-env"],
+                configFile: false,
+              },
             },
-          },
-        ],
-      },
-    }),
-    Object.assign({}, globalConfig, {
-      output: {
-        path: context.directory,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-            options: {
-              cacheDirectory: context.cacheDirectory,
-              cacheIdentifier: "b",
-              presets: ["@babel/preset-env"],
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
             },
-          },
-        ],
-      },
-    }),
-  ];
+          ],
+        },
+      ],
+    },
+    stats: {
+      loggingDebug: ["babel-loader"],
+    },
+  });
 
-  await Promise.allSettled(
-    configs.map(async config => {
-      const stats = await webpackAsync(config);
-      assert.deepEqual(stats.compilation.errors, []);
-      assert.deepEqual(stats.compilation.warnings, []);
-    }),
+  let stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.match(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+\n/,
+    "The first run stat does not match the snapshot regex",
   );
+  let files = fs.readdirSync(defaultCacheDir, { recursive: true });
+  files = files.filter(file => UNCOMPRESSED_CACHE_FILE_REGEX.test(file));
+  assert.ok(files.length > 0);
 
-  const files = fs.readdirSync(context.cacheDirectory);
-  assert.strictEqual(files.length, 6);
+  stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.match(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+found cache for.+\n/,
+    "The second run stat does not match the snapshot regex",
+  );
+});
+
+test("should not reuse cache if the identifier changes", async () => {
+  const configFactory = cacheIdentifier =>
+    Object.assign({}, globalConfig, {
+      cache: {
+        type: "filesystem",
+      },
+      output: {
+        path: context.directory,
+      },
+      module: {
+        rules: [
+          {
+            test: /\.jsx?/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: babelLoader,
+                options: {
+                  cacheDirectory: true,
+                  cacheIdentifier,
+                  presets: ["@babel/preset-env"],
+                  configFile: false,
+                },
+              },
+              {
+                loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+              },
+            ],
+          },
+        ],
+      },
+      stats: {
+        loggingDebug: ["babel-loader"],
+      },
+    });
+
+  let config = configFactory("a");
+  let stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.match(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+/,
+    "The first run stat does not match the snapshot regex",
+  );
+  let files = fs.readdirSync(defaultCacheDir, { recursive: true });
+  files = files.filter(file => UNCOMPRESSED_CACHE_FILE_REGEX.test(file));
+  assert.ok(files.length > 0);
+
+  config = configFactory("b");
+  stats = await webpackAsync(config);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.match(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+/,
+    "The second run stat does not match the snapshot regex",
+  );
+  files = fs.readdirSync(defaultCacheDir, { recursive: true });
+  files = files.filter(file => UNCOMPRESSED_CACHE_FILE_REGEX.test(file));
+  assert.ok(files.length > 0);
 });
 
 test("should allow to specify the .babelrc file", async () => {
-  const config = [
+  const configs = [
     Object.assign({}, globalConfig, {
       entry: path.join(__dirname, "fixtures/constant.js"),
+      cache: {
+        type: "filesystem",
+        cacheDirectory: context.cacheDirectory,
+      },
       output: {
         path: context.directory,
       },
@@ -291,19 +297,34 @@ test("should allow to specify the .babelrc file", async () => {
         rules: [
           {
             test: /\.jsx?/,
-            loader: babelLoader,
             exclude: /node_modules/,
-            options: {
-              cacheDirectory: context.cacheDirectory,
-              extends: path.join(__dirname, "fixtures/babelrc"),
-              babelrc: false,
-              presets: ["@babel/preset-env"],
-            },
+            use: [
+              {
+                loader: babelLoader,
+                options: {
+                  cacheDirectory: true,
+                  extends: path.join(__dirname, "fixtures/babelrc"),
+                  babelrc: false,
+                  presets: ["@babel/preset-env"],
+                  configFile: false,
+                },
+              },
+              {
+                loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+              },
+            ],
           },
         ],
+      },
+      stats: {
+        loggingDebug: ["babel-loader"],
       },
     }),
     Object.assign({}, globalConfig, {
+      cache: {
+        type: "filesystem",
+        cacheDirectory: context.cacheDirectory,
+      },
       entry: path.join(__dirname, "fixtures/constant.js"),
       output: {
         path: context.directory,
@@ -312,27 +333,47 @@ test("should allow to specify the .babelrc file", async () => {
         rules: [
           {
             test: /\.jsx?/,
-            loader: babelLoader,
             exclude: /node_modules/,
-            options: {
-              cacheDirectory: context.cacheDirectory,
-              presets: ["@babel/preset-env"],
-            },
+            use: [
+              {
+                loader: babelLoader,
+                options: {
+                  cacheDirectory: true,
+                  presets: ["@babel/preset-env"],
+                  configFile: false,
+                },
+              },
+              {
+                loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+              },
+            ],
           },
         ],
+      },
+      stats: {
+        loggingDebug: ["babel-loader"],
       },
     }),
   ];
-  const multiStats = await webpackAsync(config);
-  assert.deepEqual(multiStats.stats[0].compilation.errors, []);
-  assert.deepEqual(multiStats.stats[0].compilation.warnings, []);
-  assert.deepEqual(multiStats.stats[1].compilation.errors, []);
-  assert.deepEqual(multiStats.stats[1].compilation.warnings, []);
+  let stats = await webpackAsync(configs[0]);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.match(
+    stats.toString(configs[0].stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+\s+added '.+fixtures\/babelrc' to webpack dependencies/,
+    "The first run stat does not match the snapshot regex",
+  );
 
-  const files = fs.readdirSync(context.cacheDirectory);
-  // The two configs resolved to same Babel config because "fixtures/babelrc"
-  // is { "presets": ["@babel/preset-env"] }
-  assert.strictEqual(files.length, 1);
+  // The cache is reused because the two configs resolved to same Babel
+  // config as "fixtures/babelrc" is { "presets": ["@babel/preset-env"] }
+  stats = await webpackAsync(configs[1]);
+  assert.deepEqual(stats.compilation.errors, []);
+  assert.deepEqual(stats.compilation.warnings, []);
+  assert.match(
+    stats.toString(configs[1].stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+found cache for.+\n/,
+    "The second run stat does not match the snapshot regex",
+  );
 });
 
 test("should cache result when there are external dependencies", async () => {
@@ -343,6 +384,10 @@ test("should cache result when there are external dependencies", async () => {
   let counter = 0;
 
   const config = Object.assign({}, globalConfig, {
+    cache: {
+      type: "filesystem",
+      cacheDirectory: context.cacheDirectory,
+    },
     entry: path.join(__dirname, "fixtures/constant.js"),
     output: {
       path: context.directory,
@@ -350,30 +395,40 @@ test("should cache result when there are external dependencies", async () => {
     module: {
       rules: [
         {
-          test: /\.js$/,
-          loader: babelLoader,
-          options: {
-            babelrc: false,
-            configFile: false,
-            cacheDirectory: context.cacheDirectory,
-            plugins: [
-              api => {
-                api.cache.never();
-                api.addExternalDependency(dep);
-                return {
-                  visitor: {
-                    BooleanLiteral(path) {
-                      counter++;
-                      path.replaceWith(
-                        api.types.stringLiteral(fs.readFileSync(dep, "utf8")),
-                      );
-                      path.stop();
-                    },
+          test: /\.jsx?/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                babelrc: false,
+                configFile: false,
+                cacheDirectory: true,
+                plugins: [
+                  api => {
+                    api.cache.never();
+                    api.addExternalDependency(dep);
+                    return {
+                      visitor: {
+                        BooleanLiteral(path) {
+                          counter++;
+                          path.replaceWith(
+                            api.types.stringLiteral(
+                              fs.readFileSync(dep, "utf8"),
+                            ),
+                          );
+                          path.stop();
+                        },
+                      },
+                    };
                   },
-                };
+                ],
               },
-            ],
-          },
+            },
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+            },
+          ],
         },
       ],
     },
@@ -402,7 +457,7 @@ test("should cache result when there are external dependencies", async () => {
   assert.strictEqual(counter, 2);
 });
 
-test("should output debug logs when stats.loggingDebug includes babel-loader", async () => {
+test("should work with memory type webpack cache", async () => {
   const config = Object.assign({}, globalConfig, {
     cache: {
       type: "memory",
@@ -414,13 +469,13 @@ test("should output debug logs when stats.loggingDebug includes babel-loader", a
       rules: [
         {
           test: /\.jsx?/,
-
           exclude: /node_modules/,
           use: [
             {
               loader: babelLoader,
               options: {
                 cacheDirectory: true,
+                configFile: false,
                 presets: ["@babel/preset-env"],
               },
             },
@@ -442,14 +497,14 @@ test("should output debug logs when stats.loggingDebug includes babel-loader", a
       if (err) reject(err);
       assert.match(
         stats.toString(config.stats),
-        /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+\n\s+added '.+babel.config.json' to webpack dependencies/,
+        /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+/,
         "The first run stat does not match the snapshot regex",
       );
       compiler.run((err, newStats) => {
         if (err) reject(err);
         assert.match(
           newStats.toString(config.stats),
-          /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+found cache for.+\n\s+added '.+babel.config.json' to webpack dependencies/,
+          /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+found cache for.+/,
           "The second run stat does not match the snapshot regex",
         );
         resolve();
