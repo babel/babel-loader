@@ -75,6 +75,10 @@ test("should output files to cache directory when cache type is filesystem", asy
                 presets: ["@babel/preset-env"],
               },
             },
+            // when cache.type is filesystem, webpack will try to cache the loader result if they
+            // are cacheable (by default). The webpack cache will then be hit before the babel-loader
+            // cache. To test the babel-loader cache behaviour, we have to mark the loader results
+            // as uncacheable
             {
               loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
             },
@@ -571,6 +575,107 @@ test("should work with memory type webpack cache", async () => {
     },
     stats: {
       loggingDebug: ["babel-loader"],
+    },
+  });
+
+  return new Promise((resolve, reject) => {
+    const compiler = webpack(config);
+    compiler.run((err, stats) => {
+      if (err) reject(err);
+      assert.match(
+        stats.toString(config.stats),
+        /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+missed cache for.+\n\s+applying Babel transform\n\s+caching result for.+\n\s+cached result for.+/,
+        "The first run stat does not match the snapshot regex",
+      );
+      compiler.run((err, newStats) => {
+        if (err) reject(err);
+        assert.match(
+          newStats.toString(config.stats),
+          /normalizing loader options\n\s+resolving Babel configs\n\s+cache is enabled\n\s+getting cache for.+\n\s+found cache for.+/,
+          "The second run stat does not match the snapshot regex",
+        );
+        resolve();
+      });
+    });
+  });
+});
+
+test("it should work with custom webpack cache plugin", async () => {
+  class CustomCachePlugin {
+    /**
+     * Apply the plugin
+     * @param {import("webpack").Compiler} compiler the compiler instance
+     */
+    apply(compiler) {
+      let cache = Object.create(null);
+      const pluginName = this.constructor.name;
+
+      compiler.cache.hooks.store.tap(pluginName, (identifier, etag, data) => {
+        cache[identifier] = { etag, data };
+      });
+
+      compiler.cache.hooks.get.tap(
+        pluginName,
+        (identifier, etag, gotHandlers) => {
+          if (!(identifier in cache)) {
+            return null;
+          } else if (cache[identifier] != null) {
+            const cacheEntry = cache[identifier];
+            if (cacheEntry.etag === etag) {
+              return cacheEntry.data;
+            } else {
+              return null;
+            }
+          }
+          gotHandlers.push((result, callback) => {
+            if (result === undefined) {
+              cache[identifier] = null;
+            } else {
+              cache[identifier] = { etag, data: result };
+            }
+            return callback();
+          });
+        },
+      );
+
+      compiler.cache.hooks.shutdown.tap(
+        pluginName,
+        () => (cache = Object.create(null)),
+      );
+    }
+  }
+
+  const config = Object.assign({}, globalConfig, {
+    // disable builtin webpack cache so that CustomCachePlugin can provide the cache backend
+    cache: false,
+    entry: path.join(__dirname, "fixtures/constant.js"),
+    output: {
+      path: context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: babelLoader,
+              options: {
+                cacheDirectory: true,
+                configFile: false,
+                presets: ["@babel/preset-env"],
+              },
+            },
+            {
+              loader: "./test/fixtures/uncacheable-passthrough-loader.cjs",
+            },
+          ],
+        },
+      ],
+    },
+    plugins: [new CustomCachePlugin()],
+    stats: {
+      loggingDebug: ["babel-loader", CustomCachePlugin.name],
     },
   });
 
