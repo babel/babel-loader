@@ -6,7 +6,7 @@
 
 <div align="center">
   <a href="https://github.com/babel/babel">
-    <img src="https://rawgit.com/babel/logo/master/babel.svg" alt="Babel logo" width="200" height="200">
+    <img src="https://raw.githubusercontent.com/babel/logo/master/babel.svg" alt="Babel logo" width="200" height="200">
   </a>
   <a href="https://github.com/webpack/webpack">
     <img src="https://webpack.js.org/assets/icon-square-big.svg" alt="webpack logo" width="200" height="200">
@@ -46,8 +46,9 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
+          targets: "defaults",
           presets: [
-            ['@babel/preset-env', { targets: "defaults" }]
+            ['@babel/preset-env']
           ]
         }
       }
@@ -71,10 +72,11 @@ module: {
       use: {
         loader: 'babel-loader',
         options: {
+          targets: "defaults",
           presets: [
-            ['@babel/preset-env', { targets: "defaults" }]
+            ['@babel/preset-env']
           ],
-          plugins: ['@babel/plugin-proposal-class-properties']
+          plugins: ['@babel/plugin-proposal-decorators', { version: "2023-11" }]
         }
       }
     }
@@ -94,7 +96,7 @@ This loader also supports the following loader-specific option:
 
 * `customize`: Default `null`. The path of a module that exports a `custom` callback [like the one that you'd pass to `.custom()`](#customized-loader). Since you already have to make a new file to use this, it is recommended that you instead use `.custom` to create a wrapper loader. Only use this if you _must_ continue using `babel-loader` directly, but still want to customize.
 
-* `metadataSubscribers`: Default `[]`. Takes an array of context function names. E.g. if you passed ['myMetadataPlugin'], you'd assign a subscriber function to `context.myMetadataPlugin` within your webpack plugin's hooks & that function will be called with `metadata`.
+* `metadataSubscribers`: Default `[]`. Takes an array of context function names. E.g. if you passed ['myMetadataPlugin'], you'd assign a subscriber function to `context.myMetadataPlugin` within your webpack plugin's hooks & that function will be called with `metadata`. See [`./test/metadata.test.js`](./test/metadata.test.js) for an example.
 
 ## Troubleshooting
 
@@ -287,10 +289,6 @@ For example, to change the environment targets passed to `@babel/preset-env` bas
 
 module.exports = api => {
   return {
-    plugins: [
-      "@babel/plugin-proposal-nullish-coalescing-operator",
-      "@babel/plugin-proposal-optional-chaining"
-    ],
     presets: [
       [
         "@babel/preset-env",
