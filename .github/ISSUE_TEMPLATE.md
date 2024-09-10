@@ -10,19 +10,12 @@ the [Babel Slack](babeljs.slack.com). Future support requests will be closed.
 **I'm submitting a feature request**
 **I'm submitting a support request** => Please do not submit support request here, see note at the top of this template.
 
-
-**Webpack Version:**
-1.10.x/2.x
-
-**Babel Core Version**:
-6.x
-
-**Babel Loader Version**:
-5.4.x/6.2.x
-
-
 **Please tell us about your environment:**
-OSX 10.x / Linux / Windows 10
+Webpack Version: 4.x/5.x
+Babel Core Version: 7.x
+Babel Loader Version: 8.x/9.x
+
+Tip: you can also run `npx envinfo --preset babel` and just paste the result here
 
 **Current behavior:**
 
