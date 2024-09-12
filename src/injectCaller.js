@@ -35,7 +35,7 @@ function supportsCallerOption() {
     try {
       // Rather than try to match the Babel version, we just see if it throws
       // when passed a 'caller' flag, and use that to decide if it is supported.
-      babel.loadPartialConfig({
+      babel.loadPartialConfigSync({
         caller: undefined,
         babelrc: false,
         configFile: false,
