@@ -53,7 +53,10 @@ function makeLoader(callback) {
 
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
-  const logger = this.getLogger("babel-loader");
+  const logger =
+    typeof this.getLogger === "function"
+      ? this.getLogger("babel-loader")
+      : { debug: () => {} };
 
   let loaderOptions = this.getOptions();
   validateOptions(schema, loaderOptions, {
