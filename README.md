@@ -98,6 +98,20 @@ This loader also supports the following loader-specific option:
 
 ## Troubleshooting
 
+### Enable debug mode logging
+
+Specify the webpack option [`stats.loggingDebug`](https://webpack.js.org/configuration/stats/#statsloggingdebug) to output verbose debug logs.
+
+```js
+// webpack.config.js
+module.exports = {
+  // ...
+  stats: {
+    loggingDebug: ["babel-loader"]
+  }
+}
+```
+
 ### babel-loader is slow!
 
 Make sure you are transforming as few files as possible. Because you are probably matching `/\.m?js$/`, you might be transforming the `node_modules` folder or other unwanted source.
