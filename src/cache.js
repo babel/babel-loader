@@ -93,6 +93,7 @@ const handleCache = async function (directory, params) {
     cacheIdentifier,
     cacheDirectory,
     cacheCompression,
+    logger,
   } = params;
 
   const file = path.join(directory, filename(source, cacheIdentifier, options));
@@ -100,14 +101,19 @@ const handleCache = async function (directory, params) {
   try {
     // No errors mean that the file was previously cached
     // we just need to return it
+    logger.debug(`reading cache file '${file}'`);
     return await read(file, cacheCompression);
-  } catch (err) {}
+  } catch (err) {
+    // conitnue if cache can't be read
+    logger.debug(`discarded cache as it can not be read`);
+  }
 
   const fallback =
     typeof cacheDirectory !== "string" && directory !== os.tmpdir();
 
   // Make sure the directory exists.
   try {
+    logger.debug(`creating cache folder '${directory}'`);
     await makeDir(directory);
   } catch (err) {
     if (fallback) {
@@ -119,12 +125,14 @@ const handleCache = async function (directory, params) {
 
   // Otherwise just transform the file
   // return it to the user asap and write it in cache
+  logger.debug(`applying Babel transform`);
   const result = await transform(source, options);
 
   // Do not cache if there are external dependencies,
   // since they might change and we cannot control it.
   if (!result.externalDependencies.length) {
     try {
+      logger.debug(`writing result to cache file '${file}'`);
       await write(file, cacheCompression, result);
     } catch (err) {
       if (fallback) {
