@@ -194,3 +194,20 @@ test("should track external dependencies", async t => {
   t.true(stats.compilation.fileDependencies.has(dep));
   t.deepEqual(stats.compilation.warnings, []);
 });
+
+test("should output debug logs when stats.loggingDebug includes babel-loader", async t => {
+  const config = Object.assign({}, globalConfig, {
+    output: {
+      path: t.context.directory,
+    },
+    stats: {
+      loggingDebug: ["babel-loader"],
+    },
+  });
+
+  const stats = await webpackAsync(config);
+  t.regex(
+    stats.toString(config.stats),
+    /normalizing loader options\n\s+resolving Babel configs\n\s+cache is disabled, applying Babel transform/,
+  );
+});
