@@ -2,7 +2,7 @@
 > If you are using legacy Babel v6, see the [7.x branch](https://github.com/babel/babel-loader/tree/7.x) docs
 
 [![NPM Status](https://img.shields.io/npm/v/babel-loader.svg?style=flat)](https://www.npmjs.com/package/babel-loader)
-[![codecov](https://codecov.io/gh/babel/babel-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
+[![codecov](https://codecov.io/gh/babel/babel-loader/graph/badge.svg)](https://codecov.io/gh/babel/babel-loader)
 
 <div align="center">
   <a href="https://github.com/babel/babel">
