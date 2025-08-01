@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": ".",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "lib": ["ESNext"],
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "incremental": true,
+    "allowJs": true
+  },
+  "include": ["src/**/*.js"],
+  "exclude": ["node_modules", "test/fixtures/*.js"]
+}
