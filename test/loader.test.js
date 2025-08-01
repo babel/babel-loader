@@ -21,7 +21,27 @@ const globalConfig = {
         loader: babelLoader,
         options: {
           targets: "chrome 42",
-          presets: [["@babel/preset-env", { bugfixes: true, loose: true }]],
+          assumptions: {
+            arrayLikeIsIterable: true,
+            constantReexports: true,
+            ignoreFunctionLength: true,
+            ignoreToPrimitiveHint: true,
+            mutableTemplateObject: true,
+            noClassCalls: true,
+            noDocumentAll: true,
+            objectRestNoSymbols: true,
+            privateFieldsAsProperties: true,
+            pureGetters: true,
+            setClassMethods: true,
+            setComputedProperties: true,
+            setPublicClassFields: true,
+            setSpreadProperties: true,
+            skipForOfIteratorClosing: true,
+            superIsCallableConstructor: true,
+          },
+          presets: [
+            ["@babel/preset-env", { exclude: ["transform-typeof-symbol"] }],
+          ],
           configFile: false,
           babelrc: false,
         },
@@ -57,13 +77,13 @@ test("should transpile the code snippet", async () => {
   const files = fs.readdirSync(context.directory);
   assert.ok(files.length === 1);
 
-  const test = "var App = function App(arg)";
+  const test = /var App = .*(?:_createClass\()?function App\(arg\)/;
   const subject = fs.readFileSync(
     path.resolve(context.directory, files[0]),
     "utf8",
   );
 
-  assert.ok(subject.includes(test));
+  assert.match(subject, test);
 });
 
 test("should not throw error on syntax error", async () => {
