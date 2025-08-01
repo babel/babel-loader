@@ -7,15 +7,25 @@ permissions:
 
 jobs:
   test:
-    name: Test - ${{ matrix.os }} - Node ${{ matrix.node-version }}, Webpack ${{ matrix.webpack-version }}
+    name: Test - ${{ matrix.os }} - Node ${{ matrix.node-version }}, Babel ${{ matrix.babel-version }}, Webpack ${{ matrix.webpack-version }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [18, 20, 22]
+        node-version: [20, 22, 24]
+        babel-version: ["7", "8"]
         webpack-version: ["5"]
         include:
+          - node-version: "18"
+            webpack-version: "5"
+            babel-version: "7"
+            os: ubuntu-latest
+          - node-version: "18"
+            webpack-version: "5"
+            babel-version: "7"
+            os: windows-latest
           - node-version: "18.20.0" # The minimum supported node version
             webpack-version: "5.61.0" # The minimum supported webpack version
+            babel-version: "7"
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -29,6 +39,9 @@ jobs:
         run: yarn
       - name: Install webpack ${{ matrix.webpack-version }}
         run: yarn add -D webpack@${{ matrix.webpack-version }}
+      - name: Downgrade to Babel 7
+        if: matrix.babel-version == '7'
+        run: yarn up @babel/*@^7
       - name: Build babel-loader
         run: yarn run build
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
@@ -50,6 +63,8 @@ jobs:
           cache: "yarn"
       - name: Install dependencies
         run: yarn
+      - name: Run tsc
+        run: yarn tsc
       - name: Run lint and coverage tests
         run: yarn test
       - name: Submit coverage data to codecov

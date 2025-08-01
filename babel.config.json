@@ -24,7 +24,6 @@
     [
       "@babel/preset-env",
       {
-        "bugfixes": true,
         "modules": false
       }
     ]
