@@ -1,3 +1,37 @@
+// @ts-check
+/**
+ * @typedef {object} LoaderOnlyOptions
+ * @property {string} [cacheDirectory] Directory to store cached files.
+ * @property {string} [cacheIdentifier] Unique identifier to bust cache.
+ * @property {boolean} [cacheCompression] Whether to compress cached files.
+ * @property {string} [customize] The absolute path of a file that exports a BabelLoaderWrapper.
+ * @property {Array<string>} [metadataSubscribers] Names of subscribers registered in the loader context.
+ */
+
+/**
+ * @typedef {import("webpack").LoaderContext<LoaderOptions>} BabelLoaderContext
+ * @typedef {string} BabelLoaderSource Parameters<import("webpack").LoaderDefinitionFunction>[0]
+ * @typedef {string} BabelLoaderInputSourceMap Parameters<import("webpack").LoaderDefinitionFunction>[1]
+ *
+ * @todo Consider exporting these types from @babel/core
+ * @typedef {Awaited<ReturnType<import("@babel/core").loadPartialConfigAsync>>} PartialConfig
+ * @typedef {PartialConfig['options']} NormalizedOptions
+ */
+
+/**
+ * @typedef {(babel: typeof import("@babel/core")) => BabelOverrideHooks} BabelLoaderWrapper
+ * @typedef {object} BabelOverrideHooks
+ * @property {(this: BabelLoaderContext, loaderOptions: LoaderOptions, params: { source: BabelLoaderSource, map: BabelLoaderInputSourceMap }) => Promise<{ custom: any, loader: LoaderOptions }>} customOptions
+ * @property {(this: BabelLoaderContext, config: PartialConfig, params: { source: BabelLoaderSource, map: BabelLoaderInputSourceMap, customOptions: any }) => Promise<PartialConfig['options']>} config
+ * @property {(this: BabelLoaderContext, result: import("./transform").TransformResult, params: { source: BabelLoaderSource, map: BabelLoaderInputSourceMap, customOptions: any, config: PartialConfig, options: PartialConfig['options'] }) => Promise<import("./transform").TransformResult>} result
+ */
+/**
+ * @typedef {import("@babel/core").InputOptions & LoaderOnlyOptions} LoaderOptions
+ */
+
+/**
+ * @type {import("@babel/core")}
+ */
 let babel;
 try {
   babel = require("@babel/core");
@@ -23,13 +57,21 @@ const { version } = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 const injectCaller = require("./injectCaller");
-const schema = require("./schema");
+const schema = require("./schema.json");
 
 const { isAbsolute } = require("path");
 const { promisify } = require("util");
 
+/**
+ * Invoke a metadata subscriber registered in the loader context.
+ * @param {string} subscriber
+ * @param {unknown} metadata
+ * @param {import("webpack").LoaderContext<LoaderOptions>} context
+ */
 function subscribe(subscriber, metadata, context) {
+  // @ts-expect-error subscriber is a custom function
   if (context[subscriber]) {
+    // @ts-expect-error subscriber is a custom function
     context[subscriber](metadata);
   }
 }
@@ -37,24 +79,44 @@ function subscribe(subscriber, metadata, context) {
 module.exports = makeLoader();
 module.exports.custom = makeLoader;
 
+/**
+ * @param {BabelLoaderWrapper} [callback]
+ */
 function makeLoader(callback) {
   const overrides = callback ? callback(babel) : undefined;
 
-  return function (source, inputSourceMap) {
+  /**
+   * @this {BabelLoaderContext}
+   * @param {BabelLoaderSource} source
+   * @param {BabelLoaderInputSourceMap} inputSourceMap
+   */
+  const webpackLoader = function (source, inputSourceMap) {
     // Make the loader async
     const callback = this.async();
 
     loader.call(this, source, inputSourceMap, overrides).then(
+      // @ts-expect-error (FixMe): Argument of type 'string | EncodedSourceMap' is not assignable to parameter of type 'string | Buffer<ArrayBufferLike>'.
       args => callback(null, ...args),
       err => callback(err),
     );
   };
+
+  return webpackLoader;
 }
 
+/**
+ * Babel loader
+ * @this {BabelLoaderContext}
+ * @param {BabelLoaderSource} source The source code to transform
+ * @param {BabelLoaderInputSourceMap} inputSourceMap
+ * @param {BabelOverrideHooks} overrides
+ * @returns
+ */
 async function loader(source, inputSourceMap, overrides) {
   const filename = this.resourcePath;
   const logger = this.getLogger("babel-loader");
 
+  // @ts-expect-error TS does not treat schema.json/properties/cacheDirectory/type as a constant string literal
   let loaderOptions = this.getOptions(schema);
 
   if (loaderOptions.customize != null) {
@@ -72,6 +134,7 @@ async function loader(source, inputSourceMap, overrides) {
     }
 
     logger.debug(`loading customize override: '${loaderOptions.customize}'`);
+
     let override = require(loaderOptions.customize);
     if (override.__esModule) override = override.default;
 
@@ -182,12 +245,21 @@ async function loader(source, inputSourceMap, overrides) {
       metadataSubscribers = [],
     } = loaderOptions;
 
+    /**
+     * @type {import("./transform").TransformResult}
+     */
     let result;
     if (cacheDirectory) {
       logger.debug("cache is enabled");
-      const getFileTimestamp = promisify((path, cb) => {
-        this._compilation.fileSystemInfo.getFileTimestamp(path, cb);
-      });
+      const getFileTimestamp = promisify(
+        /**
+         * @param {string} path
+         * @param {(err: import("webpack").WebpackError | null, fileTimestamp: import("./cache").FileSystemInfoEntry) => void} cb
+         */
+        (path, cb) => {
+          this._compilation.fileSystemInfo.getFileTimestamp(path, cb);
+        },
+      );
       const hash = this.utils.createHash(
         this._compilation.outputOptions.hashFunction,
       );

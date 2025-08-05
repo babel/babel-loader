@@ -1,5 +1,13 @@
+// @ts-check
+/**
+ * Inject babel-loader caller information into the Babel options.
+ * @param {import("@babel/core").InputOptions} opts
+ * @param {string} target
+ * @returns {import("@babel/core").InputOptions}
+ */
 module.exports = function injectCaller(opts, target) {
-  return Object.assign({}, opts, {
+  return {
+    ...opts,
     caller: Object.assign(
       {
         name: "babel-loader",
@@ -19,5 +27,5 @@ module.exports = function injectCaller(opts, target) {
       },
       opts.caller,
     ),
-  });
+  };
 };

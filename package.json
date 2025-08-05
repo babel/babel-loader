@@ -13,14 +13,14 @@
     "find-up": "^5.0.0"
   },
   "peerDependencies": {
-    "@babel/core": "^7.12.0",
+    "@babel/core": "^7.12.0 || ^8.0.0-beta.1",
     "webpack": ">=5.61.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.23.0",
-    "@babel/core": "^7.23.3",
-    "@babel/eslint-parser": "^7.23.3",
-    "@babel/preset-env": "^7.23.3",
+    "@babel/cli": "^8.0.0-beta.1",
+    "@babel/core": "^8.0.0-beta.1",
+    "@babel/eslint-parser": "^8.0.0-beta.1",
+    "@babel/preset-env": "^8.0.0-beta.1",
     "c8": "^10.1.2",
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
@@ -29,6 +29,7 @@
     "husky": "^9.1.5",
     "lint-staged": "^15.2.9",
     "prettier": "^3.0.0",
+    "typescript": "^5.8.3",
     "webpack": "^5.93.0"
   },
   "scripts": {
@@ -38,7 +39,7 @@
     "lint": "eslint src test",
     "precommit": "lint-staged",
     "prepublish": "yarn run clean && yarn run build",
-    "preversion": "yarn run test",
+    "preversion": "yarn tsc && yarn run test",
     "test": "yarn run lint && yarn run build --source-maps && c8 yarn run test-only",
     "test-only": "node --test test/**/*.test.js"
   },

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Filesystem Cache
  *
@@ -17,6 +18,27 @@ const { sync: findUpSync } = require("find-up");
 const { env } = process;
 const transform = require("./transform");
 const serialize = require("./serialize");
+/**
+ * @typedef {object} FileSystemInfoEntry
+ * @property {number} safeTime
+ * @property {number} timestamp
+ */
+/**
+ * @typedef {object} WebpackLogger
+ * @property {function(string): void} debug
+ * @property {function(string): void} info
+ * @property {function(string): void} warn
+ * @property {function(string): void} error
+ */
+/**
+ * @typedef {object} WebpackHash
+ * @property {(data: string | Buffer, inputEncoding?: string) => WebpackHash} update
+ * @property {(encoding?: string) => string | Buffer} digest
+ */
+
+/**
+ * @type {string | null}
+ */
 let defaultCacheDirectory = null;
 
 const gunzip = promisify(zlib.gunzip);
@@ -35,8 +57,8 @@ const findRootPackageJSON = () => {
  * Read the contents from the compressed file.
  *
  * @async
- * @params {String} filename
- * @params {Boolean} compress
+ * @param {string} filename
+ * @param {boolean} compress
  */
 const read = async function (filename, compress) {
   const data = await readFile(filename + (compress ? ".gz" : ""));
@@ -47,11 +69,10 @@ const read = async function (filename, compress) {
 
 /**
  * Write contents into a compressed file.
- *
  * @async
- * @params {String} filename
- * @params {Boolean} compress
- * @params {String} result
+ * @param {string} filename
+ * @param {boolean} compress
+ * @param {any} result
  */
 const write = async function (filename, compress, result) {
   const content = JSON.stringify(result);
@@ -62,11 +83,11 @@ const write = async function (filename, compress, result) {
 
 /**
  * Build the filename for the cached file
- *
- * @params {String} source  File source code
- * @params {Object} options Options used
- *
- * @return {String}
+ * @param {string} source File source code
+ * @param {string} identifier Unique identifier to bust cache
+ * @param {Object} options Options used
+ * @param {WebpackHash} hash Hash function returned by `LoaderContext.utils.createHash`
+ * @return {string}
  */
 const filename = function (source, identifier, options, hash) {
   hash.update(serialize([options, source, identifier]));
@@ -74,6 +95,12 @@ const filename = function (source, identifier, options, hash) {
   return hash.digest("hex") + ".json";
 };
 
+/**
+ * Add timestamps to external dependencies.
+ * @async
+ * @param {import("./transform").TransformResult["externalDependencies"]} externalDependencies
+ * @param {(filename: string) => Promise<FileSystemInfoEntry>} getFileTimestamp
+ */
 const addTimestamps = async function (externalDependencies, getFileTimestamp) {
   for (const depAndEmptyTimestamp of externalDependencies) {
     try {
@@ -86,6 +113,13 @@ const addTimestamps = async function (externalDependencies, getFileTimestamp) {
   }
 };
 
+/**
+ * Check if any external dependencies have been modified.
+ * @async
+ * @param {import("./transform").TransformResult["externalDependencies"]} externalDepsWithTimestamp
+ * @param {(filename: string) => Promise<FileSystemInfoEntry>} getFileTimestamp
+ * @returns {Promise<boolean>}
+ */
 const areExternalDependenciesModified = async function (
   externalDepsWithTimestamp,
   getFileTimestamp,
@@ -107,9 +141,18 @@ const areExternalDependenciesModified = async function (
 
 /**
  * Handle the cache
- *
- * @params {String} directory
- * @params {Object} params
+ * @async
+ * @param {string} directory
+ * @param {Object} params
+ * @param {string} params.source The source code to transform.
+ * @param {import(".").NormalizedOptions} [params.options] Options used for transformation.
+ * @param {string} params.cacheIdentifier Unique identifier to bust cache.
+ * @param {string} [params.cacheDirectory] Directory to store cached files.
+ * @param {boolean} [params.cacheCompression] Whether to compress cached files.
+ * @param {WebpackHash} params.hash Hash function to use for the cache filename.
+ * @param {(filename: string) => Promise<FileSystemInfoEntry>} params.getFileTimestamp - Function to get file timestamps.
+ * @param {WebpackLogger} params.logger
+ * @returns {Promise<null | import("./transform").TransformResult>}
  */
 const handleCache = async function (directory, params) {
   const {
@@ -170,6 +213,10 @@ const handleCache = async function (directory, params) {
   // return it to the user asap and write it in cache
   logger.debug(`applying Babel transform`);
   const result = await transform(source, options);
+  if (!result) {
+    logger.debug(`no result from Babel transform, skipping cache write`);
+    return null;
+  }
   await addTimestamps(result.externalDependencies, getFileTimestamp);
 
   try {
@@ -189,14 +236,17 @@ const handleCache = async function (directory, params) {
 
 /**
  * Retrieve file from cache, or create a new one for future reads
- *
  * @async
- * @param  {Object}   params
- * @param  {String}   params.cacheDirectory   Directory to store cached files
- * @param  {String}   params.cacheIdentifier  Unique identifier to bust cache
- * @param  {Boolean}  params.cacheCompression Whether compressing cached files
- * @param  {String}   params.source   Original contents of the file to be cached
- * @param  {Object}   params.options  Options to be given to the transform fn
+ * @param {object} params
+ * @param {string} params.cacheDirectory Directory to store cached files.
+ * @param {string} params.cacheIdentifier Unique identifier to bust cache.
+ * @param {boolean} params.cacheCompression Whether compressing cached files.
+ * @param {string} params.source Original contents of the file to be cached.
+ * @param {import(".").NormalizedOptions} params.options Options to be given to the transform function.
+ * @param {function} params.transform Transform function to apply to the file.
+ * @param {WebpackHash} params.hash Hash function to use for the cache filename.
+ * @param {function(string): Promise<FileSystemInfoEntry>} params.getFileTimestamp Function to get file timestamps.
+ * @param {WebpackLogger} params.logger Logger instance.
  *
  * @example
  *
@@ -212,7 +262,7 @@ const handleCache = async function (directory, params) {
  *   });
  */
 
-module.exports = async function (params) {
+module.exports = async function cache(params) {
   let directory;
 
   if (typeof params.cacheDirectory === "string") {
@@ -225,13 +275,23 @@ module.exports = async function (params) {
   return await handleCache(directory, params);
 };
 
+/**
+ * Find the cache directory for babel-loader.
+ * @param {string} name "babel-loader"
+ * @returns {string}
+ */
 function findCacheDir(name) {
   if (env.CACHE_DIR && !["true", "false", "1", "0"].includes(env.CACHE_DIR)) {
     return path.join(env.CACHE_DIR, name);
   }
-  const rootPkgJSONPath = path.dirname(findRootPackageJSON());
+  const rootPkgJSONPath = findRootPackageJSON();
   if (rootPkgJSONPath) {
-    return path.join(rootPkgJSONPath, "node_modules", ".cache", name);
+    return path.join(
+      path.dirname(rootPkgJSONPath),
+      "node_modules",
+      ".cache",
+      name,
+    );
   }
   return os.tmpdir();
 }
