@@ -30,6 +30,7 @@
     "@babel/core": "^8.0.0-beta.1",
     "@babel/eslint-parser": "^8.0.0-beta.1",
     "@babel/preset-env": "^8.0.0-beta.1",
+    "@rspack/core": "^1.7.5",
     "c8": "^10.1.2",
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
