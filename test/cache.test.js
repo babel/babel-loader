@@ -402,7 +402,7 @@ function defineCacheTests(bundler) {
       assert.strictEqual(counter, 1);
 
       fs.writeFileSync(dep, "second update");
-      const counterBeforeUpdate = counter;
+
       stats = await bundler.compileAsync(config);
       assert.equal(stats.compilation.warnings.length, 0);
       assert.equal(stats.compilation.errors.length, 0);
