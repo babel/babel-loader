@@ -15,7 +15,7 @@
 
 <h1 align="center">Babel Loader</h1>
 
-This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) and [webpack](https://github.com/webpack/webpack).
+This package allows transpiling JavaScript files using [Babel](https://github.com/babel/babel) together with [webpack](https://github.com/webpack/webpack) or [Rspack](https://github.com/web-infra-dev/rspack).
 
 **Note**: Issues with the output should be reported on the Babel [Issues](https://github.com/babel/babel/issues) tracker.
 
