@@ -342,71 +342,73 @@ function defineCacheTests(bundler) {
   strictCacheHitTest(
     "should cache result when there are external dependencies",
     async () => {
-    const dep = path.join(cacheDir, "externalDependency.txt");
+      const dep = path.join(cacheDir, "externalDependency.txt");
 
-    fs.writeFileSync(dep, "first update");
+      fs.writeFileSync(dep, "first update");
 
-    let counter = 0;
+      let counter = 0;
 
-    const config = Object.assign({}, globalConfig, {
-      entry: path.join(__dirname, "fixtures/constant.js"),
-      output: {
-        path: context.directory,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.js$/,
-            loader: babelLoader,
-            options: {
-              babelrc: false,
-              configFile: false,
-              cacheDirectory: context.cacheDirectory,
-              plugins: [
-                api => {
-                  api.cache.never();
-                  api.addExternalDependency(dep);
-                  return {
-                    visitor: {
-                      BooleanLiteral(path) {
-                        counter++;
-                        path.replaceWith(
-                          api.types.stringLiteral(fs.readFileSync(dep, "utf8")),
-                        );
-                        path.stop();
+      const config = Object.assign({}, globalConfig, {
+        entry: path.join(__dirname, "fixtures/constant.js"),
+        output: {
+          path: context.directory,
+        },
+        module: {
+          rules: [
+            {
+              test: /\.js$/,
+              loader: babelLoader,
+              options: {
+                babelrc: false,
+                configFile: false,
+                cacheDirectory: context.cacheDirectory,
+                plugins: [
+                  api => {
+                    api.cache.never();
+                    api.addExternalDependency(dep);
+                    return {
+                      visitor: {
+                        BooleanLiteral(path) {
+                          counter++;
+                          path.replaceWith(
+                            api.types.stringLiteral(
+                              fs.readFileSync(dep, "utf8"),
+                            ),
+                          );
+                          path.stop();
+                        },
                       },
-                    },
-                  };
-                },
-              ],
+                    };
+                  },
+                ],
+              },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      });
 
-    let stats = await bundler.compileAsync(config);
-    assert.equal(stats.compilation.warnings.length, 0);
-    assert.equal(stats.compilation.errors.length, 0);
+      let stats = await bundler.compileAsync(config);
+      assert.equal(stats.compilation.warnings.length, 0);
+      assert.equal(stats.compilation.errors.length, 0);
 
-    assert.ok(stats.compilation.fileDependencies.has(dep));
-    assert.strictEqual(counter, 1);
+      assert.ok(stats.compilation.fileDependencies.has(dep));
+      assert.strictEqual(counter, 1);
 
-    stats = await bundler.compileAsync(config);
-    assert.equal(stats.compilation.warnings.length, 0);
-    assert.equal(stats.compilation.errors.length, 0);
+      stats = await bundler.compileAsync(config);
+      assert.equal(stats.compilation.warnings.length, 0);
+      assert.equal(stats.compilation.errors.length, 0);
 
-    assert.ok(stats.compilation.fileDependencies.has(dep));
-    assert.strictEqual(counter, 1);
+      assert.ok(stats.compilation.fileDependencies.has(dep));
+      assert.strictEqual(counter, 1);
 
-    fs.writeFileSync(dep, "second update");
-    const counterBeforeUpdate = counter;
-    stats = await bundler.compileAsync(config);
-    assert.equal(stats.compilation.warnings.length, 0);
-    assert.equal(stats.compilation.errors.length, 0);
+      fs.writeFileSync(dep, "second update");
+      const counterBeforeUpdate = counter;
+      stats = await bundler.compileAsync(config);
+      assert.equal(stats.compilation.warnings.length, 0);
+      assert.equal(stats.compilation.errors.length, 0);
 
-    assert.ok(stats.compilation.fileDependencies.has(dep));
-    assert.strictEqual(counter, 2);
+      assert.ok(stats.compilation.fileDependencies.has(dep));
+      assert.strictEqual(counter, 2);
     },
   );
 

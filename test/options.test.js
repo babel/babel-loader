@@ -74,69 +74,72 @@ function defineOptionsTests(bundler) {
   schemaValidationTest(
     "should throw when options.metadataSubscribers is not an array",
     async () => {
-    const config = Object.assign({}, globalConfig, {
-      output: {
-        path: context.directory,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-            options: {
-              metadataSubscribers: function subscriber() {},
+      const config = Object.assign({}, globalConfig, {
+        output: {
+          path: context.directory,
+        },
+        module: {
+          rules: [
+            {
+              test: /\.jsx?/,
+              loader: babelLoader,
+              exclude: /node_modules/,
+              options: {
+                metadataSubscribers: function subscriber() {},
+              },
             },
-          },
-        ],
-      },
-    });
-    const stats = await bundler.compileAsync(config);
-    const { errors } = stats.compilation;
-    assert.deepEqual(errors.length, 1);
-    const errorMessage = errors[0].message;
-    assert.match(
-      errorMessage,
-      /ValidationError: Invalid options object\. Babel Loader has been initialized using an options object that does not match the API schema\./,
-    );
-    assert.match(
-      errorMessage,
-      /options\.metadataSubscribers should be an array/,
-    );
+          ],
+        },
+      });
+      const stats = await bundler.compileAsync(config);
+      const { errors } = stats.compilation;
+      assert.deepEqual(errors.length, 1);
+      const errorMessage = errors[0].message;
+      assert.match(
+        errorMessage,
+        /ValidationError: Invalid options object\. Babel Loader has been initialized using an options object that does not match the API schema\./,
+      );
+      assert.match(
+        errorMessage,
+        /options\.metadataSubscribers should be an array/,
+      );
     },
   );
 
-  schemaValidationTest("should throw when options.customize is not a string", async () => {
-    const config = Object.assign({}, globalConfig, {
-      output: {
-        path: context.directory,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.jsx?/,
-            loader: babelLoader,
-            exclude: /node_modules/,
-            options: {
-              customize: true,
+  schemaValidationTest(
+    "should throw when options.customize is not a string",
+    async () => {
+      const config = Object.assign({}, globalConfig, {
+        output: {
+          path: context.directory,
+        },
+        module: {
+          rules: [
+            {
+              test: /\.jsx?/,
+              loader: babelLoader,
+              exclude: /node_modules/,
+              options: {
+                customize: true,
+              },
             },
-          },
-        ],
-      },
-    });
-    const stats = await bundler.compileAsync(config);
-    const { errors } = stats.compilation;
-    assert.deepEqual(errors.length, 1);
-    const errorMessage = errors[0].message;
-    assert.match(
-      errorMessage,
-      /ValidationError: Invalid options object\. Babel Loader has been initialized using an options object that does not match the API schema\./,
-    );
-    assert.match(
-      errorMessage,
-      /options\.customize should be one of these:\s null | string/,
-    );
-  });
+          ],
+        },
+      });
+      const stats = await bundler.compileAsync(config);
+      const { errors } = stats.compilation;
+      assert.deepEqual(errors.length, 1);
+      const errorMessage = errors[0].message;
+      assert.match(
+        errorMessage,
+        /ValidationError: Invalid options object\. Babel Loader has been initialized using an options object that does not match the API schema\./,
+      );
+      assert.match(
+        errorMessage,
+        /options\.customize should be one of these:\s null | string/,
+      );
+    },
+  );
 
   test("should throw when options.customize is not an absolute path", async () => {
     const config = Object.assign({}, globalConfig, {
