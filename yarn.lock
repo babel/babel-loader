@@ -2042,10 +2042,10 @@ __metadata:
     "@babel/preset-env": ^8.0.0-beta.1
     "@rspack/core": ^1.7.5
     c8: ^10.1.2
+    empathic: ^1.1.0
     eslint: ^9.6.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.1.3
-    find-up: ^5.0.0
     globals: ^15.8.0
     husky: ^9.1.5
     lint-staged: ^15.2.9
@@ -2458,6 +2458,13 @@ __metadata:
   version: 9.2.2
   resolution: "emoji-regex@npm:9.2.2"
   checksum: 8487182da74aabd810ac6d6f1994111dfc0e331b01271ae01ec1eb0ad7b5ecc2bbbbd2f053c05cb55a1ac30449527d819bbfbf0e3de1023db308cbcb47f86601
+  languageName: node
+  linkType: hard
+
+"empathic@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "empathic@npm:1.1.0"
+  checksum: 1e41763802f14e5fa2522063f8f93e161c64916698f39e493a3e274356e39aa6f60d60f33063c92f9d5c5426fd33d9cb33baed2885a194648254181ce5495a9c
   languageName: node
   linkType: hard
 
