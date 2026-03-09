@@ -8,7 +8,6 @@
  * @see https://github.com/babel/babel-loader/issues/34
  * @see https://github.com/babel/babel-loader/pull/41
  */
-const nodeModule = require("node:module");
 const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
@@ -43,15 +42,6 @@ let defaultCacheDirectory = null;
 
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
-
-const findRootPackageJSON = () => {
-  if (nodeModule.findPackageJSON) {
-    return nodeModule.findPackageJSON("..", __filename);
-  } else {
-    // todo: remove this fallback when dropping support for Node.js < 22.14
-    return findUpSync("package.json");
-  }
-};
 
 /**
  * Read the contents from the compressed file.
@@ -284,7 +274,7 @@ function findCacheDir(name) {
   if (env.CACHE_DIR && !["true", "false", "1", "0"].includes(env.CACHE_DIR)) {
     return path.join(env.CACHE_DIR, name);
   }
-  const rootPkgJSONPath = findRootPackageJSON();
+  const rootPkgJSONPath = findUpSync("package.json");
   if (rootPkgJSONPath) {
     return path.join(
       path.dirname(rootPkgJSONPath),
