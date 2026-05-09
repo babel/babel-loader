@@ -4,6 +4,7 @@
  * @property {string} [cacheDirectory] Directory to store cached files.
  * @property {string} [cacheIdentifier] Unique identifier to bust cache.
  * @property {boolean} [cacheCompression] Whether to compress cached files.
+ * @property {boolean} [cacheRaw] Whether to use raw v8 serialization for cache files.
  * @property {string} [customize] The absolute path of a file that exports a BabelLoaderWrapper.
  * @property {Array<string>} [metadataSubscribers] Names of subscribers registered in the loader context.
  */
@@ -55,6 +56,7 @@ if (/^6\./.test(babel.version)) {
 
 const { version } = require("../package.json");
 const cache = require("./cache");
+const v8 = require("v8");
 const transform = require("./transform");
 const injectCaller = require("./injectCaller");
 const schema = require("./schema.json");
