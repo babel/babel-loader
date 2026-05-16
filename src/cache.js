@@ -13,6 +13,7 @@ const path = require("path");
 const zlib = require("zlib");
 const { promisify } = require("util");
 const { readFile, writeFile, mkdir } = require("fs/promises");
+const v8 = require("v8");
 const { sync: findUpSync } = require("find-up");
 const { env } = process;
 const transform = require("./transform");
@@ -50,10 +51,13 @@ const gzip = promisify(zlib.gzip);
  * @param {string} filename
  * @param {boolean} compress
  */
-const read = async function (filename, compress) {
+const read = async function (filename, compress, raw) {
   const data = await readFile(filename + (compress ? ".gz" : ""));
   const content = compress ? await gunzip(data) : data;
 
+  if (raw) {
+    return v8.deserialize(content);
+  }
   return JSON.parse(content.toString());
 };
 
@@ -64,11 +68,16 @@ const read = async function (filename, compress) {
  * @param {boolean} compress
  * @param {any} result
  */
-const write = async function (filename, compress, result) {
-  const content = JSON.stringify(result);
-
-  const data = compress ? await gzip(content) : content;
-  return await writeFile(filename + (compress ? ".gz" : ""), data);
+const write = async function (filename, compress, result, raw) {
+  let data;
+  if (raw) {
+    data = v8.serialize(result);
+  } else {
+    const content = JSON.stringify(result);
+    data = compress ? await gzip(content) : content;
+  }
+  const path = filename + (compress && !raw ? ".gz" : "");
+  return await writeFile(path, data);
 };
 
 /**

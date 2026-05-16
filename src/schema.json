@@ -20,6 +20,10 @@
       "type": "boolean",
       "default": true
     },
+    "cacheRaw": {
+      "type": "boolean",
+      "default": false
+    },
     "customize": {
       "anyOf": [
         {
