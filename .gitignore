@@ -9,3 +9,4 @@ test/output
 .pnp.*
 .vscode
 scripts/test-legacy-source/output
+tsconfig.tsbuildinfo

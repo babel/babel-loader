@@ -1,13 +1,30 @@
+// @ts-check
 const babel = require("@babel/core");
 const { promisify } = require("util");
 const LoaderError = require("./Error");
 
-const transform = promisify(babel.transform);
-
-module.exports = async function (source, options) {
+const babelTransform = babel.transformAsync ?? promisify(babel.transform);
+/**
+ * @typedef {Object} AmendedTransformResult
+ * @property {[string, number?][]} externalDependencies
+ */
+/**
+ * @typedef {Omit<import("@babel/core").FileResult, "externalDependencies" | "options"> & AmendedTransformResult} TransformResult
+ */
+/**
+ * Transform the source code using Babel.
+ * @async
+ * @param {string} source The source code to transform.
+ * @param {import("@babel/core").InputOptions} options The Babel options.
+ * @returns {Promise<null | TransformResult>} The transformed result or null if no transformation is needed.
+ */
+module.exports = async function transform(source, options) {
+  /**
+   * @type {import("@babel/core").FileResult}
+   */
   let result;
   try {
-    result = await transform(source, options);
+    result = await babelTransform(source, options);
   } catch (err) {
     throw err.message && err.codeFrame ? new LoaderError(err) : err;
   }
@@ -32,9 +49,14 @@ module.exports = async function (source, options) {
     metadata,
     sourceType,
     // Convert it from a Set to an Array to make it JSON-serializable.
-    externalDependencies: Array.from(externalDependencies || [], dep => [
-      dep,
-    ]).sort(),
+    externalDependencies: Array.from(
+      externalDependencies || [],
+      /**
+       * @param {string} dep
+       * @returns {[string, number?]}
+       */
+      dep => [dep],
+    ).sort(),
   };
 };
 
