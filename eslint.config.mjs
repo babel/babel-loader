@@ -1,4 +1,4 @@
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import configPrettier from "eslint-config-prettier";
 import globals from "globals";
 import babelParser from "@babel/eslint-parser";
 import js from "@eslint/js";
@@ -22,5 +22,5 @@ export default [
       sourceType: "module",
     },
   },
-  eslintPluginPrettierRecommended,
+  configPrettier,
 ];
