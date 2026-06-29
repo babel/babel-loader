@@ -32,6 +32,7 @@
     "@babel/preset-env": "^8.0.0",
     "@eslint/js": "^10.0.1",
     "@rspack/core": "^1.7.5",
+    "@types/node": "^18.19.130",
     "c8": "^11.0.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
@@ -39,6 +40,7 @@
     "husky": "^9.1.5",
     "lint-staged": "^17.0.8",
     "prettier": "^3.9.3",
+    "semver": "^7.5.4",
     "typescript": "5.8.3",
     "webpack": "^5.108.2"
   },

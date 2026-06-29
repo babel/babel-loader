@@ -1604,6 +1604,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^18.19.130":
+  version: 18.19.130
+  resolution: "@types/node@npm:18.19.130"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10/ebb85c6edcec78df926de27d828ecbeb1b3d77c165ceef95bfc26e171edbc1924245db4eb2d7d6230206fe6b1a1f7665714fe1c70739e9f5980d8ce31af6ef82
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.14.1, @webassemblyjs/ast@npm:^1.14.1":
   version: 1.14.1
   resolution: "@webassemblyjs/ast@npm:1.14.1"
@@ -1930,6 +1939,7 @@ __metadata:
     "@babel/preset-env": "npm:^8.0.0"
     "@eslint/js": "npm:^10.0.1"
     "@rspack/core": "npm:^1.7.5"
+    "@types/node": "npm:^18.19.130"
     c8: "npm:^11.0.0"
     empathic: "npm:^2.0.1"
     eslint: "npm:^10.6.0"
@@ -1938,6 +1948,7 @@ __metadata:
     husky: "npm:^9.1.5"
     lint-staged: "npm:^17.0.8"
     prettier: "npm:^3.9.3"
+    semver: "npm:^7.5.4"
     typescript: "npm:5.8.3"
     webpack: "npm:^5.108.2"
   peerDependencies:
@@ -3625,7 +3636,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.7.3":
+"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.3":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
@@ -3926,6 +3937,13 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10/b9b1e73dabac5dc730c041325dbd9c99467c1b0d239f1b74ec3b90d831384af3e2ba973946232df670519147eb51a2c20f6f96163cea2b359f03de1e2091cc4f
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 10/0097779d94bc0fd26f0418b3a05472410408877279141ded2bd449167be1aed7ea5b76f756562cb3586a07f251b90799bab22d9019ceba49c037c76445f7cddd
   languageName: node
   linkType: hard
 
