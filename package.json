@@ -26,10 +26,10 @@
     }
   },
   "devDependencies": {
-    "@babel/cli": "^8.0.0-beta.1",
-    "@babel/core": "^8.0.0-beta.1",
-    "@babel/eslint-parser": "^8.0.0-beta.1",
-    "@babel/preset-env": "^8.0.0-beta.1",
+    "@babel/cli": "^8.0.0",
+    "@babel/core": "^8.0.0",
+    "@babel/eslint-parser": "^8.0.0",
+    "@babel/preset-env": "^8.0.0",
     "@rspack/core": "^1.7.5",
     "c8": "^10.1.2",
     "eslint": "^9.6.0",
