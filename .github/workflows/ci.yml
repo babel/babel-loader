@@ -11,10 +11,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [20, 22, 24]
+        node-version: [22, 24]
         babel-version: ["7", "8"]
         webpack-version: ["5"]
         include:
+          - node-version: "20"
+            webpack-version: "5"
+            babel-version: "7"
+            os: ubuntu-latest
           - node-version: "18"
             webpack-version: "5"
             babel-version: "7"
