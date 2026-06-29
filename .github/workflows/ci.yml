@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [25.6] # Do not use latest because of https://github.com/nodejs/node/issues/61971
+        node-version: [latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
