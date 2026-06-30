@@ -30,20 +30,26 @@ webpack(config, (err, stats) => {
   assert.deepStrictEqual(stats.compilation.errors, []);
   assert.deepStrictEqual(stats.compilation.warnings, []);
 
-  fs.readdir(path.join(__dirname, "test-legacy-source/output"), (err, files) => {
-    assert.strictEqual(err, null);
-    assert.strictEqual(files.length, 1);
-    fs.readFile(path.join(__dirname, "test-legacy-source/output", files[0]), (err, data) => {
+  fs.readdir(
+    path.join(__dirname, "test-legacy-source/output"),
+    (err, files) => {
       assert.strictEqual(err, null);
-      const test = "var App = function App()";
-      const subject = data.toString();
+      assert.strictEqual(files.length, 1);
+      fs.readFile(
+        path.join(__dirname, "test-legacy-source/output", files[0]),
+        (err, data) => {
+          assert.strictEqual(err, null);
+          const test = "var App = function App()";
+          const subject = data.toString();
 
-      assert.notStrictEqual(subject.indexOf(test), -1);
+          assert.notStrictEqual(subject.indexOf(test), -1);
 
-      console.log("DONE");
-      clearTimeout(timeout);
-    });
-  });
+          console.log("DONE");
+          clearTimeout(timeout);
+        }
+      );
+    }
+  );
 });
 
 const timeout = setTimeout(() => {
