@@ -12,8 +12,8 @@ const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 const { promisify } = require("util");
+const { lstatSync } = require("fs");
 const { readFile, writeFile, mkdir } = require("fs/promises");
-const { up: findUpSync } = require("empathic/find");
 const { env } = process;
 const transform = require("./transform");
 const serialize = require("./serialize");
@@ -274,14 +274,32 @@ function findCacheDir(name) {
   if (env.CACHE_DIR && !["true", "false", "1", "0"].includes(env.CACHE_DIR)) {
     return path.join(env.CACHE_DIR, name);
   }
-  const rootPkgJSONPath = findUpSync("package.json");
-  if (rootPkgJSONPath) {
-    return path.join(
-      path.dirname(rootPkgJSONPath),
-      "node_modules",
-      ".cache",
-      name,
-    );
+  const rootPkgJSONPath = findPackageRoot();
+  if (rootPkgJSONPath !== null) {
+    return path.join(rootPkgJSONPath, "node_modules", ".cache", name);
   }
   return os.tmpdir();
+}
+
+/**
+ * Find the package root directory.
+ * @returns {string | null}
+ */
+function findPackageRoot() {
+  let current = process.cwd();
+  let previous;
+
+  while (current !== previous) {
+    try {
+      if (lstatSync(path.join(current, "package.json")).isFile()) {
+        return current;
+      }
+    } catch {
+      // empty
+    }
+    previous = current;
+    current = path.dirname(current);
+  }
+
+  return null;
 }
