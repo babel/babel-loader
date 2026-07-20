@@ -1941,7 +1941,6 @@ __metadata:
     "@rspack/core": "npm:^1.7.5"
     "@types/node": "npm:^18.19.130"
     c8: "npm:^11.0.0"
-    empathic: "npm:^2.0.1"
     eslint: "npm:^10.6.0"
     eslint-config-prettier: "npm:^10.1.8"
     globals: "npm:^17.7.0"
