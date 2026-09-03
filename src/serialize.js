@@ -1,6 +1,6 @@
 // @ts-check
 var objToString = Object.prototype.toString;
-var objKeys = Object.getOwnPropertyNames;
+var objKeys = Object.keys;
 
 /**
  * A custom Babel options serializer
