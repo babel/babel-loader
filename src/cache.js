@@ -142,24 +142,20 @@ const areExternalDependenciesModified = async function (
  * @param {WebpackHash} params.hash Hash function to use for the cache filename.
  * @param {(filename: string) => Promise<FileSystemInfoEntry>} params.getFileTimestamp - Function to get file timestamps.
  * @param {WebpackLogger} params.logger
+ * @param {string} cacheFilename The cache filename, shared with fallback directories.
  * @returns {Promise<null | import("./transform").TransformResult>}
  */
-const handleCache = async function (directory, params) {
+const handleCache = async function (directory, params, cacheFilename) {
   const {
     source,
     options = {},
-    cacheIdentifier,
     cacheDirectory,
     cacheCompression,
-    hash,
     getFileTimestamp,
     logger,
   } = params;
 
-  const file = path.join(
-    directory,
-    filename(source, cacheIdentifier, options, hash),
-  );
+  const file = path.join(directory, cacheFilename);
 
   try {
     // No errors mean that the file was previously cached
@@ -193,7 +189,7 @@ const handleCache = async function (directory, params) {
     await mkdir(directory, { recursive: true });
   } catch (err) {
     if (fallback) {
-      return handleCache(os.tmpdir(), params);
+      return handleCache(os.tmpdir(), params, cacheFilename);
     }
 
     throw err;
@@ -215,7 +211,7 @@ const handleCache = async function (directory, params) {
   } catch (err) {
     if (fallback) {
       // Fallback to tmpdir if node_modules folder not writable
-      return handleCache(os.tmpdir(), params);
+      return handleCache(os.tmpdir(), params, cacheFilename);
     }
 
     throw err;
@@ -262,7 +258,9 @@ module.exports = async function cache(params) {
     directory = defaultCacheDirectory;
   }
 
-  return await handleCache(directory, params);
+  const { source, cacheIdentifier, options = {}, hash } = params;
+  const cacheFilename = filename(source, cacheIdentifier, options, hash);
+  return await handleCache(directory, params, cacheFilename);
 };
 
 /**
