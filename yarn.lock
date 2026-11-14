@@ -1948,7 +1948,6 @@ __metadata:
     husky: "npm:^9.1.5"
     lint-staged: "npm:^17.0.8"
     prettier: "npm:^3.9.3"
-    semver: "npm:^7.5.4"
     typescript: "npm:5.8.3"
     webpack: "npm:^5.108.2"
   peerDependencies:
@@ -3643,7 +3642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.3":
+"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.7.3":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
