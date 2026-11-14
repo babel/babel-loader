@@ -40,7 +40,6 @@
     "husky": "^9.1.5",
     "lint-staged": "^17.0.8",
     "prettier": "^3.9.3",
-    "semver": "^7.5.4",
     "typescript": "5.8.3",
     "webpack": "^5.108.2"
   },
