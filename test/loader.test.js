@@ -2,7 +2,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { satisfies } from "semver";
 import createTestDirectory from "./helpers/createTestDirectory.js";
 import { bundlers } from "./helpers/bundlers.js";
 import { fileURLToPath } from "node:url";
@@ -175,21 +174,10 @@ for (const bundler of bundlers) {
       });
 
       const stats = await bundler.compileAsync(config);
-      // Node supports ESM without a flag starting from 12.13.0 and 13.2.0.
-      if (satisfies(process.version, `^12.13.0 || >=13.2.0`)) {
-        assert.deepEqual(
-          stats.compilation.errors.map(e => e.message),
-          [],
-        );
-      } else {
-        assert.strictEqual(stats.compilation.errors.length, 1);
-        const moduleBuildError = stats.compilation.errors[0];
-        const babelLoaderError = moduleBuildError.error;
-        assert.ok(babelLoaderError instanceof Error);
-        // Error messages are slightly different between versions:
-        // "modules aren't supported" or "modules not supported".
-        assert.match(babelLoaderError.message, /supported/i);
-      }
+      assert.deepEqual(
+        stats.compilation.errors.map(e => e.message),
+        [],
+      );
       assert.equal(stats.compilation.warnings.length, 0);
     });
 
